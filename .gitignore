@@ -1,0 +1,40 @@
+/data
+/.vscode
+/count_lines.py
+/fft.py
+/docs
+/identifier.sqlite
+/ipynb
+
+/src/__pycache__
+
+/src/all_code.txt
+/core/single_flows/parser.out
+/core/single_flows/parsetab.py
+
+/core/single_flows/__pycache__/
+
+
+# ----------------------
+# 仿真/计算生成的中间结果文件
+# ----------------------
+*.log
+*.sum
+*.toc
+*.tlg
+*.grd
+*.fld
+*.par
+*.pp
+*.m2d
+*.m2d3
+*.m2d4
+fort.*
+*.OBI
+*.OBR
+*.TXT
+*.pyc
+
+/tests
+/某人的毕设.md
+
