@@ -120,6 +120,44 @@ class MCLPreprocess:
                 idx += 1
         return " ".join(tokens)
 
+    def process_assignment_units(self, tokens: List[str]) -> List[str]:
+        """
+        处理赋值语句中的单位表达式
+        """
+        processed_tokens = []
+        i = 0
+        while i < len(tokens):
+            # 检查是否是类似 "2 nanoseconds" 的模式
+            if (i + 1 < len(tokens) and 
+                re.match(self.rules.float_ext_exp, tokens[i]) and 
+                not "*" in tokens[i] and  # 不包含*号
+                re.match(r'^[a-zA-Z]+$', tokens[i+1])):  # 下一个token是纯字母
+                
+                # 合并两个token作为单位表达式处理
+                unit_expr = f"{tokens[i]} {tokens[i+1]}"
+                try:
+                    formatted_expr = self.math_exp_format(unit_expr)
+                    processed_tokens.append(formatted_expr)
+                    i += 2  # 跳过已处理的两个token
+                    continue
+                except ValueError:
+                    # 如果处理失败，按原样添加
+                    pass
+            
+            # 检查单个token是否是单位表达式（已经包含*号的）
+            if re.match(self.rules.float_ext_exp, tokens[i]):
+                try:
+                    processed_tokens.append(self.math_exp_format(tokens[i]))
+                except ValueError:
+                    # 如果处理失败，按原样添加
+                    processed_tokens.append(tokens[i])
+            else:
+                processed_tokens.append(tokens[i])
+            
+            i += 1
+        
+        return processed_tokens
+
     # ---------- 主流程 ----------
     def mcl_preprocess(self, input_lines: List[str]) -> List[Dict[str, str]]:
         """
@@ -194,6 +232,18 @@ class MCLPreprocess:
             if first == "POINT":
                 name = toks[1]
                 coords = " ".join(toks[2:-1])  # 去掉末尾 ;
+                # 对坐标单位进行格式化处理
+                coord_tokens = coords.split()
+                formatted_coords = []
+                for token in coord_tokens:
+                    if re.match(self.rules.float_ext_exp, token):
+                        try:
+                            formatted_coords.append(self.math_exp_format(token))
+                        except ValueError:
+                            formatted_coords.append(token)
+                    else:
+                        formatted_coords.append(token)
+                coords = " ".join(formatted_coords)
                 point_table[name] = coords
 
             if first in ("LINE", "AREA"):
@@ -215,6 +265,9 @@ class MCLPreprocess:
                 full_cmd = self.process_line_command(full_cmd)
             elif full_cmd.startswith("AREA"):
                 full_cmd = self.process_area_command(full_cmd)
+            elif full_cmd.startswith("POINT"):
+                # POINT命令已经在阶段2处理过单位，直接跳过重复处理
+                pass
 
             full_cmd = self.replace_all(full_cmd, "**", " ! ")
             full_cmd = self.replace_all(full_cmd, "*", " * ")
@@ -231,6 +284,10 @@ class MCLPreprocess:
                 if re.match(self.rules.float_ext_exp, token):
                     tokens[i] = self.math_exp_format(token)
 
+            # 处理赋值语句中的单位
+            if not full_cmd.startswith(("LINE", "AREA")):
+                tokens = self.process_assignment_units(tokens)
+            
             text = " ".join(tokens)
             text = self.replace_all(text, " inline_enter ", " ")
             text = re.sub(r";\s*;", ";", text).strip()
@@ -298,4 +355,3 @@ if __name__ == "__main__":
     args = argparser.parse_args()
     preprocessor = MCLPreprocess(rules=PreprocessRules())
     preprocessor.pre_main(args.input_file)
-    

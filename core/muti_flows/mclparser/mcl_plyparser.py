@@ -30,13 +30,8 @@ class PLYParser:
 
         source = cls._build_padded_source(items)
         lexer.lineno = 1
-        try:
-            ast = ply_parser.parse(source, lexer=lexer, tracking=True)
-            return ast if ast else ProgramNode([])
-        except Exception as e:
-            print(f"PLY parsing failed: {e}")
-            # 返回空的程序节点而不是完全失败
-            return ProgramNode([])
+        ast = ply_parser.parse(source, lexer=lexer, tracking=True)
+        return ast
 
 
     # ---------------------------- 生成源文本 ----------------------------

@@ -454,12 +454,7 @@ def t_newline(t):
 # 错误处理
 def t_error(t):
     print(f"Illegal character '{t.value[0]}' at line {t.lineno}")
-    # 尝试恢复：跳过非法字符直到空白字符或分号
-    while t.lexer.lexdata[t.lexer.lexpos:t.lexer.lexpos+1] not in (' ', '\t', '\n', ';', ''):
-        t.lexer.lexpos += 1
-    if t.lexer.lexdata[t.lexer.lexpos:t.lexer.lexpos+1] in ('\n', ';'):
-        t.lexer.lexpos += 1
-        t.lexer.lineno += 1
+    t.lexer.skip(1)
 
 
 

@@ -130,8 +130,8 @@ class MaterialApplicationNode(ASTNode):
     def to_expression(self):
         #print("MaterialApplicationNode......\n")
         if hasattr(self, 'spec') and self.spec:
-            return f"'mtype': '{self.mtype}', 'geom_name': '{self.geom_name}', 'spec': '{self.spec[0]}', 'name': '{self.name}'"
-        return f"'mtype': '{self.mtype}', 'geom_name': '{self.geom_name}', 'name': '{self.name}'"
+            return f"'mtype': '{self.mtype}', 'geom_name': '{self.geom_name}', 'spec': '{self.spec[0]}'"
+        return f"'mtype': '{self.mtype}', 'geom_name': '{self.geom_name}'"
 
     
 # 端口

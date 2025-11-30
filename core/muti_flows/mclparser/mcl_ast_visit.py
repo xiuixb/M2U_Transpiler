@@ -52,24 +52,7 @@ class ASTVisitor:
         """
         results: List[ParseResult] = []
 
-        # 如果程序节点为空，尝试从line_index构建部分结果
         if not isinstance(program, ProgramNode) or not getattr(program, "statements", None):
-            # 即使解析失败，也尝试返回部分信息
-            if line_index:
-                for lineno, meta in line_index.items():
-                    command = meta.get("command", "")
-                    text = meta.get("text", "")
-                    results.append(
-                        ParseResult(
-                            lineno=lineno,
-                            command=command,
-                            payload={},
-                            parser_kind=parser_name,
-                            ok=False,
-                            errors=["Failed to parse: PLY parser error"],
-                            text=text,
-                        )
-                    )
             return results
 
         for stmt in program.statements:
@@ -99,7 +82,7 @@ class ASTVisitor:
                         payload={},
                         parser_kind=parser_name,
                         ok=False,
-                        errors=[f"AST visit error: {str(e)}"],
+                        errors=[str(e)],
                         text=text,
                     )
                 )

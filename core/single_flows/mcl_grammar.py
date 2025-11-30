@@ -876,13 +876,6 @@ def p_empty(p):
 def p_error(p):
     if p:
         print(f"Syntax error at line {p.lineno}: Unexpected token '{p.value}'")
-        # 错误恢复：跳过直到分号或文件结束
-        while True:
-            tok = yacc.token()  # Get next token
-            if not tok or tok.type == 'SEMI' or tok.type == 'NEWLINE':
-                break
-        yacc.errok()  # 通知解析器错误已处理
-        return tok  # 返回恢复点的token
     else:
         print("Syntax error: Unexpected end of input")
 

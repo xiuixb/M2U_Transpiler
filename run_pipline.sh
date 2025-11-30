@@ -5,7 +5,7 @@
 # data\BWO\BWO.m2d
 M2D_FILE2="D:\AAA_PIC\Parser\M2U_Transpiler\data\BWO\BWO.m2d"
 # data\MILO_new\milo_new.m2d
-M2D_FILE1="D:\AAA_PIC\Parser\M2U_Transpiler\data\MILO_new\milo_new.m2d"
+M2D_FILE="D:\AAA_PIC\Parser\M2U_Transpiler\data\MILO_new\milo_new.m2d"
 
 # data\Mitl\Mitl.m2d
 M2D_FILE="D:\AAA_PIC\Parser\M2U_Transpiler\data\Mitl\Mitl.m2d"
