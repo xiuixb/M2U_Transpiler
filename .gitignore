@@ -38,3 +38,10 @@ fort.*
 /tests
 /test
 /某人的毕设.md
+
+
+# build artifacts
+dist/
+build/
+*.exe
+*.pkg
