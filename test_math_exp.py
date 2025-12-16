@@ -4,8 +4,8 @@ import os
 # 添加项目根目录到Python路径
 sys.path.insert(0, r'd:\AAA_PIC\Parser\M2U_Transpiler')
 
-from core.muti_flows.mcl_preprocess import MCLPreprocess
-from core.rules import PreprocessRules
+from src.core_symbol.muti_flows.mcl_preprocess import MCLPreprocess
+from src.core_symbol.rules import PreprocessRules
 
 # 创建预处理器实例
 preprocessor = MCLPreprocess(rules=PreprocessRules())
