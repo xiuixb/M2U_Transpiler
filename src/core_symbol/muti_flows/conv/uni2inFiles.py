@@ -11,7 +11,6 @@ while not os.path.exists(os.path.join(current_dir, ".project_mark")):
 project_root = current_dir
 sys.path.append(project_root)
 
-
 from src.core_symbol.symbolBase import Unipic25dSymbolTable
 
 import json

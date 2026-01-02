@@ -17,11 +17,11 @@ while not os.path.exists(os.path.join(current_dir, ".project_mark")):
 project_root = current_dir
 sys.path.append(project_root)
 
-
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from src.core_symbol.symbolBase import ParseResult
 from src.core_cac.cac_entity import OpenAILLMEntity
 from src.core_cac.cac_flows import ChromaFlow, MCLPromptBuildFlow
+
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
 
 class LLMParser:
@@ -59,7 +59,8 @@ class LLMParser:
         print(f"总共 {len(input_list)} 个项，分为 {len(batches)} 个批次，每批次 ≤ {batch_size} 个项")
         
         # 使用线程池并发处理各个批次
-        max_concurrent = min(2, len(batches))  # 限制最多2个并发，减少API限制风险
+        # 增加并发数量，支持更多批次同时处理
+        max_concurrent = min(6, len(batches))  # 增加到最多6个并发批次
         batch_results = [None] * len(batches)
         
         with ThreadPoolExecutor(max_workers=max_concurrent) as executor:
@@ -160,7 +161,9 @@ class LLMParser:
                 if raw_result and raw_result.strip():
                     json_result = self._parse_json_result(raw_result)
                     if json_result:
-                        return json_result
+                        # 后处理：为每个结果添加必要字段
+                        processed_result = self._post_process_llm_results(json_result, batch)
+                        return processed_result
                     elif attempt < max_retries:
                         print(f"批次 {batch_index + 1} JSON解析失败，准备重试...")
                         continue
@@ -182,6 +185,60 @@ class LLMParser:
                     print(f"批次 {batch_index + 1} 重试 {max_retries} 次后仍然失败: {e}")
                     
         return None
+    
+    def _post_process_llm_results(self, llm_results, original_batch):
+        """后处理LLM解析结果，添加必要字段和错误处理
+        
+        Args:
+            llm_results: LLM返回的JSON结果列表
+            original_batch: 原始输入批次
+            
+        Returns:
+            处理后的结果列表
+        """
+        if not isinstance(llm_results, list):
+            return []
+        
+        # 创建原始项目的映射
+        original_by_lineno = {}
+        for item in original_batch:
+            lineno = item.get("lineno", "0")
+            original_by_lineno[str(lineno)] = item
+        
+        processed_results = []
+        
+        for result in llm_results:
+            if not isinstance(result, dict):
+                continue
+            
+            # 获取行号
+            lineno = str(result.get("lineno", "0"))
+            original_item = original_by_lineno.get(lineno)
+            
+            # 添加text字段（从原始输入获取）
+            if original_item and "text" not in result:
+                result["text"] = original_item.get("text", "")
+            
+            # 统一errors字段为字符串类型
+            errors = result.get("errors", "no")
+            if isinstance(errors, list):
+                if not errors or (len(errors) == 1 and errors[0] == "no"):
+                    result["errors"] = "no"
+                else:
+                    result["errors"] = "; ".join(str(e) for e in errors)
+            elif errors is None:
+                result["errors"] = "no"
+            else:
+                result["errors"] = str(errors)
+            
+            # 添加ok字段
+            has_payload = bool(result.get("payload"))
+            no_errors = result["errors"] == "no"
+            result["ok"] = has_payload and no_errors
+            
+            processed_results.append(result)
+        
+        return processed_results
     
     def _parse_json_result(self, raw_result):
         """解析LLM返回的JSON结果
@@ -322,7 +379,8 @@ class LLMParser:
 
 if __name__ == "__main__":
     llmparser = LLMParser()
-    llmparser.load_entity(api_key="sk-26c2473f844345b192b7e4c1376391d3", prompt_flow=MCLPromptBuildFlow())
+    from src.config.llm_config import llm_config
+    llmparser.load_entity(api_key=llm_config.api_key, prompt_flow=MCLPromptBuildFlow())
     
     # 测试原始parse方法
     print("=== 测试parse方法 ===")

@@ -70,7 +70,7 @@ class ASTVisitor:
                         payload=payload,
                         parser_kind=parser_name,
                         ok=True,
-                        errors=[],
+                        errors="no",
                         text=text,
                     )
                 )
@@ -82,7 +82,7 @@ class ASTVisitor:
                         payload={},
                         parser_kind=parser_name,
                         ok=False,
-                        errors=[str(e)],
+                        errors=str(e),
                         text=text,
                     )
                 )

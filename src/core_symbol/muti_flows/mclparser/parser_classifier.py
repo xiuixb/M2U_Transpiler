@@ -1,6 +1,12 @@
 ################################
-# core\muti_flows\mclparser\parser_route.py
+# core\muti_flows\mclparser\parser_classifier.py
 ################################
+"""
+命令分类器：根据路由配置将命令分类到不同的解析器
+- PLY: 传统语法解析器
+- REGEX: 正则表达式解析器  
+- LLM: 大语言模型解析器
+"""
 from __future__ import annotations
 import os
 import sys
@@ -18,35 +24,48 @@ from pathlib import Path
 import json
 from typing import Dict, List
 
-from src.core_symbol.rules import RouteRule
+from src.core_symbol.muti_flows.mclparser.m2u_parser_route import RouteConfig
 
-class ParserRoute:
-    def __init__(self, config: RouteRule):
-        self.config = config
+class ParserClassifier:
+    """命令分类器，将命令按照路由规则分配给不同的解析器"""
+    
+    def __init__(self, route_config: RouteConfig):
+        self.route_config = route_config
         
     # --------------- 纯函数：内存 -> 内存 ---------------
-    def route_items(self, items: List[dict]) -> Dict[str, List[dict]]:
+    def classify_items(self, items: List[dict]) -> Dict[str, List[dict]]:
         """
+        将命令项目分类到不同的解析器
         输入: items = [{"lineno":..., "command":..., "text":...}, ...]
-        输出: {"PLY":[...], "REGEX":[...], "LLM":[...]}
+        输出:         
+        grouped = {
+            "PLY":   [{"lineno":..., "command":"...","text":"..."}, ...],
+            "REGEX": [{"lineno":..., "command":"...","text":"..."}, ...],
+            "LLM":   [{"lineno":..., "command":"...","text":"..."}, ...],
+        }
         """
         out = {"PLY": [], "REGEX": [], "LLM": []}
         for obj in items:
             command = (obj.get("command") or "").strip().upper()
             text = obj.get("text") or ""
-            route = self.config.pick_route(command, text)  # "PLY" / "REGEX" / "LLM"
-            out[route].append(obj)
+            parser_type = self.route_config.pick_route(command, text)  # 核心代码："PLY" / "REGEX" / "LLM"
+            out[parser_type].append(obj)
         return out
 
+    # 保持向后兼容的别名
+    def route_items(self, items: List[dict]) -> Dict[str, List[dict]]:
+        """向后兼容的方法名"""
+        return self.classify_items(items)
+
     # --------------- 文件封装：jsonl -> 单一 json ---------------
-    def derive_output_path(self, jsonl_file: str, *, suffix: str = "_routed.json") -> Path:
+    def derive_output_path(self, jsonl_file: str, *, suffix: str = "_classified.json") -> Path:
         p = Path(jsonl_file)
         return p.parent / f"{p.stem}{suffix}"
 
-    def route_jsonl_file(self, jsonl_file: str, *, outfile: str | None = None) -> Dict[str, List[dict]]:
+    def classify_jsonl_file(self, jsonl_file: str, *, outfile: str | None = None) -> Dict[str, List[dict]]:
         """
-        读取 jsonl -> 分流 -> 写入一个 JSON 文件（包含三组）
-        返回分流后的 dict（同 route_items）
+        读取 jsonl -> 分类 -> 写入一个 JSON 文件（包含三组）
+        返回分类后的 dict（同 classify_items）
         """
         jsonl_path = Path(jsonl_file)
         items: List[dict] = []
@@ -57,11 +76,10 @@ class ParserRoute:
                     continue
                 items.append(json.loads(line))
 
-        grouped = self.route_items(items)
+        grouped = self.classify_items(items)
 
         out_path = Path(outfile) if outfile else self.derive_output_path(str(jsonl_path))
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(grouped, f, ensure_ascii=False, indent=2)
 
         return grouped
-

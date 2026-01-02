@@ -54,7 +54,7 @@ class MID2UNI_STConv():
         with open(symbols_file, 'w') as f:
             json.dump({'variables': symbols}, f, indent=2)
         
-        ### 2. build.in
+        ### 2. buildIn
         geo_c, port_num_dict, emit_num_list, positive_port_info = self.mid2buildIn(
             unit_lr = unit_lr,
             axis_mcl_dir = axis_mcl_dir,
@@ -101,7 +101,11 @@ class MID2UNI_STConv():
             # print(f"[info] {self.mid_symbols.inductor}")
             self.mid2CircuitModelIn()
 
-        ### 10. GlobalSetting.in
+        ### 10. FoilModel.in
+        if self.mid_symbols.foilModel is not None:
+            self.mid2FoilModelIn()
+
+        ### 11. GlobalSetting.in
         self.mid2GlobalSettingIn(
             material_dir = material_dir,
         )
@@ -258,6 +262,7 @@ class MID2UNI_STConv():
                       ):
         
         port_num_dict = {}
+        positive_port_info = None
         
         for port_name in self.mid_symbols.ports:
             port_info = self.mid_symbols.ports[port_name]
@@ -644,6 +649,9 @@ class MID2UNI_STConv():
             CircuitModelIn_list.append(CircuitModel)
         
         self.uni_symbols.CircuitModelIn = CircuitModelIn_list
+
+    def mid2FoilModelIn(self):
+        pass
 
     def mid2GlobalSettingIn(self,
                             material_dir: str

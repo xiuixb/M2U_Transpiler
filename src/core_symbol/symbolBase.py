@@ -80,10 +80,10 @@ class ParseResult:
     属性字段：
         lineno     : 过滤后行号（预处理/路由决定）
         command     : 命令关键字（如 "LINE"/"AREA"/"EMISSION"...）
-        payload     : 语义结果（供转换器使用），建议沿用 SymbolTable 的字段组织
+        payload     : 语义结果（供转换器使用）
         parser_kind : 解析器名（"PLY"|"REGEX"|"LLM" 或自定义）
         ok          : 是否成功解析出语义结果
-        errors      : 错误/告警信息列表
+        errors      : 错误信息字符串，"no"表示无错误
         text        : 原始单行命令文本（规范化后的）
     """
     lineno: int
@@ -91,7 +91,7 @@ class ParseResult:
     payload: Dict[str, Any] = field(default_factory=dict)
     parser_kind: str = ""
     ok: bool = False
-    errors: List[str] = field(default_factory=list)
+    errors: str = "no"
     text: str = ""
 
 
@@ -123,15 +123,19 @@ class MidSymbolTable():
         self.grid = {'X1': -1.0, 'X2': -1.0, 'X3': -1.0}
         self.ports = {}
         self.emits = []
-        self.observes = []
+    
         self.presets = {}
-        self.freespace = []
         self.inductor = []
+        self.foilModel = []
+        self.freespace = []
+
+        self.observes = []
         self.FieldsDgn = []
         self.timers = {}
+        
 
-        self.area_entities = {}
         self.void_area = {}
+        self.area_entities = {}
         self.geom_other_entity = {}
         self.result = {}
         

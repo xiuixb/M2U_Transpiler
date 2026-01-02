@@ -1,5 +1,20 @@
+# core/entities.py
+
+import sqlite3
+from datetime import datetime
+from typing import List, Dict, Any, Optional
+import uuid
+import threading
+
+from langchain_openai import ChatOpenAI
+from langchain_core.documents import Document
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import DashScopeEmbeddings
+
+
 import os
 import sys
+import json
 
 # 自动找到项目根目录
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -10,21 +25,47 @@ while not os.path.exists(os.path.join(current_dir, ".project_mark")):
 project_root = current_dir
 sys.path.append(project_root)
 
-import re
-import json
-import sqlite3
-import logging
-import threading
-from typing import Optional, List, Dict, Any
-from neo4j import GraphDatabase, Query
-import uuid
-from datetime import datetime
+from rag_backend.core.config import Config
 
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import DashScopeEmbeddings
-from langchain_core.documents import Document
+class LCLLMEntity:
+    """大模型实体（封装阿里百炼API，兼容OpenAI接口）"""
+    def __init__(self, model_name, api_key, system_prompt="You are a helpful assistant."):
+        self.model = ChatOpenAI(
+            model=model_name,
+            api_key=api_key,
+            base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+            streaming=True,
+        )
+        self.system_prompt = system_prompt
 
-from src.core_cac.cac_entity import EmbeddingEntity
+    def chat(self, messages):
+        """messages为LangChain格式的ChatMessage列表"""
+        return self.model.invoke(messages)
+    
+    def chat_stream(self, messages):
+        """流式调用：返回同步生成器，每次 yield 一个文本片段"""
+        # LangChain的stream方法返回同步生成器
+        stream = self.model.stream(messages)
+        
+        # 直接迭代同步生成器
+        for chunk in stream:
+            if chunk.content:
+                yield chunk.content
+
+class EmbeddingEntity:
+    """嵌入模型实体（封装 DashScope 嵌入模型）"""
+    def __init__(self, model_name, api_key):
+        self.model = DashScopeEmbeddings(
+            model=model_name,
+            dashscope_api_key=api_key
+        )
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        return self.model.embed_documents(texts)
+    
+    def embed_query(self, text: str) -> list[float]:
+        return self.model.embed_query(text)
+
 
 class SystemDBEntity:
     """系统数据库实体（管理SQLite）"""
@@ -491,13 +532,14 @@ class ChromaDBEntity(VectorDBEntity):
         return results
 
     def search_similar_with_score(
-        self, query: str, similarity_threshold, top_k: int = 5, collection_name: str = "default"
+        self, query: str, top_k: int = 5, collection_name: str = "default"
     ) -> List[Dict[str, Any]]:
         """带相似度得分的搜索"""
         db = self._get_or_create_collection(collection_name)
         results = db.similarity_search_with_relevance_scores(query, k=top_k)
-
-        threshold = similarity_threshold
+        
+        config = Config()
+        threshold = getattr(config, "similarity_threshold", 0.0)
 
         filtered = []
         for doc, score in results:
@@ -527,7 +569,7 @@ class ChromaDBEntity(VectorDBEntity):
         """更新指定文档（删除再插入）"""
         self.delete_docs([id_], collection_name)
         new_doc = Document(page_content=new_content, metadata=metadata or {})
-        self.insert_docs([new_doc], [id_], collection_name)
+        self.insert_docs([new_doc], collection_name)
         print(f"[info] Updated doc {id_} in '{collection_name}'")
 
     def _get_or_create_collection(self, collection_name: str = "default") -> Chroma:
@@ -566,192 +608,3 @@ class ChromaDBEntity(VectorDBEntity):
                 "metadata": metas[i] if i < len(metas) else {}
             })
         return out
-
-
-# 配置日志系统
-# 确保日志目录存在
-LOG_PATH = os.path.join(project_root, "log", "kg_db.log")
-os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
-
-neo4j_logger = logging.getLogger("kg.db")
-neo4j_logger.setLevel(logging.INFO)
-if not neo4j_logger.hasHandlers():
-    # 文件日志
-    handler = logging.FileHandler(LOG_PATH, encoding="utf-8")
-    formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
-    handler.setFormatter(formatter)
-    neo4j_logger.addHandler(handler)
-
-class Neo4jGraphDBEntity:
-    """
-    增强版Neo4j数据库管理器
-    支持单例模式，支持多线程安全
-    """
-    
-    # 单例模式：类级别共享的连接
-    _instance = None
-    _lock = threading.Lock()
-
-    def __new__(cls, uri=None, user=None, password=None):
-        """
-        单例构造方法
-        仅第一次会创建实例，其余返回同一实例
-        """
-        if cls._instance is None:
-            with cls._lock:
-                if cls._instance is None:  # 双重检查锁（Double-Checked Locking）
-                    cls._instance = super().__new__(cls)
-                    cls._instance._initialized = False
-        return cls._instance
-    
-    def __init__(self, uri: str = "", user: str = "", password: str = ""):
-        """初始化数据库连接（实例化模式）"""
-        if not (uri and user and password):
-            raise ValueError("uri, user, password 不能为空")
-
-        if self._initialized:
-            return
-        
-        self.uri = uri
-        self.user = user
-        self.password = password
-
-        self.driver = None
-
-        self._connect()
-        self._initialized = True
-    
-
-    def _connect(self):
-        """建立数据库连接"""
-        try:
-            self.driver = GraphDatabase.driver(
-                self.uri,
-                auth=(self.user, self.password)
-            )
-            # 测试连接
-            with self.driver.session() as session:
-                session.run("RETURN 1")
-            self._log("Neo4j连接成功")
-        except Exception as e:
-            self._log(f"Neo4j连接失败: {e}", level="ERROR")
-            raise
-    
-    def _log(self, msg, level="INFO"):
-        """记录日志"""
-        if level == "ERROR":
-            neo4j_logger.error(msg)
-        else:
-            neo4j_logger.info(msg)
-    
-    def run_query(self, query: Any, parameters: dict = {}):
-        """
-        执行Cypher查询
-        
-        Args:
-            query: Cypher查询语句
-            parameters: 查询参数
-            
-        Returns:
-            查询结果列表
-        """
-        try:
-            if not self.driver:
-                raise ValueError("未初始化数据库连接")
-
-            with self.driver.session() as session:
-                result = session.run(query, parameters or {})
-                results_list = list(result)
-                
-            # 记录日志
-            pretty_cql = self.fill_cypher_params(query, parameters or {})
-            self._log(f"查询执行成功\nCypher: {pretty_cql}")
-            
-            return results_list
-        except Exception as e:
-            pretty_cql = self.fill_cypher_params(query, parameters or {})
-            self._log(f"查询执行失败: {e}\nCypher: {pretty_cql}", level="ERROR")
-            raise e
-
-    def fill_cypher_params(self, query, parameters):
-        """把CQL里的 $param 替换为实际参数值，仅日志用，不建议实际用作查询"""
-        if not parameters:
-            return query
-        def replacer(match):
-            key = match.group(1)
-            value = parameters.get(key)
-            # 字符串加引号，None/null处理，其他原样
-            if value is None:
-                return "null"
-            elif isinstance(value, str):
-                return f"'{value}'"
-            else:
-                return str(value)
-        # 匹配 $xxx
-        return re.sub(r'\$([a-zA-Z_][a-zA-Z0-9_]*)', replacer, query)
-    
-    # ========== 实体操作方法 ==========
-    
-    def create_node(self, label: str, properties: dict):
-        """
-        创建节点
-        
-        Args:
-            label: 节点标签
-            properties: 节点属性
-            
-        Returns:
-            创建结果
-        """
-        query = f"CREATE (n:{label} $props) RETURN n"
-        return self.run_query(query, {"props": properties})
-    
-    
-    def find_nodes_by_label(self, label: str, limit: int = 100):
-        """根据标签查找节点"""
-        query = f"MATCH (n:{label}) RETURN n LIMIT {limit}"
-        return self.run_query(query)
-    
-    
-    def delete_node_by_id(self, node_id: str):
-        """根据节点ID删除节点"""
-        query = "MATCH (n) WHERE elementId(n) = $id DETACH DELETE n"
-        return self.run_query(query, {"id": node_id})
-    
-    def delete_all(self):
-        """删除所有节点和关系（慎用！）"""
-        query = "MATCH (n) DETACH DELETE n"
-        result = self.run_query(query)
-        self._log("所有节点和关系已删除")
-        return result
-    
-    def get_node_count(self):
-        """获取节点数量"""
-        query = "MATCH (n) RETURN count(n) as node_count"
-        result = self.run_query(query)
-        return result[0]["node_count"] if result else 0
-    
-    def close(self):
-        """关闭数据库连接"""
-        if self.driver:
-            self.driver.close()
-            self.driver = None
-            self._log("Neo4j连接已关闭")
-    
-    def __del__(self):
-        """析构函数，确保连接被关闭"""
-        self.close()
-    
-
-    def test_connection(self):
-        self._log("测试数据库连接")
-        try:
-            if not self.driver:
-                raise ValueError("未初始化数据库连接")
-            with self.driver.session() as session:
-                session.run("RETURN 1")
-            self._log("Neo4j连接正常")
-            return True
-        except Exception as e:
-            self._log(f"Neo4j连接测试失败: {e}", level="ERROR")
-            return False
