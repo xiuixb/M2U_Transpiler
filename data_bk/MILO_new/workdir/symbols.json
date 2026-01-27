@@ -1,0 +1,34 @@
+{
+  "variables": [
+    {
+      "name": "DR",
+      "value": 4.0,
+      "unit": "mm"
+    },
+    {
+      "name": "DZ",
+      "value": 4.0,
+      "unit": "mm"
+    },
+    {
+      "name": "RUNTIME",
+      "value": 6e-08,
+      "unit": "second"
+    },
+    {
+      "name": "VOLTAGE.MAX",
+      "value": 1800000.0,
+      "unit": "volt"
+    },
+    {
+      "name": "TRISE",
+      "value": 5e-09,
+      "unit": "second"
+    },
+    {
+      "name": "RF.PERIOD",
+      "value": 0.3,
+      "unit": "speed_of_light"
+    }
+  ]
+}

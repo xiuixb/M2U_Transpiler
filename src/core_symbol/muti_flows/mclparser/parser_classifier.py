@@ -20,16 +20,15 @@ while not os.path.exists(os.path.join(current_dir, ".project_mark")):
 project_root = current_dir
 sys.path.append(project_root)
 
-from pathlib import Path
 import json
+from pathlib import Path
 from typing import Dict, List
-
-from src.core_symbol.muti_flows.mclparser.m2u_parser_route import RouteConfig
+from src.core_symbol.muti_flows.mclparser.m2u_parser_route import ParseRouteConfig
 
 class ParserClassifier:
     """命令分类器，将命令按照路由规则分配给不同的解析器"""
     
-    def __init__(self, route_config: RouteConfig):
+    def __init__(self, route_config: ParseRouteConfig):
         self.route_config = route_config
         
     # --------------- 纯函数：内存 -> 内存 ---------------

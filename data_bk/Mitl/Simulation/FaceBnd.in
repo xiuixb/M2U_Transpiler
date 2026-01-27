@@ -1,0 +1,11 @@
+<FieldSrc MurVoltagePort>
+  mask = 2
+  kind = MurVoltagePort
+  fileName = Default.h5
+  <Function Vin>
+    VOLTAGE_RISE_TIME = 2e-09
+    VOLTAGE_MAX = 1000000.0
+    kind = tFunc
+    result = VOLTAGE_MAX*SMOOTH_RAMP(t/VOLTAGE_RISE_TIME)
+  </Function>
+</FieldSrc>

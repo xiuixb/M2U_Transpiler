@@ -1,0 +1,8 @@
+<FoilModel ConductorFoil1>
+  name=conductorFoil1
+  kind=ConductorFoil
+  transparency = 1
+  dir = z
+  lowerBounds = [0.051 0.050]
+  upperBounds = [0.200 0.050]
+</FoilModel>

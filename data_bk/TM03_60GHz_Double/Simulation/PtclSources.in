@@ -1,0 +1,10 @@
+<ParticleSource Emitter>
+  <Emitter Emitter>
+    field_enhancement = 1.0
+    threshold = 2.3e+07
+    kind = GaussEmitter
+    outPtcl = Species
+    maskVector = [4 5 6]
+    applyTimes = [0.0 1e-05]
+  </Emitter>
+</ParticleSource>

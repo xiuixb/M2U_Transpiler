@@ -1,0 +1,1544 @@
+[
+  {
+    "lineno": 1,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "DR",
+      "value": "(0.5 * mm)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "DR  =  0.5 * mm  ;"
+  },
+  {
+    "lineno": 2,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "DRC",
+      "value": "(0.1 * mm)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "DRC  =  0.1 * mm ;"
+  },
+  {
+    "lineno": 3,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "DZ",
+      "value": "(0.5 * mm)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "DZ  =  0.5 * mm  ;"
+  },
+  {
+    "lineno": 4,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "RUNTIME",
+      "value": "(30.0 * nanosecond)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "RUNTIME  =  30 * nanosecond ;"
+  },
+  {
+    "lineno": 5,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "VOLTAGE.MAX",
+      "value": "(500.0 * kilovolt)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "VOLTAGE.MAX =  500 * kilovolt  ;"
+  },
+  {
+    "lineno": 6,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "TRISE",
+      "value": "(1.0 * nanosecond)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "TRISE = 1 * nanosecond ;"
+  },
+  {
+    "lineno": 7,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "SIMULATION",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(0.0 * mm)|(0.0 * mm)>",
+          "<(600.0 * mm)|(25.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "AREA SIMULATION CONFORMAL 0.0 * mm , 0.0 * mm , 600.0 * mm , 25.0 * mm ;"
+  },
+  {
+    "lineno": 8,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS1",
+      "point": "<(60.0 * mm)|(25.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS1 60 * mm , 25 * mm ;"
+  },
+  {
+    "lineno": 9,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS2",
+      "point": "<(60.0 * mm)|(23.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS2 60 * mm , 23 * mm ;"
+  },
+  {
+    "lineno": 10,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS3",
+      "point": "<(70.0 * mm)|(23.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS3 70 * mm , 23 * mm ;"
+  },
+  {
+    "lineno": 11,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS4",
+      "point": "<(82.0 * mm)|(11.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS4 82 * mm , 11 * mm ;"
+  },
+  {
+    "lineno": 12,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS5",
+      "point": "<(124.0 * mm)|(11.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS5 124 * mm , 11 * mm ;"
+  },
+  {
+    "lineno": 13,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS6",
+      "point": "<(124.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS6 124 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 14,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS7",
+      "point": "<(126.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS7 126 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 15,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS8",
+      "point": "<(130.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS8 130 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 16,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS9",
+      "point": "<(134.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS9 134 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 17,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS10",
+      "point": "<(138.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS10 138 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 18,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS11",
+      "point": "<(142.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS11 142 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 19,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS12",
+      "point": "<(146.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS12 146 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 20,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS13",
+      "point": "<(150.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS13 150 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 21,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS14",
+      "point": "<(154.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS14 154 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 22,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS15",
+      "point": "<(158.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS15 158 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 23,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS16",
+      "point": "<(162.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS16 162 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 24,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS17",
+      "point": "<(166.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS17 166 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 25,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS18",
+      "point": "<(170.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS18 170 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 26,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS19",
+      "point": "<(174.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS19 174 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 27,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS20",
+      "point": "<(178.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS20 178 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 28,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS21",
+      "point": "<(182.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS21 182 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 29,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS22",
+      "point": "<(186.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS22 186 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 30,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS23",
+      "point": "<(190.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS23 190 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 31,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS24",
+      "point": "<(194.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS24 194 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 32,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS25",
+      "point": "<(198.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS25 198 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 33,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS26",
+      "point": "<(202.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS26 202 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 34,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS27",
+      "point": "<(206.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS27 206 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 35,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS28",
+      "point": "<(210.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS28 210 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 36,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS29",
+      "point": "<(214.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS29 214 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 37,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS30",
+      "point": "<(218.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS30 218 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 38,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS31",
+      "point": "<(222.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS31 222 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 39,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS32",
+      "point": "<(226.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS32 226 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 40,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS33",
+      "point": "<(230.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS33 230 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 41,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS34",
+      "point": "<(234.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS34 234 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 42,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS35",
+      "point": "<(238.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS35 238 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 43,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS36",
+      "point": "<(242.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS36 242 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 44,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS37",
+      "point": "<(246.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS37 246 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 45,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS38",
+      "point": "<(250.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS38 250 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 46,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS39",
+      "point": "<(254.0 * mm)|(17.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS39 254 * mm , 17 * mm ;"
+  },
+  {
+    "lineno": 47,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS40",
+      "point": "<(258.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS40 258 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 48,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS41",
+      "point": "<(262.0 * mm)|(13.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS41 262 * mm , 13 * mm ;"
+  },
+  {
+    "lineno": 49,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS42",
+      "point": "<(265.0 * mm)|(15.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS42 265 * mm , 15 * mm ;"
+  },
+  {
+    "lineno": 50,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS43",
+      "point": "<(267.0 * mm)|(15.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS43 267 * mm , 15 * mm ;"
+  },
+  {
+    "lineno": 51,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS44",
+      "point": "<(321.0 * mm)|(23.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS44 321 * mm , 23 * mm ;"
+  },
+  {
+    "lineno": 52,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS45",
+      "point": "<(331.0 * mm)|(23.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS45 331 * mm , 23 * mm ;"
+  },
+  {
+    "lineno": 53,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS46",
+      "point": "<(331.0 * mm)|(25.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS46 331 * mm , 25 * mm ;"
+  },
+  {
+    "lineno": 54,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINTS47",
+      "point": "<(60.0 * mm)|(25.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINTS47 60 * mm , 25 * mm ;"
+  },
+  {
+    "lineno": 55,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "AREA1",
+      "area_type": "POLYGONAL",
+      "params": {
+        "points": [
+          "<(60.0 * mm)|(25.0 * mm)>",
+          "<(60.0 * mm)|(23.0 * mm)>",
+          "<(70.0 * mm)|(23.0 * mm)>",
+          "<(82.0 * mm)|(11.0 * mm)>",
+          "<(124.0 * mm)|(11.0 * mm)>",
+          "<(124.0 * mm)|(17.0 * mm)>",
+          "<(126.0 * mm)|(17.0 * mm)>",
+          "<(130.0 * mm)|(13.0 * mm)>",
+          "<(134.0 * mm)|(13.0 * mm)>",
+          "<(138.0 * mm)|(17.0 * mm)>",
+          "<(142.0 * mm)|(17.0 * mm)>",
+          "<(146.0 * mm)|(13.0 * mm)>",
+          "<(150.0 * mm)|(13.0 * mm)>",
+          "<(154.0 * mm)|(17.0 * mm)>",
+          "<(158.0 * mm)|(17.0 * mm)>",
+          "<(162.0 * mm)|(13.0 * mm)>",
+          "<(166.0 * mm)|(13.0 * mm)>",
+          "<(170.0 * mm)|(17.0 * mm)>",
+          "<(174.0 * mm)|(17.0 * mm)>",
+          "<(178.0 * mm)|(13.0 * mm)>",
+          "<(182.0 * mm)|(13.0 * mm)>",
+          "<(186.0 * mm)|(17.0 * mm)>",
+          "<(190.0 * mm)|(17.0 * mm)>",
+          "<(194.0 * mm)|(13.0 * mm)>",
+          "<(198.0 * mm)|(13.0 * mm)>",
+          "<(202.0 * mm)|(17.0 * mm)>",
+          "<(206.0 * mm)|(17.0 * mm)>",
+          "<(210.0 * mm)|(13.0 * mm)>",
+          "<(214.0 * mm)|(13.0 * mm)>",
+          "<(218.0 * mm)|(17.0 * mm)>",
+          "<(222.0 * mm)|(17.0 * mm)>",
+          "<(226.0 * mm)|(13.0 * mm)>",
+          "<(230.0 * mm)|(13.0 * mm)>",
+          "<(234.0 * mm)|(17.0 * mm)>",
+          "<(238.0 * mm)|(17.0 * mm)>",
+          "<(242.0 * mm)|(13.0 * mm)>",
+          "<(246.0 * mm)|(13.0 * mm)>",
+          "<(250.0 * mm)|(17.0 * mm)>",
+          "<(254.0 * mm)|(17.0 * mm)>",
+          "<(258.0 * mm)|(13.0 * mm)>",
+          "<(262.0 * mm)|(13.0 * mm)>",
+          "<(265.0 * mm)|(15.0 * mm)>",
+          "<(267.0 * mm)|(15.0 * mm)>",
+          "<(321.0 * mm)|(23.0 * mm)>",
+          "<(331.0 * mm)|(23.0 * mm)>",
+          "<(331.0 * mm)|(25.0 * mm)>",
+          "<(60.0 * mm)|(25.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "AREA AREA1 POLYGONAL 60 * mm , 25 * mm , 60 * mm , 23 * mm , 70 * mm , 23 * mm , 82 * mm , 11 * mm , 124 * mm , 11 * mm , 124 * mm , 17 * mm , 126 * mm , 17 * mm , 130 * mm , 13 * mm , 134 * mm , 13 * mm , 138 * mm , 17 * mm , 142 * mm , 17 * mm , 146 * mm , 13 * mm , 150 * mm , 13 * mm , 154 * mm , 17 * mm , 158 * mm , 17 * mm , 162 * mm , 13 * mm , 166 * mm , 13 * mm , 170 * mm , 17 * mm , 174 * mm , 17 * mm , 178 * mm , 13 * mm , 182 * mm , 13 * mm , 186 * mm , 17 * mm , 190 * mm , 17 * mm , 194 * mm , 13 * mm , 198 * mm , 13 * mm , 202 * mm , 17 * mm , 206 * mm , 17 * mm , 210 * mm , 13 * mm , 214 * mm , 13 * mm , 218 * mm , 17 * mm , 222 * mm , 17 * mm , 226 * mm , 13 * mm , 230 * mm , 13 * mm , 234 * mm , 17 * mm , 238 * mm , 17 * mm , 242 * mm , 13 * mm , 246 * mm , 13 * mm , 250 * mm , 17 * mm , 254 * mm , 17 * mm , 258 * mm , 13 * mm , 262 * mm , 13 * mm , 265 * mm , 15 * mm , 267 * mm , 15 * mm , 321 * mm , 23 * mm , 331 * mm , 23 * mm , 331 * mm , 25 * mm , 60 * mm , 25 * mm ;"
+  },
+  {
+    "lineno": 56,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINT1",
+      "point": "<(0.0 * mm)|(9.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINT1 0.0 * mm , 9.0 * mm ;"
+  },
+  {
+    "lineno": 57,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINT2",
+      "point": "<(57.0 * mm)|(9.5 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINT2 57.0 * mm , 9.5 * mm ;"
+  },
+  {
+    "lineno": 58,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINT3",
+      "point": "<(57.0 * mm)|(10.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINT3 57.0 * mm , 10.0 * mm ;"
+  },
+  {
+    "lineno": 59,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINT4",
+      "point": "<(0.0 * mm)|(10.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINT4 0.0 * mm , 10.0 * mm ;"
+  },
+  {
+    "lineno": 60,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "POINT5",
+      "point": "<(0.0 * mm)|(9.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT POINT5 0.0 * mm , 9.0 * mm ;"
+  },
+  {
+    "lineno": 61,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "CATHODE",
+      "area_type": "POLYGONAL",
+      "params": {
+        "points": [
+          "<(0.0 * mm)|(9.0 * mm)>",
+          "<(57.0 * mm)|(9.5 * mm)>",
+          "<(57.0 * mm)|(10.0 * mm)>",
+          "<(0.0 * mm)|(10.0 * mm)>",
+          "<(0.0 * mm)|(9.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "AREA CATHODE POLYGONAL 0.0 * mm , 9.0 * mm , 57.0 * mm , 9.5 * mm , 57.0 * mm , 10.0 * mm , 0.0 * mm , 10.0 * mm , 0.0 * mm , 9.0 * mm ;"
+  },
+  {
+    "lineno": 62,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "CATHODE1",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(-1.0 * mm)|(8.0 * mm)>",
+          "<(57.0 * mm)|(11.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "AREA CATHODE1 CONFORMAL -1 * mm , 8 * mm , 57 * mm , 11 * mm ;"
+  },
+  {
+    "lineno": 63,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "SHELL",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(0.0 * mm)|(25.0 * mm)>",
+          "<(600.0 * mm)|(26.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "AREA SHELL CONFORMAL 0.0 * mm , 25 * mm , 600.0 * mm , 26 * mm ;"
+  },
+  {
+    "lineno": 64,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "LEFTLINE",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(-1.0 * mm)|(0.0 * mm)>",
+          "<(0.0 * mm)|(9.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "AREA LEFTLINE CONFORMAL -1.0 * mm , 0.0 * mm , 0.0 * mm , 9.0 * mm ;"
+  },
+  {
+    "lineno": 65,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "EMITTER",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(56.9 * mm)|(8.0 * mm)>",
+          "<(57.2 * mm)|(11.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "AREA EMITTER CONFORMAL 56.9 * mm , 8 * mm , 57.2 * mm , 11 * mm ;"
+  },
+  {
+    "lineno": 66,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "SIMULATION",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "MARK SIMULATION X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 67,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "SIMULATION",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "MARK SIMULATION X2 SIZE DR ;"
+  },
+  {
+    "lineno": 68,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "CATHODE",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "MARK CATHODE X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 69,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "CATHODE",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "MARK CATHODE X2 SIZE DR ;"
+  },
+  {
+    "lineno": 70,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "AREA1",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "MARK AREA1 X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 71,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "AREA1",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "MARK AREA1 X2 SIZE DR ;"
+  },
+  {
+    "lineno": 72,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "SHELL",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "MARK SHELL X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 73,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "SHELL",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "MARK SHELL X2 SIZE DR ;"
+  },
+  {
+    "lineno": 74,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "LEFTLINE",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "MARK LEFTLINE X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 75,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "LEFTLINE",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "MARK LEFTLINE X2 SIZE DR ;"
+  },
+  {
+    "lineno": 76,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "EMITTER",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "MARK EMITTER X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 77,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "EMITTER",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "MARK EMITTER X2 SIZE DR ;"
+  },
+  {
+    "lineno": 78,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "CATHODE",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "CONDUCTOR CATHODE ;"
+  },
+  {
+    "lineno": 79,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "AREA1",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "CONDUCTOR AREA1 ;"
+  },
+  {
+    "lineno": 80,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "SHELL",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "CONDUCTOR SHELL ;"
+  },
+  {
+    "lineno": 81,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "LEFTLINE",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "CONDUCTOR LEFTLINE ;"
+  },
+  {
+    "lineno": 82,
+    "command": "FUNCTION",
+    "payload": {
+      "kind": "function",
+      "name": "FIN",
+      "params": [
+        "T"
+      ],
+      "body": "VOLTAGE.MAX * MAX ( 0.0 , MIN ( 1.0 , T / TRISE )  )"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "FUNCTION FIN ( T )  = VOLTAGE.MAX * MAX ( 0.0 , MIN ( 1.0 , T / TRISE )  )  ;"
+  },
+  {
+    "lineno": 83,
+    "command": "FUNCTION",
+    "payload": {
+      "kind": "function",
+      "name": "G1",
+      "params": [
+        "Z",
+        "R"
+      ],
+      "body": "1 / R"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "FUNCTION G1 ( Z , R )  = 1 / R ;"
+  },
+  {
+    "lineno": 84,
+    "command": "FUNCTION",
+    "payload": {
+      "kind": "function",
+      "name": "G2",
+      "params": [],
+      "body": "0.0"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "FUNCTION G2 = 0.0 ;"
+  },
+  {
+    "lineno": 85,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "INLET",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(0.0 * m)|(0.01 * m)>",
+        "<(0.0 * m)|(0.025 * m)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "LINE INLET CONFORMAL 0.0 * m , 0.01 * m 0.0 * m 0.025 * m ;"
+  },
+  {
+    "lineno": 86,
+    "command": "PORT",
+    "payload": {
+      "kind": "PORT",
+      "geom_name": "INLET",
+      "direction": "POSITIVE",
+      "options": [
+        {
+          "port_opt_name": "INCOMING",
+          "incoming_func": "FIN",
+          "incoming_opt": [
+            "E2",
+            "G1",
+            "E3",
+            "G2"
+          ]
+        },
+        {
+          "port_opt_name": "NORMALIZATION",
+          "norm_type": "VOLTAGE",
+          "geom_type": "line",
+          "peak_value": [
+            "INLET"
+          ]
+        }
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "PORT INLET POSITIVE INCOMING FIN FUNCTION E2 G1 E3 G2 NORMALIZATION VOLTAGE INLET ;"
+  },
+  {
+    "lineno": 87,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "OUTLET",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(0.6 * m)|(0.0 * m)>",
+        "<(0.6 * m)|(0.025 * m)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "LINE OUTLET CONFORMAL 0.6 * m 0.0 * m 0.6 * m 0.025 * m ;"
+  },
+  {
+    "lineno": 88,
+    "command": "PORT",
+    "payload": {
+      "kind": "PORT",
+      "geom_name": "OUTLET",
+      "direction": "NEGATIVE",
+      "options": []
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "PORT OUTLET NEGATIVE ;"
+  },
+  {
+    "lineno": 89,
+    "command": "FUNCTION",
+    "payload": {
+      "kind": "function",
+      "name": "B_Z",
+      "params": [
+        "Z",
+        "R"
+      ],
+      "body": "2.8 /  ( 1 + EXP (  ( Z - 0.29 )  / 0.02 )  )"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "FUNCTION B_Z ( Z , R )   =  2.8 /  ( 1 + EXP (  ( Z - 0.29 )  / 0.02 )  )    ;"
+  },
+  {
+    "lineno": 90,
+    "command": "PRESET",
+    "payload": {
+      "kind": "preset",
+      "preset_name": "B1ST",
+      "func_name": "B_Z"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "PRESET B1ST FUNCTION B_Z ;"
+  },
+  {
+    "lineno": 91,
+    "command": "FUNCTION",
+    "payload": {
+      "kind": "function",
+      "name": "B_R",
+      "params": [
+        "Z",
+        "R"
+      ],
+      "body": "2.8 /  ( 2 * 0.02 )  * R * EXP (  ( Z - 0.29 )  / 0.02 )  /  (  ( 1 + EXP (  ( Z - 0.29 )  / 0.02 )  )  ** 2 )"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "FUNCTION B_R ( Z , R )   =  2.8 /  ( 2 * 0.02 )  * R * EXP (  ( Z - 0.29 )  / 0.02 )  /  (  ( 1 + EXP (  ( Z - 0.29 )  / 0.02 )  )  ** 2 )   ;"
+  },
+  {
+    "lineno": 92,
+    "command": "PRESET",
+    "payload": {
+      "kind": "preset",
+      "preset_name": "B2ST",
+      "func_name": "B_R"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "PRESET B2ST FUNCTION B_R ;"
+  },
+  {
+    "lineno": 93,
+    "command": "EMISSION EXPLOSIVE",
+    "payload": {
+      "kind": "emission",
+      "process_args": {
+        "process": "EXPLOSIVE"
+      },
+      "model_opt": null,
+      "species_opt": "ELECTRON",
+      "number_opt": "1.0"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "EMISSION EXPLOSIVE SPECIES ELECTRON NUMBER 1 ;"
+  },
+  {
+    "lineno": 94,
+    "command": "EMIT",
+    "payload": {
+      "kind": "emit",
+      "model": "EXPLOSIVE",
+      "mobject": "CATHODE",
+      "ex_in": [
+        "EXCLUDE",
+        "CATHODE1",
+        "INCLUDE",
+        "EMITTER"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "EMIT EXPLOSIVE CATHODE EXCLUDE CATHODE1 INCLUDE EMITTER ;"
+  },
+  {
+    "lineno": 95,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "RF.PERIOD",
+      "value": "(((0.6 / 1.0) * c) / 2.0)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "RF.PERIOD   =  0.6/1 * c/2 ;"
+  },
+  {
+    "lineno": 96,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "INLINE",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(10.0 * mm)|(10.0 * mm)>",
+        "<(10.0 * mm)|(25.0 * mm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "LINE INLINE CONFORMAL 10 * mm , 10 * mm , 10 * mm , 25 * mm ;"
+  },
+  {
+    "lineno": 97,
+    "command": "OBSERVE FIELD_INTEGRAL",
+    "payload": {
+      "kind": "observe_field_integral",
+      "integral_kind": "E.DL",
+      "geom_name": "INLINE",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "OBSERVE FIELD_INTEGRAL E.DL INLINE ;"
+  },
+  {
+    "lineno": 98,
+    "command": "OBSERVE FIELD_POWER",
+    "payload": {
+      "kind": "observe_field_power",
+      "power_variable": "S.DA",
+      "object_kind": "INLINE",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "OBSERVE FIELD_POWER S.DA INLINE ;"
+  },
+  {
+    "lineno": 99,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "MIDLINE",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(60.0 * mm)|(0.0 * mm)>",
+        "<(60.0 * mm)|(25.0 * mm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "LINE MIDLINE CONFORMAL 60 * mm , 0.0 * mm , 60 * mm , 25 * mm ;"
+  },
+  {
+    "lineno": 100,
+    "command": "OBSERVE FIELD_INTEGRAL",
+    "payload": {
+      "kind": "observe_field_integral",
+      "integral_kind": "J.DA",
+      "geom_name": "MIDLINE",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "OBSERVE FIELD_INTEGRAL J.DA MIDLINE ;"
+  },
+  {
+    "lineno": 101,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "OUTLINE",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(490.0 * mm)|(0.0 * mm)>",
+        "<(490.0 * mm)|(25.0 * mm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "LINE OUTLINE CONFORMAL 490 * mm , 0.0 * mm , 490 * mm , 25 * mm ;"
+  },
+  {
+    "lineno": 102,
+    "command": "OBSERVE FIELD_POWER",
+    "payload": {
+      "kind": "observe_field_power",
+      "power_variable": "S.DA",
+      "object_kind": "OUTLINE",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "OBSERVE FIELD_POWER S.DA OUTLINE ;"
+  },
+  {
+    "lineno": 103,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "BD3",
+      "point": "<(450.0 * mm)|(20.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "POINT BD3 450 * mm , 20 * mm ;"
+  },
+  {
+    "lineno": 104,
+    "command": "OBSERVE FIELD",
+    "payload": {
+      "kind": "observe_field",
+      "field_kind": "B3",
+      "object_kind": "BD3",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": "no",
+    "text": "OBSERVE FIELD B3 BD3 ;"
+  }
+]

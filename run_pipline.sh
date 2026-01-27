@@ -22,7 +22,7 @@ M2D_FILE6="D:\AAA_PIC\Parser\M2U_Transpiler\data\XCT_PB\XCT_PB_3.m2d"
 
 start_time=$(date '+%Y-%m-%d %H:%M:%S.%3N')
 
-python src/m2u_transpiler/magic2unipic.py -I "$M2D_FILE"
+python src/m2u_transpiler/llm_m2u.py -I "$M2D_FILE"
 
 end_time=$(date '+%Y-%m-%d %H:%M:%S.%3N')
 

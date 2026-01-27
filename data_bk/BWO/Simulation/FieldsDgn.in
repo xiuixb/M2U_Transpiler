@@ -1,0 +1,39 @@
+<FieldsDgn Dgn1>
+  kind = VoltageDgn
+  name = Vin1
+  lineDir = r
+  org = [0.01 0.01]
+  end = [0.01 0.025]
+</FieldsDgn>
+
+<FieldsDgn Dgn2>
+  kind = PoyntingDgn
+  dir = z
+  name = Poutout1
+  lowerBounds = [0.01 0.01]
+  upperBounds = [0.01 0.025]
+</FieldsDgn>
+
+<FieldsDgn Dgn3>
+  kind = CurrentDgn
+  name = Iz1
+  dir = r
+  lowerBounds = [0.06 0]
+  upperBounds = [0.06 0.025]
+</FieldsDgn>
+
+<FieldsDgn Dgn4>
+  kind = PoyntingDgn
+  dir = z
+  name = Poutout2
+  lowerBounds = [0.49 0]
+  upperBounds = [0.49 0.025]
+</FieldsDgn>
+
+<FieldsDgn Dgn5>
+  kind = MagDgn
+  component = dynamic
+  dir = phi
+  name = Bphi1
+  location = [0.45 0.02]
+</FieldsDgn>

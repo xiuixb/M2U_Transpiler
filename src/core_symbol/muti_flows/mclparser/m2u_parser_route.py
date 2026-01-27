@@ -18,7 +18,7 @@ while not os.path.exists(os.path.join(current_dir, ".project_mark")):
 project_root = current_dir
 sys.path.append(project_root)
 
-class RouteConfig:
+class ParseRouteConfig:
     """路由配置类，定义哪些命令使用哪种解析器"""
     
     def __init__(self):
@@ -28,26 +28,30 @@ class RouteConfig:
         # REGEX解析器处理的命令（简单、结构化的命令）
         self.REGEX_COMMANDS = {
             # 几何定义类
-            "INDUCTOR",
+            # "INDUCTOR",
             #"FREESPACE",
             # 可以根据需要添加更多
         }
         
         # LLM解析器处理的命令（复杂、开放式的命令）
         self.LLM_COMMANDS = {
-            #"ASSIGN",
-            # 函数定义
-            #"FUNCTION",
-            # 预设命令
-            #"PRESET",
-            # 发射相关命令
-            # "EMISSION", "EMIT",
-            # 观测命令
+            "ASSIGN",
+            "FUNCTION",   #函数定义
+
+            "POINT",
+            "LINE",
+            "AREA",
+            
+            "MARK",
+            "CONDUCTOR",
+
+            "PORT",
+            "PRESET",
+            "EMISSION", 
+            "EMIT",
+            "INDUCTOR",
+
             #"OBSERVE", "OBSERVE FIELD", "OBSERVE FIELD_POWER", "OBSERVE FIELD_INTEGRAL",
-            # 端口命令
-            #"PORT",
-            # 材料定义
-            #"CONDUCTOR", 
         }
         
         # LLM解析器处理的前缀（所有以这些词开头的命令）
@@ -113,4 +117,4 @@ class RouteConfig:
 
 
 # 创建全局路由配置实例
-Route_cfg = RouteConfig()
+parse_route_cfg = ParseRouteConfig()

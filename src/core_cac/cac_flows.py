@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 
 # 自动找到项目根目录
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -129,13 +130,42 @@ class MCLPromptBuildFlow:
         
         # 填充模板
         prompt = f"""
-        <|相关知识背景|>: 这是高功率微波器件仿真软件领域，将MAGIC软件的命令式模型文件转译到UNIPIC的配置式模型文件。整个流程包括：预处理、解析、转换（三轮逻辑处理）、生成。\n
+        <|相关知识背景|>: 这是高功率微波器件仿真软件领域，将MAGIC软件的命令式建模脚本文件转译到UNIPIC的描述式完整模型文件。整个流程包括：预处理、解析、转换（三轮逻辑处理）、生成。\n
          {task_background}\n
         <|命令文档|>: {cmd_docs}\n
         <|JSON Schema|>: {json_schema}\n
         <|用户输入|>: {query}\n
         """
         return prompt
+    
+    def build_mcl2mid_prompt(
+                self,                
+                mcl_command_type,
+                mid_elements,
+                mcl_cmd_text_list,
+                mcl_cmd_context,
+                mid_cmd_context,
+                mcl2mid_json,
+                mcl_payload_list                
+                ):
+        
+        prompt = f"""
+<|总体背景|>: 这是高功率微波器件仿真软件领域，整体任务是将MAGIC软件的MCL命令建模脚本文件转译到UNIPIC的描述式完整模型文件。
+整个转译流程包括：参数解析、MCL到中间符号转换、中间符号到UNIPIC符号转换、UNIPIC文件生成。
+<|本次任务|>: 本次任务是实现解析后的MCL命令到中间符号的转换。
+请根据以下背景知识，将以下MCL命令{mcl_command_type}的参数转换为中间符号表元素{mid_elements}, mcl命令原始文本:
+{mcl_cmd_text_list},
+<|MCL参数知识|>: 
+{mcl_cmd_context}
+<|中间符号表知识|>: 
+{mid_cmd_context}
+<|输出输出JSON格式示例|>: 
+{mcl2mid_json}
+<|本次输入MCL命令参数|>: 
+{json.dumps(mcl_payload_list, ensure_ascii=False, indent=4)}
+<|本次输出|>:"""
+        return prompt
+
 
 
 class FileLoadingFlow:

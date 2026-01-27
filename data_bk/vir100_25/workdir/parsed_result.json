@@ -1,0 +1,943 @@
+[
+  {
+    "lineno": 1,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "DR",
+      "value": "(1.0 * mm)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "DR  =  1.0 * mm  ;"
+  },
+  {
+    "lineno": 2,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "DZ",
+      "value": "(1.0 * mm)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "DZ  =  1.0 * mm  ;"
+  },
+  {
+    "lineno": 3,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "RUNTIME",
+      "value": "(50.0 * nanosecond)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "RUNTIME  =  50.0 * nanosecond ;"
+  },
+  {
+    "lineno": 4,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "VOLTAGE.MAX",
+      "value": "(650.0 * kilovolt)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "VOLTAGE.MAX =  650 * kilovolt  ;"
+  },
+  {
+    "lineno": 5,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "TRISE",
+      "value": "(2.0 * nanosecond)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "TRISE = 2.0 * nanosecond ;"
+  },
+  {
+    "lineno": 6,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "RF.PERIOD",
+      "value": "(((0.6 / 1.0) * c) / 2.0)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "RF.PERIOD     =  0.6/1 * c/2 ;"
+  },
+  {
+    "lineno": 7,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "H_BOARD",
+      "value": "(51.0 * mm)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "H_BOARD = 51 * mm ;"
+  },
+  {
+    "lineno": 8,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "R_BOARD",
+      "value": "(0.0 * mm)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "R_BOARD = 0 * mm ;"
+  },
+  {
+    "lineno": 9,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "B_BOARD",
+      "value": "(H_BOARD - (2.0 * mm))"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "B_BOARD = H_BOARD - 2 * mm ;"
+  },
+  {
+    "lineno": 10,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "SIMULATION",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(0.0 * mm)|(0.0 * mm)>",
+          "<(600.0 * mm)|(100.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "AREA SIMULATION CONFORMAL 0.0 * mm , 0.0 * mm , 600 * mm , 100 * mm ;"
+  },
+  {
+    "lineno": 11,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "CATHODE",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(0.0 * mm)|(65.0 * mm)>",
+          "<(160.0 * mm)|(67.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "AREA CATHODE CONFORMAL 0.0 * mm , 65 * mm , 160 * mm , 67 * mm ;"
+  },
+  {
+    "lineno": 12,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "AREA1",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(200.0 * mm)|(50.0 * mm)>",
+          "<(600.0 * mm)|(100.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "AREA AREA1 CONFORMAL 200.0 * mm , 50 * mm , 600.0 * mm , 100 * mm ;"
+  },
+  {
+    "lineno": 13,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "AREA2",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<B_BOARD|R_BOARD>",
+          "<H_BOARD|(51.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "AREA AREA2 CONFORMAL B_BOARD , R_BOARD , H_BOARD , 51 * mm ;"
+  },
+  {
+    "lineno": 14,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "SHELL",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(0.0 * mm)|(100.0 * mm)>",
+          "<(600.0 * mm)|(102.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "AREA SHELL CONFORMAL 0.0 * mm , 100 * mm , 600 * mm , 102 * mm ;"
+  },
+  {
+    "lineno": 15,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "LEFT",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(-1.0 * mm)|(0.0 * mm)>",
+          "<(0.0 * mm)|(65.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "AREA LEFT CONFORMAL -1.0 * mm , 0.0 * mm , 0.0 * mm , 65 * mm ;"
+  },
+  {
+    "lineno": 16,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "EMITTER",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(115.0 * mm)|(65.0 * mm)>",
+          "<(155.0 * mm)|(66.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "AREA EMITTER CONFORMAL 115 * mm , 65 * mm , 155 * mm , 66 * mm ;"
+  },
+  {
+    "lineno": 17,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "THINWALL",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<H_BOARD|(50.0 * mm)>",
+          "<(200.0 * mm)|(51.0 * mm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "AREA THINWALL CONFORMAL H_BOARD , 50 * mm , 200 * mm , 51 * mm ;"
+  },
+  {
+    "lineno": 18,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "SIMULATION",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK SIMULATION X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 19,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "SIMULATION",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK SIMULATION X2 SIZE DR ;"
+  },
+  {
+    "lineno": 20,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "CATHODE",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK CATHODE X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 21,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "CATHODE",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK CATHODE X2 SIZE DR ;"
+  },
+  {
+    "lineno": 22,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "AREA1",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK AREA1 X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 23,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "AREA1",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK AREA1 X2 SIZE DR ;"
+  },
+  {
+    "lineno": 24,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "AREA2",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK AREA2 X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 25,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "AREA2",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK AREA2 X2 SIZE DR ;"
+  },
+  {
+    "lineno": 26,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "SHELL",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK SHELL X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 27,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "SHELL",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK SHELL X2 SIZE DR ;"
+  },
+  {
+    "lineno": 28,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "LEFT",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK LEFT X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 29,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "LEFT",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK LEFT X2 SIZE DR ;"
+  },
+  {
+    "lineno": 30,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "EMITTER",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK EMITTER X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 31,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "EMITTER",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK EMITTER X2 SIZE DR ;"
+  },
+  {
+    "lineno": 32,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "THINWALL",
+      "axis": "X1",
+      "position": null,
+      "size": "DZ"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK THINWALL X1 SIZE DZ ;"
+  },
+  {
+    "lineno": 33,
+    "command": "MARK",
+    "payload": {
+      "kind": "mark",
+      "target": "THINWALL",
+      "axis": "X2",
+      "position": null,
+      "size": "DR"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "MARK THINWALL X2 SIZE DR ;"
+  },
+  {
+    "lineno": 34,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "CATHODE",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "CONDUCTOR CATHODE ;"
+  },
+  {
+    "lineno": 35,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "AREA1",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "CONDUCTOR AREA1 ;"
+  },
+  {
+    "lineno": 36,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "SHELL",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "CONDUCTOR SHELL ;"
+  },
+  {
+    "lineno": 37,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "LEFT",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "CONDUCTOR LEFT ;"
+  },
+  {
+    "lineno": 38,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "EMITTER",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "CONDUCTOR EMITTER ;"
+  },
+  {
+    "lineno": 39,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "THINWALL",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "CONDUCTOR THINWALL ;"
+  },
+  {
+    "lineno": 40,
+    "command": "FUNCTION",
+    "payload": {
+      "kind": "function",
+      "name": "FIN",
+      "params": [
+        "T"
+      ],
+      "body": "VOLTAGE.MAX * MAX ( 0.0 , MIN ( 1.0 , T / TRISE )  )"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "FUNCTION FIN ( T )  = VOLTAGE.MAX * MAX ( 0.0 , MIN ( 1.0 , T / TRISE )  )  ;"
+  },
+  {
+    "lineno": 41,
+    "command": "FUNCTION",
+    "payload": {
+      "kind": "function",
+      "name": "G1",
+      "params": [
+        "Z",
+        "R"
+      ],
+      "body": "1 / R"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "FUNCTION G1 ( Z , R )  = 1 / R ;"
+  },
+  {
+    "lineno": 42,
+    "command": "FUNCTION",
+    "payload": {
+      "kind": "function",
+      "name": "G2",
+      "params": [],
+      "body": "0.0"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "FUNCTION G2 = 0.0 ;"
+  },
+  {
+    "lineno": 43,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "INLET",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(0.0 * m)|(67.0 * mm)>",
+        "<(0.0 * m)|(100.0 * mm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "LINE INLET CONFORMAL 0.0 * m , 67 * mm , 0.0 * m , 100 * mm ;"
+  },
+  {
+    "lineno": 44,
+    "command": "PORT",
+    "payload": {
+      "kind": "PORT",
+      "geom_name": "INLET",
+      "direction": "POSITIVE",
+      "options": [
+        {
+          "port_opt_name": "INCOMING",
+          "incoming_func": "FIN",
+          "incoming_opt": [
+            "E2",
+            "G1",
+            "E3",
+            "G2"
+          ]
+        },
+        {
+          "port_opt_name": "NORMALIZATION",
+          "norm_type": "VOLTAGE",
+          "geom_type": "line",
+          "peak_value": [
+            "INLET"
+          ]
+        }
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "PORT INLET POSITIVE INCOMING FIN FUNCTION E2 G1 E3 G2 NORMALIZATION VOLTAGE INLET ;"
+  },
+  {
+    "lineno": 45,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "OUTLET",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(600.0 * mm)|(0.0 * mm)>",
+        "<(600.0 * mm)|(50.0 * mm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "LINE OUTLET CONFORMAL 600 * mm , 0.0 * mm , 600 * mm , 50 * mm ;"
+  },
+  {
+    "lineno": 46,
+    "command": "PORT",
+    "payload": {
+      "kind": "PORT",
+      "geom_name": "OUTLET",
+      "direction": "NEGATIVE",
+      "options": []
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "PORT OUTLET NEGATIVE ;"
+  },
+  {
+    "lineno": 47,
+    "command": "EMISSION EXPLOSIVE",
+    "payload": {
+      "kind": "emission",
+      "process_args": {
+        "process": "EXPLOSIVE"
+      },
+      "model_opt": null,
+      "species_opt": "ELECTRON",
+      "number_opt": "2.0"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "EMISSION EXPLOSIVE SPECIES ELECTRON NUMBER 2 ;"
+  },
+  {
+    "lineno": 48,
+    "command": "EMIT",
+    "payload": {
+      "kind": "emit",
+      "model": "EXPLOSIVE",
+      "mobject": "EMITTER",
+      "ex_in": []
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "EMIT EXPLOSIVE EMITTER  ;"
+  },
+  {
+    "lineno": 49,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "FOILTHICKNESS",
+      "value": "(0.1 * micron)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "FOILTHICKNESS  =  0.1 * micron ;"
+  },
+  {
+    "lineno": 50,
+    "command": "OBSERVE FIELD_INTEGRAL",
+    "payload": {
+      "kind": "observe_field_integral",
+      "integral_kind": "E.DL",
+      "geom_name": "INLET",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD_INTEGRAL E.DL INLET ;"
+  },
+  {
+    "lineno": 51,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "VDIODE",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(155.0 * mm)|(50.0 * mm)>",
+        "<(155.0 * mm)|(65.0 * mm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "LINE VDIODE CONFORMAL 155 * mm , 50 * mm , 155 * mm , 65 * mm ;"
+  },
+  {
+    "lineno": 52,
+    "command": "OBSERVE FIELD_INTEGRAL",
+    "payload": {
+      "kind": "observe_field_integral",
+      "integral_kind": "E.DL",
+      "geom_name": "VDIODE",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD_INTEGRAL E.DL VDIODE ;"
+  },
+  {
+    "lineno": 53,
+    "command": "OBSERVE FIELD_POWER",
+    "payload": {
+      "kind": "observe_field_power",
+      "power_variable": "S.DA",
+      "object_kind": "INLET",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD_POWER S.DA INLET ;"
+  },
+  {
+    "lineno": 54,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "OUTLINE",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(580.0 * mm)|(0.0 * mm)>",
+        "<(580.0 * mm)|(50.0 * mm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "LINE OUTLINE CONFORMAL 580 * mm , 0.0 * mm , 580 * mm , 50 * mm ;"
+  },
+  {
+    "lineno": 55,
+    "command": "OBSERVE FIELD_POWER",
+    "payload": {
+      "kind": "observe_field_power",
+      "power_variable": "S.DA",
+      "object_kind": "OUTLINE",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD_POWER S.DA OUTLINE ;"
+  },
+  {
+    "lineno": 56,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "ED2",
+      "point": "<(580.0 * mm)|(49.0 * mm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "POINT ED2 580 * mm , 49 * mm ;"
+  },
+  {
+    "lineno": 57,
+    "command": "OBSERVE FIELD",
+    "payload": {
+      "kind": "observe_field",
+      "field_kind": "E1",
+      "object_kind": "ED2",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD E1 ED2 ;"
+  },
+  {
+    "lineno": 58,
+    "command": "OBSERVE FIELD",
+    "payload": {
+      "kind": "observe_field",
+      "field_kind": "E2",
+      "object_kind": "ED2",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD E2 ED2 ;"
+  },
+  {
+    "lineno": 59,
+    "command": "OBSERVE FIELD",
+    "payload": {
+      "kind": "observe_field",
+      "field_kind": "B3",
+      "object_kind": "ED2",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD B3 ED2 ;"
+  },
+  {
+    "lineno": 60,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "MIDLINE",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(100.0 * mm)|(64.0 * mm)>",
+        "<(170.0 * mm)|(64.0 * mm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "LINE MIDLINE CONFORMAL 100 * mm , 64 * mm , 170 * mm , 64 * mm ;"
+  },
+  {
+    "lineno": 61,
+    "command": "OBSERVE FIELD_INTEGRAL",
+    "payload": {
+      "kind": "observe_field_integral",
+      "integral_kind": "J.DA",
+      "geom_name": "MIDLINE",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD_INTEGRAL J.DA MIDLINE ;"
+  }
+]

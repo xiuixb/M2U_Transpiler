@@ -1,6 +1,6 @@
-#######################
+################################
 # core\muti_flows\mcl_allparser.py
-#######################
+################################
 
 """
 MCLParser
@@ -247,12 +247,11 @@ class MCLAllParser:
         return out
 
 
-
     # ---------------------------- LLM ----------------------------
     def parse_llm_group(self, items: List[dict]) -> List[ParseResult]:
         """
         使用LLM解析器批量处理 LLM 组命令。
-        按命令类型分组，每次只向LLM输入同一类型的命令，避免干扰。
+        实现真正的全并发：所有批次（不管什么命令类型）全部并行处理。
         """
         import time
         
@@ -316,13 +315,15 @@ class MCLAllParser:
             print("[info] LLM解析: 没有有效的命令需要处理")
             return out
         
-        # 创建所有批次任务列表
+        # 🚀 关键优化：创建所有批次任务列表，实现真正的全并发
         all_batch_tasks = []
+        total_batches_count = 0
+        
         for command_type, cmd_items in valid_command_groups.items():
             print(f"[info] LLM解析: 准备 {command_type} 命令，共 {len(cmd_items)} 条")
             
-            # 将命令分批
-            batch_size = 7  # 每批处理7个项目，符合5-8条命令的要求
+            # 将命令分批 - 使用4条命令的批次大小，平衡效率和响应时间
+            batch_size = 4  # 4条命令的批次大小，在效率和时间间找到平衡
             batches = []
             for i in range(0, len(cmd_items), batch_size):
                 batch = cmd_items[i:i + batch_size]
@@ -332,16 +333,20 @@ class MCLAllParser:
             for batch_index, batch in enumerate(batches):
                 task_info = {
                     'command_type': command_type,
-                    'batch': batch,
-                    'batch_index': batch_index,
-                    'total_batches': len(batches)
+                    'batch': batch, 
+                    'batch_index': batch_index, 
+                    'total_batches_for_command': len(batches),
+                    'global_batch_id': total_batches_count  # 全局批次ID
                 }
                 all_batch_tasks.append(task_info)
+                total_batches_count += 1
         
-        print(f"[info] LLM解析: 总共创建 {len(all_batch_tasks)} 个批次任务，准备全并发处理")
+        print(f"[info] LLM解析: 🚀 总共创建 {len(all_batch_tasks)} 个批次任务，准备全并发处理")
+        print(f"[info] LLM解析: 💡 优化效果：所有批次将同时并行，不再受命令类型限制")
         
-        # 使用更大的线程池，实现真正的全并发
-        max_concurrent_batches = min(8, len(all_batch_tasks))  # 最多8个批次同时处理
+        # 🚀 使用更大的线程池，实现真正的全并发
+        # 激进配置：使用12个并发批次，充分利用API性能
+        max_concurrent_batches = min(12, len(all_batch_tasks))  # 激进配置：最多12个批次同时处理
         
         with ThreadPoolExecutor(max_workers=max_concurrent_batches) as executor:
             # 提交所有批次任务
@@ -350,7 +355,7 @@ class MCLAllParser:
                 future = executor.submit(self._process_single_batch, task_info, which)
                 future_to_task[future] = task_info
             
-            print(f"[info] LLM解析: 已提交 {len(future_to_task)} 个批次任务，开始并发执行")
+            print(f"[info] LLM解析: 已提交 {len(future_to_task)} 个批次任务到 {max_concurrent_batches} 个并发线程")
             
             # 收集所有批次的处理结果
             completed_count = 0
@@ -358,6 +363,11 @@ class MCLAllParser:
                 task_info = future_to_task[future]
                 command_type = task_info['command_type']
                 batch_index = task_info['batch_index']
+                global_batch_id = task_info['global_batch_id']
+                
+                # 记录批次完成时间
+                batch_end_time = time.time()
+                batch_end_timestamp = time.strftime('%H:%M:%S', time.localtime(batch_end_time))
                 
                 try:
                     batch_results, batch_success, batch_failed = future.result()
@@ -366,10 +376,11 @@ class MCLAllParser:
                     total_failed += batch_failed
                     
                     completed_count += 1
-                    print(f"[info] LLM解析: {command_type} 批次 {batch_index + 1} 完成 ({completed_count}/{len(all_batch_tasks)})")
+                    batch_duration = batch_end_time - llm_start_time
+                    print(f"[info] LLM解析: ✅ [{batch_end_timestamp}] {command_type} 批次 {batch_index + 1} 完成 (全局批次 {global_batch_id + 1}, 进度 {completed_count}/{len(all_batch_tasks)}, 耗时 {batch_duration:.1f}s)")
                     
                 except Exception as e:
-                    print(f"[ERROR] LLM解析 {command_type} 批次 {batch_index + 1} 时出错: {e}")
+                    print(f"[ERROR] LLM解析: ❌ [{batch_end_timestamp}] {command_type} 批次 {batch_index + 1} 时出错: {e}")
                     # 为该批次的所有项目返回失败结果
                     batch = task_info['batch']
                     for item in batch:
@@ -386,150 +397,17 @@ class MCLAllParser:
                         )
                         total_failed += 1
         
-        print(f"[info] LLM解析: 批量解析完成，成功 {total_success} 条，失败 {total_failed} 条")
+        print(f"[info] LLM解析: 🎉 批量解析完成，成功 {total_success} 条，失败 {total_failed} 条")
         
         # 记录LLM解析结束时间
         llm_end_time = time.time()
         llm_duration = llm_end_time - llm_start_time
         print(f"[info] LLM解析: 结束时间 {time.strftime('%H:%M:%S', time.localtime(llm_end_time))}")
-        print(f"[info] LLM解析: 总耗时 {llm_duration:.2f}秒")
+        print(f"[info] LLM解析: ⚡ 总耗时 {llm_duration:.2f}秒 (全并发优化)")
         
         # 按行号排序返回结果
         out.sort(key=lambda r: r.lineno)
         return out
-
-    def _process_command_type(self, command_type: str, cmd_items: list, which: str):
-        """处理单个命令类型的所有项目
-        
-        Args:
-            command_type: 命令类型名称
-            cmd_items: 该命令类型的所有项目列表
-            which: 解析器类型标识
-            
-        Returns:
-            tuple: (results_list, success_count, failed_count)
-        """
-        results = []
-        success_count = 0
-        failed_count = 0
-        
-        try:
-            # 使用LLM解析器的parse_cmd方法进行批量解析
-            # 该方法会自动分批处理，每批5-8个项目，并发请求
-            model_name = "qwen-plus"
-            batch_size = 7  # 每批处理7个项目，符合5-8条命令的要求
-            
-            # 调用LLM解析器的批量解析方法，返回结构化JSON列表
-            llm_results = self._llm.parse_cmd(model_name, command_type, cmd_items, batch_size)
-            
-            # 处理LLM返回的结构化结果
-            if llm_results and isinstance(llm_results, list):
-                # 处理每个LLM解析结果
-                for llm_result in llm_results:
-                    if not isinstance(llm_result, dict):
-                        continue
-                        
-                    # 从LLM结果中提取信息
-                    result_lineno = int(llm_result.get("lineno", 0))
-                    
-                    # 检查LLM解析是否成功（LLM后处理已经设置了ok字段）
-                    llm_success = llm_result.get("ok", False)
-                    llm_payload = llm_result.get("payload", {})
-                    llm_errors = llm_result.get("errors", "no")
-                    llm_text = llm_result.get("text", "")
-                    
-                    # 统一errors字段为字符串类型
-                    if isinstance(llm_errors, list):
-                        if not llm_errors or (len(llm_errors) == 1 and llm_errors[0] == "no"):
-                            llm_errors = "no"
-                        else:
-                            llm_errors = "; ".join(str(e) for e in llm_errors)
-                    elif llm_errors is None:
-                        llm_errors = "no"
-                    else:
-                        llm_errors = str(llm_errors)
-                    
-                    if llm_success and llm_payload:
-                        # 解析成功
-                        results.append(
-                            ParseResult(
-                                lineno=result_lineno,
-                                command=command_type,
-                                payload=llm_payload,
-                                parser_kind=which,
-                                ok=True,
-                                errors="no",
-                                text=llm_text,
-                            )
-                        )
-                        success_count += 1
-                    else:
-                        # 解析失败
-                        results.append(
-                            ParseResult(
-                                lineno=result_lineno,
-                                command=command_type,
-                                payload={},
-                                parser_kind=which,
-                                ok=False,
-                                errors=llm_errors if llm_errors != "no" else "llm_parse_failed",
-                                text=llm_text,
-                            )
-                        )
-                        failed_count += 1
-                
-                # 检查是否有项目没有得到处理结果
-                processed_linenos = {int(r.get("lineno", 0)) for r in llm_results}
-                for item in cmd_items:
-                    item_lineno = int(item.get("lineno", 0))
-                    if item_lineno not in processed_linenos:
-                        results.append(
-                            ParseResult(
-                                lineno=item_lineno,
-                                command=command_type,
-                                payload={},
-                                parser_kind=which,
-                                ok=False,
-                                errors="llm_no_result",
-                                text=item.get("text", ""),
-                            )
-                        )
-                        failed_count += 1
-            else:
-                # LLM返回空结果或格式错误
-                print(f"[WARNING] {command_type} 命令的LLM解析返回空结果")
-                for item in cmd_items:
-                    results.append(
-                        ParseResult(
-                            lineno=int(item.get("lineno", 0)),
-                            command=command_type,
-                            payload={},
-                            parser_kind=which,
-                            ok=False,
-                            errors="llm_empty_result",
-                            text=item.get("text", ""),
-                        )
-                    )
-                    failed_count += 1
-                    
-        except Exception as e:
-            print(f"[ERROR] LLM解析 {command_type} 命令时出错: {e}")
-            # 为该命令类型的所有项目返回失败结果
-            for item in cmd_items:
-                results.append(
-                    ParseResult(
-                        lineno=int(item.get("lineno", 0)),
-                        command=command_type,
-                        payload={},
-                        parser_kind=which,
-                        ok=False,
-                        errors=f"llm_exception: {str(e)}",
-                        text=item.get("text", ""),
-                    )
-                )
-                failed_count += 1
-        
-        return results, success_count, failed_count
 
     def _process_single_batch(self, task_info: dict, which: str):
         """处理单个批次的命令
@@ -541,16 +419,23 @@ class MCLAllParser:
         Returns:
             tuple: (results_list, success_count, failed_count)
         """
+        import time
+        
         command_type = task_info['command_type']
         batch = task_info['batch']
         batch_index = task_info['batch_index']
+        global_batch_id = task_info['global_batch_id']
+        
+        # 记录批次开始时间
+        batch_start_time = time.time()
+        batch_start_timestamp = time.strftime('%H:%M:%S', time.localtime(batch_start_time))
         
         results = []
         success_count = 0
         failed_count = 0
         
         try:
-            print(f"[info] LLM解析: 开始处理 {command_type} 批次 {batch_index + 1}，共 {len(batch)} 条命令")
+            print(f"[info] LLM解析: 🚀 [{batch_start_timestamp}] 开始处理 {command_type} 批次 {batch_index + 1} (全局批次 {global_batch_id + 1})，共 {len(batch)} 条命令")
             
             # 直接调用LLM解析器处理这个批次
             model_name = "qwen-plus"
@@ -558,8 +443,15 @@ class MCLAllParser:
             # 调用LLM解析器的单批次处理方法
             llm_results = self._llm._parse_batch_with_json_retry(model_name, command_type, batch, batch_index)
             
+            # 记录LLM调用完成时间
+            llm_end_time = time.time()
+            llm_duration = llm_end_time - batch_start_time
+            llm_end_timestamp = time.strftime('%H:%M:%S', time.localtime(llm_end_time))
+            
             # 处理LLM返回的结构化结果
             if llm_results and isinstance(llm_results, list):
+                print(f"[info] LLM解析: 📝 [{llm_end_timestamp}] {command_type} 批次 {batch_index + 1} LLM调用完成，耗时 {llm_duration:.1f}s，开始后处理")
+                
                 # 处理每个LLM解析结果
                 for llm_result in llm_results:
                     if not isinstance(llm_result, dict):
@@ -631,9 +523,17 @@ class MCLAllParser:
                             )
                         )
                         failed_count += 1
+                        
+                # 记录批次完成时间
+                batch_end_time = time.time()
+                total_duration = batch_end_time - batch_start_time
+                batch_end_timestamp = time.strftime('%H:%M:%S', time.localtime(batch_end_time))
+                print(f"[info] LLM解析: ✅ [{batch_end_timestamp}] {command_type} 批次 {batch_index + 1} 处理完成，总耗时 {total_duration:.1f}s，成功 {success_count}，失败 {failed_count}")
+                
             else:
                 # LLM返回空结果或格式错误
-                print(f"[WARNING] {command_type} 批次 {batch_index + 1} 的LLM解析返回空结果")
+                llm_end_timestamp = time.strftime('%H:%M:%S', time.localtime(time.time()))
+                print(f"[WARNING] [{llm_end_timestamp}] {command_type} 批次 {batch_index + 1} 的LLM解析返回空结果")
                 for item in batch:
                     results.append(
                         ParseResult(
@@ -649,7 +549,8 @@ class MCLAllParser:
                     failed_count += 1
                     
         except Exception as e:
-            print(f"[ERROR] LLM解析 {command_type} 批次 {batch_index + 1} 时出错: {e}")
+            error_timestamp = time.strftime('%H:%M:%S', time.localtime(time.time()))
+            print(f"[ERROR] [{error_timestamp}] LLM解析 {command_type} 批次 {batch_index + 1} 时出错: {e}")
             # 为该批次的所有项目返回失败结果
             for item in batch:
                 results.append(

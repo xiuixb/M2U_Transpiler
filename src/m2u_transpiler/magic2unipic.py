@@ -16,11 +16,11 @@ sys.path.append(project_root)
 
 from src.core_symbol.symbolBase import *
 from src.core_symbol.rules import PreprocessRules
-from src.core_symbol.muti_flows.mclparser.m2u_parser_route import RouteConfig
+from src.core_symbol.muti_flows.mclparser.m2u_parser_route import parse_route_cfg
 from src.core_symbol.muti_flows.mclparser.parser_classifier import ParserClassifier
 from src.core_symbol.muti_flows.mcl_preprocess import MCLPreprocess
 from src.core_symbol.muti_flows.mclparser.mcl_allparser import MCLAllParser
-from src.core_symbol.muti_flows.mclparser.m2u_parser_route import Route_cfg
+
 from src.config.m2u_const import init_constants, alldebug
 from src.core_cac.geom_cac import GeomCac
 from src.core_symbol.muti_flows.conv.mcl2mid_sTconv import MCL2MID_STConv
@@ -36,7 +36,7 @@ class MAGIC2UNIPIC:
                  input_file: str
                  ):
         self.input_file = input_file
-        self.parser_classifier = ParserClassifier(route_config=Route_cfg)
+        self.parser_classifier = ParserClassifier(route_config=parse_route_cfg)
         self.preprocessor = MCLPreprocess(rules=PreprocessRules())
         self.allparser = MCLAllParser(parser_classifier=self.parser_classifier)
         self.input_file = input_file

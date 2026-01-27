@@ -39,10 +39,17 @@ class ConvConstants:
         self.pre_jsonl = self.data_dir / f"workdir/preprocessed.jsonl"
         self.parsed_json = self.data_dir / f"workdir/parsed_result.json"
         
-        self.symbols_json = self.data_dir / 'workdir/symbols.json'
+        self.symbols_json = self.data_dir / 'workdir/varibles.json'
         self.infile_dir = self.data_dir / 'Simulation'
         self.uni_symbols_json = self.data_dir / 'workdir/uni_symbols.json'
+        
+        self.mid_symbol1_json = self.data_dir / 'workdir/mid_symbol1.json'
+        self.mid_symbol2_json = self.data_dir / 'workdir/mid_symbol2.json'
         self.mid_symbols_json = self.data_dir / 'workdir/mid_symbols.json'
+
+        self.llmconv_json = self.data_dir / 'workdir/llmconv.json'
+        self.llm_prompt_txt = self.data_dir / 'workdir/llm_prompt.txt'
+
 
         self.IF_Conv2Void = True
         self.axis_mcl_dir = axis_mcl_dir
@@ -80,5 +87,7 @@ class AllDebug:
         self.port_debug = False
 
         self.conduct2void_debug = False
+
+        self.llmconv_debug = False
 
 alldebug = AllDebug()

@@ -1,0 +1,19 @@
+<StaticNodeFLd ZRExpressionModel>
+  axis = 2
+  rDir = 1
+  rMax = 0.6
+  kind = ZRExpressionModel
+  target = mag
+  startCenter = [0.0 0.0 0.0]
+  <Function Bz>
+    component = 0
+    kind = zrFunc
+    result = 2.8/(1+EXP((Z-0.29)/0.02))
+  </Function>
+
+  <Function Br>
+    component = 1
+    kind = zrFunc
+    result = 2.8/(2*0.02)*r*exp((Z-0.29)/0.02)/((1+EXP((Z-0.29)/0.02))^2)
+  </Function>
+</StaticNodeFLd>

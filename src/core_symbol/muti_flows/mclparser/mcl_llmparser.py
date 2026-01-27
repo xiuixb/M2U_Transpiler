@@ -37,8 +37,8 @@ class LLMParser:
         self.model = OpenAILLMEntity(api_key=api_key)
         self.prompt_flow = prompt_flow
 
-    def parse_cmd(self, model_name, cmd_name, input_list, batch_size=6):
-        """解析大模型推送的文本，每6个项拼接成一次处理，并发请求
+    def parse_cmd(self, model_name, cmd_name, input_list, batch_size=4):
+        """解析大模型推送的文本，每4个项拼接成一次处理，并发请求
         
         Args:
             model_name: 模型名称
@@ -59,8 +59,8 @@ class LLMParser:
         print(f"总共 {len(input_list)} 个项，分为 {len(batches)} 个批次，每批次 ≤ {batch_size} 个项")
         
         # 使用线程池并发处理各个批次
-        # 增加并发数量，支持更多批次同时处理
-        max_concurrent = min(6, len(batches))  # 增加到最多6个并发批次
+        # 🚀 激进配置：使用更高的并发数量，充分利用API性能
+        max_concurrent = min(10, len(batches))  # 激进配置：最多10个并发批次
         batch_results = [None] * len(batches)
         
         with ThreadPoolExecutor(max_workers=max_concurrent) as executor:
@@ -73,11 +73,15 @@ class LLMParser:
             # 收集所有批次的结果（按批次顺序）
             for batch_index, future in batch_futures:
                 try:
-                    result = future.result(timeout=120)  # 120秒超时，包含重试时间
+                    result = future.result(timeout=60)  # 60秒超时，包含重试时间
                     batch_results[batch_index] = result
-                    print(f"批次 {batch_index + 1}/{len(batches)} 完成")
+                    
+                    # 添加时间戳
+                    completion_time = time.strftime('%H:%M:%S', time.localtime())
+                    print(f"[info] LLM批次: ✅ [{completion_time}] 批次 {batch_index + 1}/{len(batches)} 完成")
                 except Exception as e:
-                    print(f"解析批次 {batch_index + 1} 时发生错误: {e}")
+                    error_time = time.strftime('%H:%M:%S', time.localtime())
+                    print(f"[ERROR] LLM批次: ❌ [{error_time}] 解析批次 {batch_index + 1} 时发生错误: {e}")
                     batch_results[batch_index] = None
         
         # 合并所有批次的JSON结果
@@ -106,7 +110,8 @@ class LLMParser:
             try:
                 if attempt > 0:
                     wait_time = min(2 ** attempt, 10)  # 指数退避，最多10秒
-                    print(f"批次 {batch_index + 1} 第 {attempt} 次重试，等待 {wait_time} 秒...")
+                    retry_time = time.strftime('%H:%M:%S', time.localtime())
+                    print(f"[info] LLM重试: 🔄 [{retry_time}] 批次 {batch_index + 1} 第 {attempt} 次重试，等待 {wait_time} 秒...")
                     time.sleep(wait_time)
                 
                 result = self.parse(model_name, cmd_name, batch)
@@ -153,7 +158,8 @@ class LLMParser:
             try:
                 if attempt > 0:
                     wait_time = min(2 ** attempt, 10)  # 指数退避，最多10秒
-                    print(f"批次 {batch_index + 1} 第 {attempt} 次重试，等待 {wait_time} 秒...")
+                    retry_time = time.strftime('%H:%M:%S', time.localtime())
+                    print(f"[info] LLM重试JSON: 🔄 [{retry_time}] 批次 {batch_index + 1} 第 {attempt} 次重试，等待 {wait_time} 秒...")
                     time.sleep(wait_time)
                 
                 raw_result = self.parse(model_name, cmd_name, batch)
@@ -373,6 +379,8 @@ class LLMParser:
         
         # 4. 调用LLM获取回答
         ai_response = self.model.chat(model_name, messages)
+        print("[LLM] 输入:", input_list)
+        # print("[LLM] 输出:", ai_response.choices[0].message.content)  # type: ignore
 
         return ai_response.choices[0].message.content  # type: ignore
 

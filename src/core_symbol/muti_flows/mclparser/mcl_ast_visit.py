@@ -120,7 +120,7 @@ class ASTVisitor:
     def _visit_AssignmentNode(self, node: AssignmentNode):
         return {
             "kind": node.decl_type or "variable",
-            "name": getattr(getattr(node, "target", None), "name", ""),
+            "sys_name": getattr(getattr(node, "target", None), "name", ""),
             "value": self._expr(node.value)
             #"location": node.lineno,
         }
@@ -129,7 +129,7 @@ class ASTVisitor:
         params = [p.name for p in getattr(node, "params", [])]
         return {
             "kind": "function",
-            "name": node.name,
+            "sys_name": node.name,
             "params": params,
             "body": self._expr(node.body)
             #"location": node.lineno,
@@ -139,7 +139,7 @@ class ASTVisitor:
         args = [self._expr(a) for a in getattr(node, "args", [])]
         return {
             "kind": "function_call",
-            "name": node.func_name,
+            "sys_name": node.func_name,
             "args": args
             #"location": node.lineno,
         }
@@ -150,7 +150,7 @@ class ASTVisitor:
         y = str(self._expr(node.coords[1]))
         return {
             "kind": "POINT",
-            "name": node.name,
+            "sys_name": node.name,
             "point": f"<{x}|{y}>",
         }
 
@@ -164,7 +164,7 @@ class ASTVisitor:
                 points.append(self._point_token(v))
         return {
             "kind": "LINE",
-            "name": node.name,
+            "sys_name": node.name,
             "line_type": node.line_type,
             "points": points,  # 统一为 ["<...>", "<...>", ...]
             # "location": node.lineno,
@@ -214,7 +214,7 @@ class ASTVisitor:
 
         return {
             "kind": "AREA",
-            "name": node.name,
+            "sys_name": node.name,
             "area_type": a_type,  # 最少结构信号：转换器据此决定解释方式
             "params": res,
             # "location": node.lineno,
@@ -225,14 +225,14 @@ class ASTVisitor:
         props = {prop: self._expr(expr) for prop, expr in node.properties}
         return {
             "kind": "material_def",
-            "name": node.name,
+            "sys_name": node.name,
             "properties": props
             #"location": node.lineno,
         }
 
     def _visit_MaterialApplicationNode(self, node: MaterialApplicationNode):
         return {
-            "kind": "material_apply",
+            "kind": "material_assign",
             "mtype": node.mtype,
             "geom_name": node.geom_name,
             "spec": node.spec
@@ -307,7 +307,7 @@ class ASTVisitor:
     def _visit_TimerCommandNode(self, node: TimerCommandNode):
         return {
             "kind": "timer",
-            "name": node.name,
+            "sys_name": node.name,
             "mode": node.mode,
             "time_type": node.time_type,
             "timer_opt": node.timer_opt
@@ -374,9 +374,9 @@ class ASTVisitor:
     def _visit_MarkCommandNode(self, node: MarkCommandNode):
         return {
             "kind": "mark",
-            "target": node.target,
+            "geom_name": node.target,
             "axis": node.axis,
-            "position": node.position,
+            "position": node.position if node.position is not None else "",
             "size": node.size
             #"location": node.lineno,
         }

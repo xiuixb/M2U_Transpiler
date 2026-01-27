@@ -1,0 +1,583 @@
+[
+  {
+    "lineno": 1,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "PI",
+      "value": "3.14159"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "PI  =  3.14159  ;"
+  },
+  {
+    "lineno": 2,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "XMU0",
+      "value": "1.2566e-06"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "XMU0  =  1.2566e-6  ;"
+  },
+  {
+    "lineno": 3,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "EPS0",
+      "value": "8.8544e-12"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "EPS0  =  8.8544e-12  ;"
+  },
+  {
+    "lineno": 4,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "VOLTAGE_RISE_TIME",
+      "value": "(2.0 * nanosecond)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "VOLTAGE_RISE_TIME  =  2 * nanosecond  ;"
+  },
+  {
+    "lineno": 5,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "VOLTAGE_MAX",
+      "value": "(1.0 * megavolt)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "VOLTAGE_MAX  =  1.0 * megavolt  ;"
+  },
+  {
+    "lineno": 6,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "SIMULATION_TIME",
+      "value": "(4.0 * nanosecond)"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "SIMULATION_TIME  =  4 * nanosecond  ;"
+  },
+  {
+    "lineno": 7,
+    "command": "ASSIGN",
+    "payload": {
+      "kind": "variable",
+      "name": "VM",
+      "value": "(VOLTAGE_MAX / (1.0 * megavolt))"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "VM  =  VOLTAGE_MAX/(1 * megavolt)  ;"
+  },
+  {
+    "lineno": 8,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "INNER_LEFT",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(0.0 * m)|(6.9 * cm)>",
+          "<(0.05 * m)|(7.0 * cm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "AREA INNER_LEFT CONFORMAL 0.0 * m , 6.9 * cm .05 * m , 7.0 * cm ;"
+  },
+  {
+    "lineno": 9,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "INNER",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(0.05 * m)|(6.9 * cm)>",
+          "<(0.2 * m)|(7.0 * cm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "AREA INNER CONFORMAL 0.05 * m , 6.9 * cm .20 * m , 7.0 * cm ;"
+  },
+  {
+    "lineno": 10,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "INNER_RIGHT",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(0.2 * m)|(6.9 * cm)>",
+          "<(0.25 * m)|(7.0 * cm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "AREA INNER_RIGHT CONFORMAL 0.20 * m , 6.9 * cm .25 * m , 7.0 * cm ;"
+  },
+  {
+    "lineno": 11,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "OUTER",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(0.0 * m)|(9.0 * cm)>",
+          "<(0.25 * m)|(9.1 * cm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "AREA OUTER CONFORMAL 0.00 * m , 9.0 * cm .25 * m , 9.1 * cm ;"
+  },
+  {
+    "lineno": 12,
+    "command": "AREA",
+    "payload": {
+      "kind": "AREA",
+      "name": "OUTER_BLOCK",
+      "area_type": "CONFORMAL",
+      "params": {
+        "points": [
+          "<(0.15 * m)|(8.0 * cm)>",
+          "<(0.25 * m)|(9.0 * cm)>"
+        ]
+      }
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "AREA OUTER_BLOCK CONFORMAL 0.15 * m , 8.0 * cm .25 * m , 9.0 * cm ;"
+  },
+  {
+    "lineno": 13,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "INLET",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(0.0 * m)|(7.0 * cm)>",
+        "<(0.0 * m)|(9.0 * cm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "LINE INLET CONFORMAL 0.0 * m , 7.0 * cm 0.0 * m , 9.0 * cm ;"
+  },
+  {
+    "lineno": 14,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "INLET_VOLTAGE",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(0.0 * m)|(7.0 * cm)>",
+        "<(0.0 * m)|(9.0 * cm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "LINE INLET_VOLTAGE CONFORMAL 0.0 * m , 7.0 * cm 0.0 * m , 9.0 * cm ;"
+  },
+  {
+    "lineno": 15,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "OUTLET",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(0.25 * m)|(7.0 * cm)>",
+        "<(0.25 * m)|(8.0 * cm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "LINE OUTLET CONFORMAL 0.25 * m , 7.0 * cm 0.25 * m , 8.0 * cm ;"
+  },
+  {
+    "lineno": 16,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "OUTLET_VOLTAGE",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(0.25 * m)|(7.0 * cm)>",
+        "<(0.25 * m)|(8.0 * cm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "LINE OUTLET_VOLTAGE CONFORMAL 0.25 * m , 7.0 * cm 0.25 * m , 8.0 * cm ;"
+  },
+  {
+    "lineno": 17,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "ESURFACE",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(0.0 * m)|(7.0 * cm)>",
+        "<(0.25 * m)|(7.0 * cm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "LINE ESURFACE CONFORMAL 0.0 * m , 7.0 * cm .25 * m , 7.0 * cm ;"
+  },
+  {
+    "lineno": 18,
+    "command": "LINE",
+    "payload": {
+      "kind": "LINE",
+      "name": "MPLANE",
+      "line_type": "CONFORMAL",
+      "points": [
+        "<(15.0 * cm)|(7.0 * cm)>",
+        "<(15.0 * cm)|(9.0 * cm)>"
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "LINE MPLANE CONFORMAL 15 * cm , 7.0 * cm 15 * cm , 9.0 * cm ;"
+  },
+  {
+    "lineno": 19,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "B_PROBE_INLET",
+      "point": "<(0.01 * m)|(8.9 * cm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "POINT B_PROBE_INLET .01 * m , 8.9 * cm ;"
+  },
+  {
+    "lineno": 20,
+    "command": "POINT",
+    "payload": {
+      "kind": "POINT",
+      "name": "B_PROBE_OUTLET",
+      "point": "<(0.24 * m)|(7.9 * cm)>"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "POINT B_PROBE_OUTLET .24 * m , 7.9 * cm ;"
+  },
+  {
+    "lineno": 22,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "INNER_LEFT",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "CONDUCTOR  INNER_LEFT  ;"
+  },
+  {
+    "lineno": 23,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "INNER",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "CONDUCTOR  INNER  ;"
+  },
+  {
+    "lineno": 24,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "INNER_RIGHT",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "CONDUCTOR  INNER_RIGHT  ;"
+  },
+  {
+    "lineno": 25,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "OUTER",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "CONDUCTOR  OUTER  ;"
+  },
+  {
+    "lineno": 26,
+    "command": "CONDUCTOR",
+    "payload": {
+      "kind": "material_assign",
+      "mtype": "CONDUCTOR",
+      "geom_name": "OUTER_BLOCK",
+      "spec": null
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "CONDUCTOR  OUTER_BLOCK  ;"
+  },
+  {
+    "lineno": 27,
+    "command": "FUNCTION",
+    "payload": {
+      "kind": "function",
+      "name": "INCIDENT",
+      "params": [
+        "T"
+      ],
+      "body": "VOLTAGE_MAX * SMOOTH_RAMP ( T / VOLTAGE_RISE_TIME )"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "FUNCTION INCIDENT ( T )   =  VOLTAGE_MAX * SMOOTH_RAMP ( T / VOLTAGE_RISE_TIME )   ;"
+  },
+  {
+    "lineno": 28,
+    "command": "FUNCTION",
+    "payload": {
+      "kind": "function",
+      "name": "GX2",
+      "params": [
+        "Z",
+        "R"
+      ],
+      "body": "1 / R"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "FUNCTION GX2 ( Z , R )   =  1 / R  ;"
+  },
+  {
+    "lineno": 29,
+    "command": "FUNCTION",
+    "payload": {
+      "kind": "function",
+      "name": "GX3",
+      "params": [
+        "Z",
+        "R"
+      ],
+      "body": ".0"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "FUNCTION GX3 ( Z , R )   =  .0  ;"
+  },
+  {
+    "lineno": 30,
+    "command": "PORT",
+    "payload": {
+      "kind": "PORT",
+      "geom_name": "INLET",
+      "direction": "POSITIVE",
+      "options": [
+        {
+          "port_opt_name": "INCOMING",
+          "incoming_func": "INCIDENT",
+          "incoming_opt": [
+            "E2",
+            "GX2",
+            "E3",
+            "GX3"
+          ]
+        },
+        {
+          "port_opt_name": "NORMALIZATION",
+          "norm_type": "VOLTAGE",
+          "geom_type": "line",
+          "peak_value": [
+            "INLET_VOLTAGE"
+          ]
+        }
+      ]
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "PORT INLET POSITIVE INCOMING INCIDENT FUNCTION E2 GX2 E3 GX3 NORMALIZATION VOLTAGE INLET_VOLTAGE ;"
+  },
+  {
+    "lineno": 31,
+    "command": "PORT",
+    "payload": {
+      "kind": "PORT",
+      "geom_name": "OUTLET",
+      "direction": "NEGATIVE",
+      "options": []
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "PORT OUTLET NEGATIVE ;"
+  },
+  {
+    "lineno": 32,
+    "command": "OBSERVE FIELD_INTEGRAL",
+    "payload": {
+      "kind": "observe_field_integral",
+      "integral_kind": "E.DL",
+      "geom_name": "INLET_VOLTAGE",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD_INTEGRAL E.DL INLET_VOLTAGE ;"
+  },
+  {
+    "lineno": 33,
+    "command": "OBSERVE FIELD_INTEGRAL",
+    "payload": {
+      "kind": "observe_field_integral",
+      "integral_kind": "E.DL",
+      "geom_name": "OUTLET_VOLTAGE",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD_INTEGRAL E.DL OUTLET_VOLTAGE ;"
+  },
+  {
+    "lineno": 34,
+    "command": "OBSERVE FIELD_POWER",
+    "payload": {
+      "kind": "observe_field_power",
+      "power_variable": "S.DA",
+      "object_kind": "INLET",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD_POWER S.DA INLET ;"
+  },
+  {
+    "lineno": 35,
+    "command": "OBSERVE FIELD_POWER",
+    "payload": {
+      "kind": "observe_field_power",
+      "power_variable": "S.DA",
+      "object_kind": "OUTLET",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD_POWER S.DA OUTLET ;"
+  },
+  {
+    "lineno": 36,
+    "command": "OBSERVE FIELD_INTEGRAL",
+    "payload": {
+      "kind": "observe_field_integral",
+      "integral_kind": "J.DA",
+      "geom_name": "ESURFACE",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD_INTEGRAL J.DA ESURFACE ;"
+  },
+  {
+    "lineno": 37,
+    "command": "OBSERVE FIELD_INTEGRAL",
+    "payload": {
+      "kind": "observe_field_integral",
+      "integral_kind": "J.DA",
+      "geom_name": "MPLANE",
+      "observe_opt": {}
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "OBSERVE FIELD_INTEGRAL J.DA MPLANE ;"
+  },
+  {
+    "lineno": 38,
+    "command": "FUNCTION",
+    "payload": {
+      "kind": "function",
+      "name": "FTAG",
+      "params": [
+        "T"
+      ],
+      "body": ".01"
+    },
+    "parser_kind": "PLY",
+    "ok": true,
+    "errors": [],
+    "text": "FUNCTION FTAG ( T )   =  .01  ;"
+  }
+]
