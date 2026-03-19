@@ -1,0 +1,61 @@
+{"lineno": "1", "command": "ASSIGN", "text": "DR  =  1.0 * mm  ;", "para": {"symbol_name": "DR"}}
+{"lineno": "2", "command": "ASSIGN", "text": "DZ  =  1.0 * mm  ;", "para": {"symbol_name": "DZ"}}
+{"lineno": "3", "command": "ASSIGN", "text": "RUNTIME  =  50.0 * nanosecond ;", "para": {"symbol_name": "RUNTIME"}}
+{"lineno": "4", "command": "ASSIGN", "text": "VOLTAGE.MAX =  650 * kilovolt  ;", "para": {"symbol_name": "VOLTAGE.MAX"}}
+{"lineno": "5", "command": "ASSIGN", "text": "TRISE = 2.0 * nanosecond ;", "para": {"symbol_name": "TRISE"}}
+{"lineno": "6", "command": "ASSIGN", "text": "RF.PERIOD     =  0.6/1 * c/2 ;", "para": {"symbol_name": "RF.PERIOD"}}
+{"lineno": "7", "command": "ASSIGN", "text": "H_BOARD = 51 * mm ;", "para": {"symbol_name": "H_BOARD"}}
+{"lineno": "8", "command": "ASSIGN", "text": "R_BOARD = 0 * mm ;", "para": {"symbol_name": "R_BOARD"}}
+{"lineno": "9", "command": "ASSIGN", "text": "B_BOARD = H_BOARD - 2 * mm ;", "para": {"symbol_name": "B_BOARD"}}
+{"lineno": "10", "command": "AREA", "text": "AREA SIMULATION CONFORMAL 0.0 * mm , 0.0 * mm , 600 * mm , 100 * mm ;", "para": {"symbol_name": "SIMULATION"}}
+{"lineno": "11", "command": "AREA", "text": "AREA CATHODE CONFORMAL 0.0 * mm , 65 * mm , 160 * mm , 67 * mm ;", "para": {"symbol_name": "CATHODE"}}
+{"lineno": "12", "command": "AREA", "text": "AREA AREA1 CONFORMAL 200.0 * mm , 50 * mm , 600.0 * mm , 100 * mm ;", "para": {"symbol_name": "AREA1"}}
+{"lineno": "13", "command": "AREA", "text": "AREA AREA2 CONFORMAL B_BOARD , R_BOARD , H_BOARD , 51 * mm ;", "para": {"symbol_name": "AREA2"}}
+{"lineno": "14", "command": "AREA", "text": "AREA SHELL CONFORMAL 0.0 * mm , 100 * mm , 600 * mm , 102 * mm ;", "para": {"symbol_name": "SHELL"}}
+{"lineno": "15", "command": "AREA", "text": "AREA LEFT CONFORMAL -1.0 * mm , 0.0 * mm , 0.0 * mm , 65 * mm ;", "para": {"symbol_name": "LEFT"}}
+{"lineno": "16", "command": "AREA", "text": "AREA EMITTER CONFORMAL 115 * mm , 65 * mm , 155 * mm , 66 * mm ;", "para": {"symbol_name": "EMITTER"}}
+{"lineno": "17", "command": "AREA", "text": "AREA THINWALL CONFORMAL H_BOARD , 50 * mm , 200 * mm , 51 * mm ;", "para": {"symbol_name": "THINWALL"}}
+{"lineno": "18", "command": "MARK", "text": "MARK SIMULATION X1 SIZE DZ ;", "para": {"symbol_name": null}}
+{"lineno": "19", "command": "MARK", "text": "MARK SIMULATION X2 SIZE DR ;", "para": {"symbol_name": null}}
+{"lineno": "20", "command": "MARK", "text": "MARK CATHODE X1 SIZE DZ ;", "para": {"symbol_name": null}}
+{"lineno": "21", "command": "MARK", "text": "MARK CATHODE X2 SIZE DR ;", "para": {"symbol_name": null}}
+{"lineno": "22", "command": "MARK", "text": "MARK AREA1 X1 SIZE DZ ;", "para": {"symbol_name": null}}
+{"lineno": "23", "command": "MARK", "text": "MARK AREA1 X2 SIZE DR ;", "para": {"symbol_name": null}}
+{"lineno": "24", "command": "MARK", "text": "MARK AREA2 X1 SIZE DZ ;", "para": {"symbol_name": null}}
+{"lineno": "25", "command": "MARK", "text": "MARK AREA2 X2 SIZE DR ;", "para": {"symbol_name": null}}
+{"lineno": "26", "command": "MARK", "text": "MARK SHELL X1 SIZE DZ ;", "para": {"symbol_name": null}}
+{"lineno": "27", "command": "MARK", "text": "MARK SHELL X2 SIZE DR ;", "para": {"symbol_name": null}}
+{"lineno": "28", "command": "MARK", "text": "MARK LEFT X1 SIZE DZ ;", "para": {"symbol_name": null}}
+{"lineno": "29", "command": "MARK", "text": "MARK LEFT X2 SIZE DR ;", "para": {"symbol_name": null}}
+{"lineno": "30", "command": "MARK", "text": "MARK EMITTER X1 SIZE DZ ;", "para": {"symbol_name": null}}
+{"lineno": "31", "command": "MARK", "text": "MARK EMITTER X2 SIZE DR ;", "para": {"symbol_name": null}}
+{"lineno": "32", "command": "MARK", "text": "MARK THINWALL X1 SIZE DZ ;", "para": {"symbol_name": null}}
+{"lineno": "33", "command": "MARK", "text": "MARK THINWALL X2 SIZE DR ;", "para": {"symbol_name": null}}
+{"lineno": "34", "command": "CONDUCTOR", "text": "CONDUCTOR CATHODE ;", "para": {"symbol_name": null}}
+{"lineno": "35", "command": "CONDUCTOR", "text": "CONDUCTOR AREA1 ;", "para": {"symbol_name": null}}
+{"lineno": "36", "command": "CONDUCTOR", "text": "CONDUCTOR SHELL ;", "para": {"symbol_name": null}}
+{"lineno": "37", "command": "CONDUCTOR", "text": "CONDUCTOR LEFT ;", "para": {"symbol_name": null}}
+{"lineno": "38", "command": "CONDUCTOR", "text": "CONDUCTOR EMITTER ;", "para": {"symbol_name": null}}
+{"lineno": "39", "command": "CONDUCTOR", "text": "CONDUCTOR THINWALL ;", "para": {"symbol_name": null}}
+{"lineno": "40", "command": "FUNCTION", "text": "FUNCTION FIN ( T )  = VOLTAGE.MAX * MAX ( 0.0 , MIN ( 1.0 , T / TRISE )  )  ;", "para": {"symbol_name": ")"}}
+{"lineno": "41", "command": "FUNCTION", "text": "FUNCTION G1 ( Z , R )  = 1 / R ;", "para": {"symbol_name": ")"}}
+{"lineno": "42", "command": "FUNCTION", "text": "FUNCTION G2 = 0.0 ;", "para": {"symbol_name": "G2"}}
+{"lineno": "43", "command": "LINE", "text": "LINE INLET CONFORMAL 0.0 * m , 67 * mm , 0.0 * m , 100 * mm ;", "para": {"symbol_name": "INLET"}}
+{"lineno": "44", "command": "PORT", "text": "PORT INLET POSITIVE INCOMING FIN FUNCTION E2 G1 E3 G2 NORMALIZATION VOLTAGE INLET ;", "para": {"symbol_name": null}}
+{"lineno": "45", "command": "LINE", "text": "LINE OUTLET CONFORMAL 600 * mm , 0.0 * mm , 600 * mm , 50 * mm ;", "para": {"symbol_name": "OUTLET"}}
+{"lineno": "46", "command": "PORT", "text": "PORT OUTLET NEGATIVE ;", "para": {"symbol_name": null}}
+{"lineno": "47", "command": "EMISSION EXPLOSIVE", "text": "EMISSION EXPLOSIVE SPECIES ELECTRON NUMBER 2 ;", "para": {"symbol_name": null}}
+{"lineno": "48", "command": "EMIT", "text": "EMIT EXPLOSIVE EMITTER  ;", "para": {"symbol_name": null}}
+{"lineno": "49", "command": "ASSIGN", "text": "FOILTHICKNESS  =  0.1 * micron ;", "para": {"symbol_name": "FOILTHICKNESS"}}
+{"lineno": "50", "command": "OBSERVE FIELD_INTEGRAL", "text": "OBSERVE FIELD_INTEGRAL E.DL INLET ;", "para": {"symbol_name": null}}
+{"lineno": "51", "command": "LINE", "text": "LINE VDIODE CONFORMAL 155 * mm , 50 * mm , 155 * mm , 65 * mm ;", "para": {"symbol_name": "VDIODE"}}
+{"lineno": "52", "command": "OBSERVE FIELD_INTEGRAL", "text": "OBSERVE FIELD_INTEGRAL E.DL VDIODE ;", "para": {"symbol_name": null}}
+{"lineno": "53", "command": "OBSERVE FIELD_POWER", "text": "OBSERVE FIELD_POWER S.DA INLET ;", "para": {"symbol_name": null}}
+{"lineno": "54", "command": "LINE", "text": "LINE OUTLINE CONFORMAL 580 * mm , 0.0 * mm , 580 * mm , 50 * mm ;", "para": {"symbol_name": "OUTLINE"}}
+{"lineno": "55", "command": "OBSERVE FIELD_POWER", "text": "OBSERVE FIELD_POWER S.DA OUTLINE ;", "para": {"symbol_name": null}}
+{"lineno": "56", "command": "POINT", "text": "POINT ED2 580 * mm , 49 * mm ;", "para": {"symbol_name": "ED2"}}
+{"lineno": "57", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD E1 ED2 ;", "para": {"symbol_name": null}}
+{"lineno": "58", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD E2 ED2 ;", "para": {"symbol_name": null}}
+{"lineno": "59", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD B3 ED2 ;", "para": {"symbol_name": null}}
+{"lineno": "60", "command": "LINE", "text": "LINE MIDLINE CONFORMAL 100 * mm , 64 * mm , 170 * mm , 64 * mm ;", "para": {"symbol_name": "MIDLINE"}}
+{"lineno": "61", "command": "OBSERVE FIELD_INTEGRAL", "text": "OBSERVE FIELD_INTEGRAL J.DA MIDLINE ;", "para": {"symbol_name": null}}

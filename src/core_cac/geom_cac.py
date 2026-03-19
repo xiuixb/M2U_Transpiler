@@ -95,8 +95,8 @@ class GeomCac:
         3. 读取ex_in参数INCLUDE参数修改真空点集，修改阴极点集
         4. 遍历阴极点集mobject_pnts中的每两个点(一条边)，判断是否在真空点集边界，且在排除区域的每个连通区域外，如果是则将线的中点字符串存入结果数组中
         """
+        
         results = {}
-        results["emit"] = {}
         results["emit_selection_refPnts"] = []
         if emit_debug:
             print(f"       原始真空点集:\n{' '*7}", void_area["pnts"])
@@ -106,9 +106,8 @@ class GeomCac:
         refPnt = ""
 
         # 1. 分割字符串为数字列表
-        #print(f"area_entities: {area_entities}")
-        mobject_pnts = geom["areas"][mobject]['points']
-        results["emit"]["mobject_pnts"] = mobject_pnts
+        mobject_pnts = geom[mobject]['points']
+        results["mobject_pnts"] = mobject_pnts
         if emit_debug:
             print(f"\n       设置发射参考点: {mobject} \n{' '*7}ex_in: {ex_in}")
             print(f"       mobject:\n{' '*7}",mobject_pnts)
@@ -119,7 +118,7 @@ class GeomCac:
         inserted_points = set()
         if len(ex_in) >= 2:
             # 示例：['EXCLUDE', 'NO_EMISSION', 'INCLUDE', 'EMISSION']
-            results["emit"]["ex_in"] = []
+            results["ex_in"] = []
 
             for i in range(0, len(ex_in), 2):
                 ex_in_kind = ex_in[i]
@@ -128,8 +127,8 @@ class GeomCac:
                     print(f"       获取发射区域参数: {ex_in_kind} {ex_in_area_name}")
 
                 if ex_in_kind in ("EXCLUDE", "INCLUDE"):
-                    ex_in_area_pnts = geom["areas"][ex_in_area_name]['points']
-                    results["emit"]["ex_in"].append({
+                    ex_in_area_pnts = geom[ex_in_area_name]['points']
+                    results["ex_in"].append({
                         "ex_in_area_name": ex_in_area_name,
                         "ex_in_kind": ex_in_kind,
                         "pnts": ex_in_area_pnts
@@ -161,8 +160,7 @@ class GeomCac:
         遍历判断应该插到哪个边上
         """
         void_points = [tuple(p) for p in void_area["pnts"]]
-        if emit_debug:
-            print(f"       原始真空点集 有 {len(void_points)} 个点")
+        print(f"       原始真空点集 有 {len(void_points)} 个点")
 
         edges = list(zip(void_points, void_points[1:]))
 
@@ -171,8 +169,9 @@ class GeomCac:
         if emit_debug:
             print(f"       要插入的断点有 {inserted_points}")
 
-
-        for (p1, p2) in edges:
+        for i, (p1, p2) in enumerate(edges):
+            #print(f"       遍历边: {p1} -> {p2}")
+            #print("len(new_void) before:", len(new_void), "len(cleaned) before:", len(cleaned))
             line = LineString([p1, p2])
             # 当前边的插入点（按投影参数排序）
             pts_on_edge = []
@@ -186,28 +185,33 @@ class GeomCac:
             # 边上的点按位置排序
             pts_on_edge.sort(key=lambda x: x[0])
 
-            # 添加起点 + 插入点
-            new_void.append(p1)
+            # 写入 p1（仅第一条边写一次，避免重复）
+            if i == 0:
+                new_void.append(p1)
+            
+            # 写入插入点（避免相邻重复）
             for _, p in pts_on_edge:
-                if p not in new_void:
-                    new_void.append(p)
+                if new_void and p == new_void[-1]:
+                    continue
+                new_void.append(p)
         
-            # 去掉重复点
-            cleaned = []
-            seen = set()
-            for pt in new_void:
-                if cleaned and pt == cleaned[-1]:
-                    continue
-                if pt in seen:
-                    continue
-                cleaned.append(pt)
-                seen.add(pt)
+            # 写入 p2（避免相邻重复）
+            if new_void and p2 == new_void[-1]:
+                continue
+            new_void.append(p2)
 
-            # 闭合
-            if cleaned and cleaned[0] != cleaned[-1]:
-                cleaned.append(cleaned[0])
+        # 最后统一去掉相邻重复（可选）
+        cleaned = []
+        for pt in new_void:
+            if cleaned and pt == cleaned[-1]:
+                continue
+            cleaned.append(pt)
 
-            void_area["pnts"] = cleaned
+        # 最后统一闭合（只做一次）
+        if cleaned and cleaned[0] != cleaned[-1]:
+            cleaned.append(cleaned[0])
+
+        void_area["pnts"] = cleaned
 
         # 计算一下新的真空点集有多少个点
         print(f"       新的真空点集 有 {len(cleaned)} 个点")
@@ -250,18 +254,17 @@ class GeomCac:
         """
         主要逻辑：从emits中计算发射参考点，并给几何点集打断点
         """
+        #print(f"[info] geom: \n{geom}")
         results = {}
         for emit in emits:
             #print(f"[info] 处理发射: \n{emit}")
-            emit_type = emit['kind']
-            if emit_type == 'emission':
-                pass
-            elif emit_type == 'emit':
-                mobject = emit['mobject']
-                if 'model' in emit:
-                    emit_kind = emit['model']
-                if 'ex_in' in emit:
-                    ex_in = emit['ex_in']
+            emit_type = emit['sys_type']
+            if emit_type == 'emit_apply':
+                mobject = emit['parameters']['mobject']
+                if 'emission_name' in emit['parameters']:
+                    emit_kind = emit['emission_name']
+                if 'ex_in' in emit['parameters']:
+                    ex_in = emit['parameters']['ex_in']
                 else:
                     ex_in = []
                 void_area, results = cls.get_emit_refPnts(mobject, ex_in, geom, void_area, emit_debug)

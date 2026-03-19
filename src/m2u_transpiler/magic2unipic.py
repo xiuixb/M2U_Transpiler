@@ -15,13 +15,13 @@ project_root = current_dir
 sys.path.append(project_root)
 
 from src.core_symbol.symbolBase import *
-from src.core_symbol.rules import PreprocessRules, RouteRule
-
-from src.core_symbol.muti_flows.mclparser.parser_route import ParserRoute
+from src.core_symbol.rules import PreprocessRules
+from src.core_symbol.muti_flows.mclparser.m2u_parser_route import parse_route_cfg
+from src.core_symbol.muti_flows.mclparser.parser_classifier import ParserClassifier
 from src.core_symbol.muti_flows.mcl_preprocess import MCLPreprocess
-from src.core_symbol.muti_flows.mcl_allparser import MCLAllParser
-from src.m2u_transpiler.sys_config.route_config import Route_cfg
-from src.m2u_transpiler.sys_config.config import init_constants, alldebug
+from src.core_symbol.muti_flows.mclparser.mcl_allparser import MCLAllParser
+
+from src.config.m2u_const import init_constants, alldebug
 from src.core_cac.geom_cac import GeomCac
 from src.core_symbol.muti_flows.conv.mcl2mid_sTconv import MCL2MID_STConv
 from src.core_symbol.muti_flows.conv.mid_sTconv import MID_STConv
@@ -36,9 +36,9 @@ class MAGIC2UNIPIC:
                  input_file: str
                  ):
         self.input_file = input_file
-        self.parser_route = ParserRoute(config=Route_cfg)
+        self.parser_classifier = ParserClassifier(route_config=parse_route_cfg)
         self.preprocessor = MCLPreprocess(rules=PreprocessRules())
-        self.allparser = MCLAllParser(parser_route=self.parser_route)
+        self.allparser = MCLAllParser(parser_classifier=self.parser_classifier)
         self.input_file = input_file
         
         self.input_file_path = Path(input_file)
@@ -72,11 +72,15 @@ class MAGIC2UNIPIC:
 
         # --- Step 1 ---
         print("=====> Step 1: Preprocessing")
+        time_preprocess_start = time.time()
+        
         with open(input_file, "r") as f:
             input_str = f.read()
 
         lines = input_str.splitlines(keepends=False)
         pre_items = self.preprocessor.mcl_preprocess(lines)
+        
+        time_preprocess_end = time.time()
         
         with open(constants.pre_jsonl, "w", encoding="utf-8") as fj:
             for it in pre_items:
@@ -84,6 +88,8 @@ class MAGIC2UNIPIC:
 
         # --- Step 2 ---
         print("=====> Step 2: Parsing")
+        time_parse_start = time.time()
+        
         filtered_items = [
             it for it in pre_items
             if not (it.get("para", {}).get("ignore") == "yes")  # type: ignore
@@ -91,12 +97,15 @@ class MAGIC2UNIPIC:
 
         parsed_dicts = self.allparser.mclparser_in_memory(filtered_items)
         
+        time_parse_end = time.time()
+        
         with open(constants.parsed_json, "w", encoding="utf-8") as fp:
             json.dump(parsed_dicts, fp, ensure_ascii=False, indent=2)
 
 
         # --- Step 3 ---
         print("=====> Step 3: Converting to UNI")
+        time_conv_start = time.time()
         
         self.mcl2mid_conv.load_list(
             parsed_dicts=parsed_dicts, 
@@ -108,11 +117,10 @@ class MAGIC2UNIPIC:
             function_debug=alldebug.function_debug,
             port_debug=alldebug.port_debug,
             )
-        time_mcl2mid = time.time()
         self.mid_symbols = self.mcl2mid_conv.mcl2mid_sTconv()
 
         
-        time_mid_conv = time.time()
+        time_mcl2mid_end = time.time()
         self.mid_conv.load_data(self.mid_symbols)
         
         self.mid_symbols = self.mid_conv.mid_sTconv(
@@ -123,7 +131,7 @@ class MAGIC2UNIPIC:
 
         
         
-        time_mid2uni = time.time()
+        time_mid_conv_end = time.time()
         self.mid2uni_conv.load_data(self.mid_symbols)
         self.uni_symbols = self.mid2uni_conv.mid2uni_sTconv(
             symbols_file=str(constants.symbols_json),
@@ -139,6 +147,8 @@ class MAGIC2UNIPIC:
 
         # --- Step 4 ---
         print("=====> Step 4: Outputting files")
+        time_save_start = time.time()
+        
         self.mid2files.load_data(self.mid_symbols)
         self.mid2files.save_data_to_json(str(constants.mid_symbols_json))
         print(f"Mid symbols: {constants.mid_symbols_json}")
@@ -151,18 +161,32 @@ class MAGIC2UNIPIC:
         self.uni2infiles.write_all()
         print(f"Uni in files: {constants.infile_dir}")
 
-
+        time_save_end = time.time()
 
         # --- Done ---
         print("\n\n=================================")
         print("✅ Pipeline completed.")
         print(f"Preprocess: {constants.pre_jsonl}")
         print(f"Parse:      {constants.parsed_json}")
-        print(f"Total Time: {time.time() - start_time:.2f}s")
-        print(f"Preprocess time: {time_mcl2mid - start_time:.2f}s")
-        print(f"Parse time:      {time_mid_conv - time_mcl2mid:.2f}s")
-        print(f"Conv time:       {time_mid2uni - time_mid_conv:.2f}s")
-        print(f"Save time:       {time.time() - time_mid_conv:.2f}s")
+        # 计算各阶段时间
+        total_time = time.time() - start_time
+        preprocess_time = time_preprocess_end - time_preprocess_start
+        parse_time = time_parse_end - time_parse_start
+        conv_time = time_save_start - time_conv_start
+        save_time = time_save_end - time_save_start
+        
+        print(f"Total Time: {total_time:.2f}s")
+        print(f"Preprocess time: {preprocess_time:.2f}s")
+        print(f"Parse time:      {parse_time:.2f}s (包含LLM解析)")
+        print(f"Conv time:       {conv_time:.2f}s")
+        print(f"Save time:       {save_time:.2f}s")
+        
+        # 显示时间占比
+        print(f"\n时间占比:")
+        print(f"  预处理: {preprocess_time/total_time*100:.1f}%")
+        print(f"  解析:   {parse_time/total_time*100:.1f}%")
+        print(f"  转换:   {conv_time/total_time*100:.1f}%")
+        print(f"  保存:   {save_time/total_time*100:.1f}%")
 
         # --- Step 5 如果以后需要解析汇总展示 ---
         #self._print_parse_summary(parsed_dicts)

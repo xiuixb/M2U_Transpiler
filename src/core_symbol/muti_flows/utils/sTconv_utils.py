@@ -26,7 +26,7 @@ def convert_to_xy_pairs(points: Iterable[Tuple], nd: int = 10) -> List[Tuple[flo
             return v
         # 纯数，按 mm 解释
         if isinstance(v, (int, float)):
-            return v * ureg.millimeter
+            return v * ureg.mm
         # 其它（字符串/表达式），尝试 pint 解析
         return ureg.parse_expression(str(v))
 
@@ -36,8 +36,8 @@ def convert_to_xy_pairs(points: Iterable[Tuple], nd: int = 10) -> List[Tuple[flo
             raise TypeError(f"第 {i} 个点不是二元组：{pt!r}")
         qx = to_qty(pt[0])
         qy = to_qty(pt[1])
-        x_mm = round(qx.to(ureg.millimeter).magnitude, nd)
-        y_mm = round(qy.to(ureg.millimeter).magnitude, nd)
+        x_mm = round(qx.to(ureg.mm).magnitude, nd)
+        y_mm = round(qy.to(ureg.mm).magnitude, nd)
         out.append((x_mm, y_mm))
     return out
 
@@ -45,8 +45,8 @@ def substitute_variables(expr_str: str, symbol_table: Dict[str, Dict[str, Any]])
     def repl(m):
         v = m.group(1)
         if v in symbol_table:
-            info = symbol_table[v]
-            return f"({info['value']} * {info['unit']})"
+            info = symbol_table[v]["cac_result"]
+            return f"({info['var_num']} * {info['var_unit']})"
         return v
     return VAR_RE.sub(repl, expr_str)
 

@@ -239,6 +239,38 @@ class RouteRule:
         self.regex_rules = regex_rules
         self.llm_rules = llm_rules
         self.MULTIWORD_PREFIXES = MULTIWORD_PREFIXES
+        self.llm_fallback_enabled = False
+
+    @classmethod
+    def create_default_route(cls):
+        """创建默认的路由规则"""
+        # REGEX规则：简单命令用正则解析
+        regex_rules = RuleBucket.from_patterns(
+            exact=["ASSIGN", "POINT"],  # 简单的赋值和点定义
+            prefix=[],
+            regex=[]
+        )
+        
+        # LLM规则：复杂命令用LLM解析
+        llm_rules = RuleBucket.from_patterns(
+            exact=[
+                "EMISSION", "EMIT",  # 发射相关命令
+                "OBSERVE FIELD", "OBSERVE FIELD_POWER", "OBSERVE FIELD_INTEGRAL",  # 观测命令
+                "PORT",  # 端口命令
+                "FUNCTION",  # 函数定义
+                "CONDUCTOR", "INDUCTOR",  # 材料定义
+                "PRESET"  # 预设命令
+            ],
+            prefix=["OBSERVE"],  # 所有OBSERVE开头的命令
+            regex=[
+                r".*COMPLEX.*",  # 包含复杂表达式的命令
+                r".*\$.*",  # 包含变量引用的命令
+            ]
+        )
+        
+        multiword_prefixes = {"OBSERVE", "PORT", "EMISSION"}
+        
+        return cls(regex_rules, llm_rules, multiword_prefixes)
 
     def extract_command_key(self, command: str, text: str) -> str:
         """
@@ -261,6 +293,10 @@ class RouteRule:
         if self.llm_rules.match(key, text):
             return "LLM"
         return "PLY"
+    
+    def enable_llm_fallback(self, enable: bool = True):
+        """启用LLM作为PLY解析失败时的回退选项"""
+        self.llm_fallback_enabled = enable
     
 
 

@@ -1,0 +1,100 @@
+{"lineno": "1", "command": "ASSIGN", "text": "DZ  =  1 * MM  ;", "para": {"symbol_name": "DZ"}}
+{"lineno": "2", "command": "ASSIGN", "text": "DR  =  1 * MM  ;", "para": {"symbol_name": "DR"}}
+{"lineno": "3", "command": "ASSIGN", "text": "RF.FREQUENCY  =  9.9 * GHZ  ;", "para": {"symbol_name": "RF.FREQUENCY"}}
+{"lineno": "4", "command": "ASSIGN", "text": "RUNTIME  =  40 * nanosecond  ;", "para": {"symbol_name": "RUNTIME"}}
+{"lineno": "5", "command": "ASSIGN", "text": "TRISE  =  10 * nanosecond  ;", "para": {"symbol_name": "TRISE"}}
+{"lineno": "6", "command": "ASSIGN", "text": "TDELAY  =  0 * nanosecond  ;", "para": {"symbol_name": "TDELAY"}}
+{"lineno": "7", "command": "ASSIGN", "text": "VOLTAGE.MAX  =  590 * KILOVOLT  ;", "para": {"symbol_name": "VOLTAGE.MAX"}}
+{"lineno": "8", "command": "FUNCTION", "text": "FUNCTION RAMP1 ( T )  =  MAX ( 0  ,  MIN ( 1  ,  ( T - TDELAY ) / TRISE ) )  ;", "para": {"symbol_name": ")"}}
+{"lineno": "9", "command": "FUNCTION", "text": "FUNCTION FTEMPORAL ( T )  =  VOLTAGE.MAX * RAMP1 ( T )  ;", "para": {"symbol_name": ")"}}
+{"lineno": "10", "command": "ASSIGN", "text": "RCATHODE  =  200 * MM  ;", "para": {"symbol_name": "RCATHODE"}}
+{"lineno": "11", "command": "ASSIGN", "text": "RCATHODE1  =  62 * MM  ;", "para": {"symbol_name": "RCATHODE1"}}
+{"lineno": "12", "command": "ASSIGN", "text": "RCATHODE2  =  150 * MM  ;", "para": {"symbol_name": "RCATHODE2"}}
+{"lineno": "13", "command": "ASSIGN", "text": "RCATHODE3  =  170 * MM  ;", "para": {"symbol_name": "RCATHODE3"}}
+{"lineno": "14", "command": "ASSIGN", "text": "ZCATHODE  =  36 * MM  ;", "para": {"symbol_name": "ZCATHODE"}}
+{"lineno": "15", "command": "ASSIGN", "text": "ZCATHODE1  =  126 * MM  ;", "para": {"symbol_name": "ZCATHODE1"}}
+{"lineno": "16", "command": "ASSIGN", "text": "ZCATHODE2  =  106 * MM  ;", "para": {"symbol_name": "ZCATHODE2"}}
+{"lineno": "17", "command": "ASSIGN", "text": "RCATHODEH  =  32 * MM  ;", "para": {"symbol_name": "RCATHODEH"}}
+{"lineno": "18", "command": "ASSIGN", "text": "RCATHODEH1  =  31.25 * MM  ;", "para": {"symbol_name": "RCATHODEH1"}}
+{"lineno": "19", "command": "ASSIGN", "text": "ZCATHODEH  =  410 * MM  ;", "para": {"symbol_name": "ZCATHODEH"}}
+{"lineno": "20", "command": "ASSIGN", "text": "ZCATHODEH1  =  435 * MM  ;", "para": {"symbol_name": "ZCATHODEH1"}}
+{"lineno": "21", "command": "ASSIGN", "text": "ZCATHODEH2  =  438 * MM  ;", "para": {"symbol_name": "ZCATHODEH2"}}
+{"lineno": "22", "command": "AREA", "text": "AREA CATHODEBASE POLYGONAL 0 * m , 0 * m 0 * m , RCATHODE ZCATHODE1 , RCATHODE ZCATHODE1 , RCATHODE2 * zcathode2 , RCATHODE2 * zcathode2 , RCATHODE3 * zcathode , RCATHODE3 * zcathode , RCATHODE1 * zcathode1 , RCATHODE1 * zcathode1 , 0 * m 0 * m , 0 * m ;", "para": {"symbol_name": "CATHODEBASE"}}
+{"lineno": "23", "command": "AREA", "text": "AREA CATHODEHOLDER POLYGONAL ZCATHODE1 , RCATHODEH ZCATHODEH1 , RCATHODEH ZCATHODEH1 , RCATHODEH1 * zcathodeh , RCATHODEH1 * zcathodeh , 0 * m ZCATHODE1 , 0 * m ZCATHODE1 , RCATHODEH ;", "para": {"symbol_name": "CATHODEHOLDER"}}
+{"lineno": "24", "command": "AREA", "text": "AREA CATHODE POLYGONAL ZCATHODEH1 , RCATHODEH ZCATHODEH2 , RCATHODEH ZCATHODEH2 , RCATHODEH1 * zcathodeh1 , RCATHODEH1 * zcathodeh1 , RCATHODEH ;", "para": {"symbol_name": "CATHODE"}}
+{"lineno": "25", "command": "CONDUCTOR", "text": "CONDUCTOR CATHODEBASE  ;", "para": {"symbol_name": null}}
+{"lineno": "26", "command": "CONDUCTOR", "text": "CONDUCTOR CATHODEHOLDER  ;", "para": {"symbol_name": null}}
+{"lineno": "27", "command": "CONDUCTOR", "text": "CONDUCTOR CATHODE  ;", "para": {"symbol_name": null}}
+{"lineno": "28", "command": "ASSIGN", "text": "R_HEAD1  =  30.0 * MM  ;", "para": {"symbol_name": "R_HEAD1"}}
+{"lineno": "29", "command": "ASSIGN", "text": "ZQUADR1  =  ZCATHODE1 - R_HEAD1  ;", "para": {"symbol_name": "ZQUADR1"}}
+{"lineno": "30", "command": "ASSIGN", "text": "RQUADR1  =  RCATHODE - R_HEAD1  ;", "para": {"symbol_name": "RQUADR1"}}
+{"lineno": "31", "command": "AREA", "text": "AREA QUADR1 FILLET ZQUADR1 * rquadr1 ZCATHODE1 * rcathode R_HEAD1 0 * m 90 * m ;", "para": {"symbol_name": "QUADR1"}}
+{"lineno": "32", "command": "VOID", "text": "VOID QUADR1  ;", "para": {"symbol_name": null}}
+{"lineno": "33", "command": "ASSIGN", "text": "R_HEAD2  =  30.0 * MM  ;", "para": {"symbol_name": "R_HEAD2"}}
+{"lineno": "34", "command": "ASSIGN", "text": "ZQUADR2  =  ZCATHODE1 - R_HEAD1  ;", "para": {"symbol_name": "ZQUADR2"}}
+{"lineno": "35", "command": "ASSIGN", "text": "RQUADR2  =  RCATHODE1 - R_HEAD1  ;", "para": {"symbol_name": "RQUADR2"}}
+{"lineno": "36", "command": "AREA", "text": "AREA QUADR2 FILLET ZQUADR2 * rquadr2 ZCATHODE1 * rcathode1 R_HEAD2 0 * m 90 * m ;", "para": {"symbol_name": "QUADR2"}}
+{"lineno": "37", "command": "VOID", "text": "VOID QUADR2  ;", "para": {"symbol_name": null}}
+{"lineno": "38", "command": "ASSIGN", "text": "R_HEAD5  =  20.0 * MM  ;", "para": {"symbol_name": "R_HEAD5"}}
+{"lineno": "39", "command": "ASSIGN", "text": "ZQUADR5  =  ZCATHODE1 - R_HEAD5  ;", "para": {"symbol_name": "ZQUADR5"}}
+{"lineno": "40", "command": "ASSIGN", "text": "RQUADR5  =  RCATHODE2 + R_HEAD5  ;", "para": {"symbol_name": "RQUADR5"}}
+{"lineno": "41", "command": "AREA", "text": "AREA QUADR5 FILLET ZQUADR5 * rquadr5 ZCATHODE1 * rcathode2 R_HEAD5 270 * m 360 * m ;", "para": {"symbol_name": "QUADR5"}}
+{"lineno": "42", "command": "VOID", "text": "VOID QUADR5  ;", "para": {"symbol_name": null}}
+{"lineno": "43", "command": "ASSIGN", "text": "RDRIFT  =  35 * MM  ;", "para": {"symbol_name": "RDRIFT"}}
+{"lineno": "44", "command": "ASSIGN", "text": "ZEND  =  666 * MM  ;", "para": {"symbol_name": "ZEND"}}
+{"lineno": "45", "command": "ASSIGN", "text": "ZHEAD2  =  468 * MM  ;", "para": {"symbol_name": "ZHEAD2"}}
+{"lineno": "46", "command": "ASSIGN", "text": "ZHEAD2_1  =  478 * MM  ;", "para": {"symbol_name": "ZHEAD2_1"}}
+{"lineno": "47", "command": "ASSIGN", "text": "ZDIODE2  =  215 * MM  ;", "para": {"symbol_name": "ZDIODE2"}}
+{"lineno": "48", "command": "ASSIGN", "text": "ZDIODE21  =  250.5 * MM  ;", "para": {"symbol_name": "ZDIODE21"}}
+{"lineno": "49", "command": "ASSIGN", "text": "ZDIODE2_1  =  140 * MM  ;", "para": {"symbol_name": "ZDIODE2_1"}}
+{"lineno": "50", "command": "ASSIGN", "text": "RDIODEINX  =  110 * MM  ;", "para": {"symbol_name": "RDIODEINX"}}
+{"lineno": "51", "command": "ASSIGN", "text": "RDIODEOUT  =  325 * MM  ;", "para": {"symbol_name": "RDIODEOUT"}}
+{"lineno": "52", "command": "ASSIGN", "text": "RDIODEOUT2  =  330 * MM  ;", "para": {"symbol_name": "RDIODEOUT2"}}
+{"lineno": "53", "command": "ASSIGN", "text": "RCATHODEOUT2  =  61 * MM  ;", "para": {"symbol_name": "RCATHODEOUT2"}}
+{"lineno": "54", "command": "AREA", "text": "AREA HEAD1 POLYGONAL 0 * m , RDIODEOUT2 0 * m , RDIODEOUT ZDIODE2 * _1 , RDIODEOUT ZDIODE2 , RDIODEINX ZDIODE21 , RDIODEINX ZDIODE21 , RDIODEOUT2 0 * m , RDIODEOUT2 ;", "para": {"symbol_name": "HEAD1"}}
+{"lineno": "55", "command": "AREA", "text": "AREA CT POLYGONAL ZDIODE21 , RDIODEOUT2 * zdiode21 , RCATHODEOUT2 * zhead2_1 , RCATHODEOUT2 * zhead2_1 , RDIODEOUT2 * zdiode21 , RDIODEOUT2 ;", "para": {"symbol_name": "CT"}}
+{"lineno": "56", "command": "AREA", "text": "AREA HEAD2 POLYGONAL ZHEAD2 , RCATHODEOUT2 * zhead2 , RDRIFT ZHEAD2 * _1 , RDRIFT ZHEAD2 * _1 , RCATHODEOUT2 * zhead2 , RCATHODEOUT2 ;", "para": {"symbol_name": "HEAD2"}}
+{"lineno": "57", "command": "AREA", "text": "AREA COLLECTOR POLYGONAL ZHEAD2 * _1 , RDIODEOUT2 * zhead2_1 , RDRIFT ZEND , RDRIFT ZEND , RDIODEOUT2 * zhead2_1 , RDIODEOUT2 ;", "para": {"symbol_name": "COLLECTOR"}}
+{"lineno": "58", "command": "CONDUCTOR", "text": "CONDUCTOR HEAD1  ;", "para": {"symbol_name": null}}
+{"lineno": "59", "command": "CONDUCTOR", "text": "CONDUCTOR HEAD2  ;", "para": {"symbol_name": null}}
+{"lineno": "60", "command": "CONDUCTOR", "text": "CONDUCTOR CT  ;", "para": {"symbol_name": null}}
+{"lineno": "61", "command": "CONDUCTOR", "text": "CONDUCTOR COLLECTOR  ;", "para": {"symbol_name": null}}
+{"lineno": "62", "command": "ASSIGN", "text": "R_QUADR3  =  5.0 * MM  ;", "para": {"symbol_name": "R_QUADR3"}}
+{"lineno": "63", "command": "ASSIGN", "text": "ZQUADR3  =  ZDIODE21 + R_QUADR3  ;", "para": {"symbol_name": "ZQUADR3"}}
+{"lineno": "64", "command": "ASSIGN", "text": "RQUADR3  =  RCATHODEOUT2 + R_QUADR3  ;", "para": {"symbol_name": "RQUADR3"}}
+{"lineno": "65", "command": "AREA", "text": "AREA QUADR3 FILLET ZQUADR3 * rquadr3 ZDIODE21 * rcathodeout2 R_QUADR3 180 * m 270 * m ;", "para": {"symbol_name": "QUADR3"}}
+{"lineno": "66", "command": "VOID", "text": "VOID QUADR3  ;", "para": {"symbol_name": null}}
+{"lineno": "67", "command": "ASSIGN", "text": "R_QUADR4  =  5 * MM  ;", "para": {"symbol_name": "R_QUADR4"}}
+{"lineno": "68", "command": "ASSIGN", "text": "ZQUADR4  =  ZHEAD2 + R_QUADR4  ;", "para": {"symbol_name": "ZQUADR4"}}
+{"lineno": "69", "command": "ASSIGN", "text": "RQUADR4  =  RDRIFT + R_QUADR4  ;", "para": {"symbol_name": "RQUADR4"}}
+{"lineno": "70", "command": "AREA", "text": "AREA QUADR4 FILLET ZQUADR4 * rquadr4 ZHEAD2 * rdrift R_QUADR4 180 * m 270 * m ;", "para": {"symbol_name": "QUADR4"}}
+{"lineno": "71", "command": "VOID", "text": "VOID QUADR4  ;", "para": {"symbol_name": null}}
+{"lineno": "72", "command": "ASSIGN", "text": "B  =  0.65 * tesla  ;", "para": {"symbol_name": "B"}}
+{"lineno": "73", "command": "ASSIGN", "text": "BX  =  0.65 * tesla  ;", "para": {"symbol_name": "BX"}}
+{"lineno": "74", "command": "ASSIGN", "text": "FACTOR  =  B / BX  ;", "para": {"symbol_name": "FACTOR"}}
+{"lineno": "75", "command": "ASSIGN", "text": "ZSHIFT  =  220 * MM  ;", "para": {"symbol_name": "ZSHIFT"}}
+{"lineno": "76", "command": "PRESET", "text": "PRESET B1ST PANDIRA CC41.TXT  ;", "para": {"symbol_name": null}}
+{"lineno": "77", "command": "PRESET", "text": "PRESET B2ST PANDIRA CC41.TXT  ;", "para": {"symbol_name": null}}
+{"lineno": "78", "command": "ASSIGN", "text": "THRESHOLD_FIELD_F1  =  300  ;", "para": {"symbol_name": "THRESHOLD_FIELD_F1"}}
+{"lineno": "79", "command": "ASSIGN", "text": "THRESHOLD_FIELD1  =  THRESHOLD_FIELD_F1 * 1E5 * v / M  ;", "para": {"symbol_name": "THRESHOLD_FIELD1"}}
+{"lineno": "80", "command": "EMISSION EXPLOSIVE", "text": "EMISSION EXPLOSIVE SPECIES Q1ELECTRON ;", "para": {"symbol_name": null}}
+{"lineno": "81", "command": "EMIT", "text": "EMIT A1 CATHODE  ;", "para": {"symbol_name": null}}
+{"lineno": "82", "command": "LINE", "text": "LINE OUTLINE CONFORMAL ZEND , 0 * m ZEND , RDRIFT ;", "para": {"symbol_name": "OUTLINE"}}
+{"lineno": "83", "command": "PORT", "text": "PORT OUTLINE NEGATIVE ;", "para": {"symbol_name": null}}
+{"lineno": "84", "command": "FUNCTION", "text": "FUNCTION FX ( X )  =  X ** 2  ;", "para": {"symbol_name": ")"}}
+{"lineno": "85", "command": "ASSIGN", "text": "Z_ABSOB  =  ZEND - 50 * MM  ;", "para": {"symbol_name": "Z_ABSOB"}}
+{"lineno": "86", "command": "AREA", "text": "AREA ABSOB CONFORMAL Z_ABSOB , 0 * m ZEND , RDRIFT ;", "para": {"symbol_name": "ABSOB"}}
+{"lineno": "87", "command": "FREESPACE", "text": "FREESPACE ABSOB NEGATIVE X1 TRANSVERSE CONDUCTIVITY FX NO_TERMINATE_WITH_SHORT  ;", "para": {"symbol_name": null}}
+{"lineno": "88", "command": "LINE", "text": "LINE INLET CONFORMAL 0 * m , RCATHODE 0 * m , RDIODEOUT ;", "para": {"symbol_name": "INLET"}}
+{"lineno": "89", "command": "FUNCTION", "text": "FUNCTION GX1 ( Z  ,  R )  =  1 / R  ;", "para": {"symbol_name": ")"}}
+{"lineno": "90", "command": "FUNCTION", "text": "FUNCTION GX2 ( Z  ,  R )  =  0  ;", "para": {"symbol_name": ")"}}
+{"lineno": "91", "command": "PORT", "text": "PORT INLET POSITIVE INCOMING FTEMPORAL FUNCTION E2 GX1 E3 GX2 NORMALIZATION VOLTAGE INLET ;", "para": {"symbol_name": null}}
+{"lineno": "92", "command": "ASSIGN", "text": "TIMEFILTER  =  1. / RF.FREQUENCY * 10  ;", "para": {"symbol_name": "TIMEFILTER"}}
+{"lineno": "93", "command": "ASSIGN", "text": "ZINOBS  =  20 * MM  ;", "para": {"symbol_name": "ZINOBS"}}
+{"lineno": "94", "command": "LINE", "text": "LINE LINEIN CONFORMAL ZINOBS , RCATHODE ZINOBS , RDIODEOUT ;", "para": {"symbol_name": "LINEIN"}}
+{"lineno": "95", "command": "ASSIGN", "text": "ZT1  =  305 * MM  ;", "para": {"symbol_name": "ZT1"}}
+{"lineno": "96", "command": "ASSIGN", "text": "RD1  =  30 * MM  ;", "para": {"symbol_name": "RD1"}}
+{"lineno": "97", "command": "ASSIGN", "text": "RD2  =  90 * MM  ;", "para": {"symbol_name": "RD2"}}
+{"lineno": "98", "command": "LINE", "text": "LINE LINEIN1 CONFORMAL ZT1 , RD1 * zt1 , RD2 ;", "para": {"symbol_name": "LINEIN1"}}
+{"lineno": "99", "command": "OBSERVE FIELD_INTEGRAL", "text": "OBSERVE FIELD_INTEGRAL E.DL LINEIN1 ;", "para": {"symbol_name": null}}
+{"lineno": "100", "command": "OBSERVE EMITTED", "text": "OBSERVE EMITTED CATHODE Q1ELECTRON CURRENT ;", "para": {"symbol_name": null}}

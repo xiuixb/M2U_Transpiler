@@ -52,7 +52,7 @@ class RegexParser:
                         payload={},
                         parser_kind=self.name,
                         ok=False,
-                        errors=[f"No handler found for command '{command}'"],
+                        errors=f"No handler found for command '{command}'",
                         text=text,
                     )
        
@@ -66,7 +66,7 @@ class RegexParser:
                         payload=payload,
                         parser_kind=self.name,
                         ok=True,
-                        errors=[],
+                        errors="no",
                         text=text
                     )
         # ======================
@@ -78,7 +78,7 @@ class RegexParser:
                         payload={},
                         parser_kind=self.name,
                         ok=False,
-                        errors=[str(e)],
+                        errors=str(e),
                         text=text
                     )
 

@@ -23,17 +23,16 @@ class GeomUtils:
 
     def get_entities_from_list(self, entities_list):
         for name, entity in entities_list.items():
-            #print(f"entity:\n{entity}")
             pnts = entity['points']
             if "material" in entity:
                 material = entity["material"]
-                print("       Material:", material)
-                if material == "CONDUCTOR":
+                # print("       Material:", material)
+                if material == "PEC":
                     self.geom_conductor_entities.append(pnts)
                 elif material == "VOID":
                     self.geom_void_entities.append(pnts)
                 else:
-                    raise ValueError("不支持的材料类型")
+                    raise ValueError(f"不支持的材料类型:{material}")
             else:
                 self.geom_other_entities.append(pnts)
         return self.geom_conductor_entities, self.geom_void_entities
@@ -360,11 +359,11 @@ class GeomUtils:
             [(0.0, 0.0), (0.0, 12.3), (16.95, 12.3), (16.95, 0.0), (0.0, 0.0)]
         ]
         """
-        #print(f"conduct2void start:\n{entities_list}\n")
+        # print(f"conduct2void start:\n{entities_list}\n")
 
         conductor_contours, void_contours = self.get_entities_from_list(entities_list)
 
-        #print(f"conductor_contours:\n{conductor_contours}\n")
+        # print(f"[info] conductor_contours:\n{conductor_contours}\n")
         
         # 兜底：如果所有导体的最大 X 都 <= 0，直接忽略
         if not conductor_contours or max(max(p[0] for p in poly) for poly in conductor_contours) <= 0:

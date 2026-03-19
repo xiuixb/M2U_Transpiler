@@ -1,0 +1,568 @@
+{
+  "buildIn": [
+    {
+      "sys_type": "ini",
+      "unitScale": -3,
+      "backGround": "PEC",
+      "geomAlgoTol": "1.0e-12"
+    },
+    {
+      "sys_type": "xml",
+      "xml_name": "theGeomCtrl",
+      "xml_type": "GeomCtrl",
+      "content": [
+        [
+          {
+            "sys_type": "xml",
+            "xml_type": "GeomBuilder",
+            "xml_name": "vectorBuilder",
+            "content": [
+              {
+                "sys_type": "ini",
+                "nameid": "vectorBuilder",
+                "kind": "vector",
+                "name": "axis",
+                "type": "Dim",
+                "value": "[0.0 0.0 100.0]"
+              }
+            ]
+          },
+          {
+            "sys_type": "xml",
+            "xml_type": "GeomBuilder",
+            "xml_name": "polyBuilder",
+            "content": [
+              {
+                "sys_type": "ini",
+                "kind": "polygon",
+                "nameid": "polyBuilder",
+                "name": "voidarea",
+                "type": "polygon",
+                "material": "FREESPACE",
+                "pnts": "[0.0 8.8 29.0 0.0 8.8 34.0 0.0 14.8 34.0 0.0 14.8 42.7 0.0 8.8 42.7 0.0 8.8 57.0 0.0 14.8 57.0 0.0 14.8 65.7 0.0 8.8 65.7 0.0 8.8 69.2 0.0 9.6 69.2 0.0 9.6 69.8 0.0 8.8 70.3 0.0 8.8 70.6 0.0 9.6 71.1 0.0 9.6 71.7 0.0 8.8 72.2 0.0 8.8 72.5 0.0 9.6 73.0 0.0 9.6 73.6 0.0 8.8 74.1 0.0 8.8 74.4 0.0 9.6 74.9 0.0 9.6 75.5 0.0 8.8 76.0 0.0 8.8 76.3 0.0 9.6 76.8 0.0 9.6 77.4 0.0 8.8 77.9 0.0 8.8 78.2 0.0 9.6 78.7 0.0 9.6 79.3 0.0 8.8 79.8 0.0 8.8 80.1 0.0 9.6 80.6 0.0 9.6 81.2 0.0 8.8 81.7 0.0 8.8 82.0 0.0 9.6 82.5 0.0 9.6 83.1 0.0 8.8 83.6 0.0 8.8 83.9 0.0 9.6 84.4 0.0 9.6 85.0 0.0 8.8 85.5 0.0 8.8 85.8 0.0 9.6 86.3 0.0 9.6 86.9 0.0 8.8 86.9 0.0 8.8 88.4 0.0 12.2 88.4 0.0 12.2 89.7 0.0 8.7 89.7 0.0 8.7 121.7 0.0 0.0 121.7 0.0 0.0 13.0 0.0 7.6 13.0 0.0 7.6 16.95 0.0 7.6 17.0 0.0 7.8 17.0 0.0 7.8 16.95 0.0 7.8 13.0 0.0 7.8 0.0 0.0 17.8 0.0 0.0 17.8 22.0 0.0 8.8 29.0]"
+              }
+            ]
+          },
+          {
+            "sys_type": "xml",
+            "xml_type": "GeomBuilder",
+            "xml_name": "faceBuilder",
+            "content": [
+              {
+                "sys_type": "ini",
+                "nameid": "faceBuilder",
+                "kind": "face",
+                "name": "polyFace",
+                "wireName": "voidarea",
+                "isPlanar": 1
+              }
+            ]
+          },
+          {
+            "sys_type": "xml",
+            "xml_type": "GeomBuilder",
+            "xml_name": "revolutionBuilder",
+            "content": [
+              {
+                "sys_type": "ini",
+                "nameid": "revolutionBuilder",
+                "kind": "revolution",
+                "name": "revolModel",
+                "base": "polyFace",
+                "mask": 1,
+                "vector": "axis",
+                "material": "FREESPACE",
+                "type": "oneWay",
+                "angle": "360.0"
+              }
+            ]
+          },
+          {
+            "sys_type": "xml",
+            "xml_type": "GeomBuilder",
+            "xml_name": "selectionBuilder1",
+            "content": [
+              {
+                "sys_type": "ini",
+                "contextNodeName": "revolModel",
+                "kind": "subFaceSelection",
+                "mask": 2,
+                "name": "selection1",
+                "refPnt": "[0.0 12.8 0.0]",
+                "materialType": "INPUTMURPORT"
+              }
+            ]
+          },
+          {
+            "sys_type": "xml",
+            "xml_type": "GeomBuilder",
+            "xml_name": "selectionBuilder2",
+            "content": [
+              {
+                "sys_type": "ini",
+                "contextNodeName": "revolModel",
+                "kind": "subFaceSelection",
+                "mask": 3,
+                "name": "selection2",
+                "refPnt": "[0.0 4.35 121.7]",
+                "materialType": "OPENPORT"
+              }
+            ]
+          },
+          {
+            "sys_type": "xml",
+            "xml_type": "GeomBuilder",
+            "xml_name": "selectionBuilder3",
+            "content": [
+              {
+                "sys_type": "ini",
+                "contextNodeName": "revolModel",
+                "kind": "subFaceSelection",
+                "mask": 4,
+                "name": "selection3",
+                "refPnt": "[0.0 7.6 16.975]",
+                "materialType": "EMITTER"
+              }
+            ]
+          },
+          {
+            "sys_type": "xml",
+            "xml_type": "GeomBuilder",
+            "xml_name": "selectionBuilder4",
+            "content": [
+              {
+                "sys_type": "ini",
+                "contextNodeName": "revolModel",
+                "kind": "subFaceSelection",
+                "mask": 5,
+                "name": "selection4",
+                "refPnt": "[0.0 7.7 17.0]",
+                "materialType": "EMITTER"
+              }
+            ]
+          },
+          {
+            "sys_type": "xml",
+            "xml_type": "GeomBuilder",
+            "xml_name": "selectionBuilder5",
+            "content": [
+              {
+                "sys_type": "ini",
+                "contextNodeName": "revolModel",
+                "kind": "subFaceSelection",
+                "mask": 6,
+                "name": "selection5",
+                "refPnt": "[0.0 7.8 16.975]",
+                "materialType": "EMITTER"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "sys_type": "xml",
+      "xml_type": "GridCtrl",
+      "xml_name": "theGC",
+      "content": [
+        [
+          {
+            "sys_type": "ini",
+            "margin": 1,
+            "waveLength": 0.1,
+            "axis": "z",
+            "org": "[0.0000,0.0000,0.0000]",
+            "rDir": "y"
+          },
+          {
+            "sys_type": "xml",
+            "xml_type": "GridDefine",
+            "xml_name": "gd1",
+            "content": [
+              {
+                "sys_type": "ini",
+                "dir": "y",
+                "kind": "uniformGrid",
+                "waveResolutionRatio": 500
+              }
+            ]
+          },
+          {
+            "sys_type": "xml",
+            "xml_type": "GridDefine",
+            "xml_name": "gd2",
+            "content": [
+              {
+                "sys_type": "ini",
+                "dir": "z",
+                "kind": "uniformGrid",
+                "waveResolutionRatio": 500
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  ],
+  "FaceBndIn": [
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldSrc",
+      "xml_name": "MurVoltagePort",
+      "content": [
+        {
+          "sys_type": "ini",
+          "mask": 2,
+          "kind": "MurVoltagePort",
+          "fileName": "Default.h5"
+        },
+        {
+          "sys_type": "xml",
+          "xml_type": "Function",
+          "xml_name": "Vin",
+          "content": [
+            {
+              "sys_type": "ini",
+              "VOL_MAX": 460000.0,
+              "TRISE": 1e-09,
+              "TFALL": 5e-09,
+              "TSTAY": 6e-08,
+              "kind": "tFunc",
+              "result": "VOL_MAX*min(1,t/TRISE)*min(1,(TRISE+TSTAY+TFALL-t)/TFALL)"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "PtclSourcesIn": [
+    {
+      "sys_type": "xml",
+      "xml_type": "ParticleSource",
+      "xml_name": "Emitter",
+      "content": [
+        {
+          "sys_type": "xml",
+          "xml_type": "Emitter",
+          "xml_name": "Emitter",
+          "content": [
+            {
+              "sys_type": "ini",
+              "field_enhancement": 1.0,
+              "threshold": "2.3e+07",
+              "kind": "GaussEmitter",
+              "outPtcl": "Species",
+              "maskVector": "[4 5 6]",
+              "applyTimes": "[0.0 1e-05]"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "SpeciesIn": [
+    {
+      "sys_type": "xml",
+      "xml_type": "Species",
+      "xml_name": "Species",
+      "content": [
+        {
+          "sys_type": "ini",
+          "charge": "-1.6022e-19",
+          "mass": "9.109e-31",
+          "ptclCreationRate": 3.0,
+          "kind": "electron",
+          "name": "Species"
+        }
+      ]
+    }
+  ],
+  "PMLIn": [
+    {
+      "sys_type": "xml",
+      "xml_type": "PML",
+      "xml_name": "PMLSetting",
+      "content": [
+        {
+          "sys_type": "ini",
+          "key": 1,
+          "powerOrder": 3,
+          "alpha": 0.0,
+          "kappaMax": 40.0,
+          "sigmaRatio": 7.5
+        }
+      ]
+    }
+  ],
+  "StaticNodeFLdsIn": [
+    {
+      "sys_type": "xml",
+      "xml_type": "StaticNodeFLd",
+      "xml_name": "ZRExpressionModel",
+      "content": [
+        {
+          "sys_type": "ini",
+          "axis": 2,
+          "rDir": 1,
+          "rMax": "0.122",
+          "kind": "ZRExpressionModel",
+          "target": "mag",
+          "startCenter": "[0.0 0.0 0.0]"
+        },
+        {
+          "sys_type": "xml",
+          "xml_type": "Function",
+          "xml_name": "Bz",
+          "content": [
+            {
+              "sys_type": "ini",
+              "component": "0",
+              "kind": "zrFunc",
+              "B0": 1.2,
+              "ZA": 1.5,
+              "ZB": 124.7,
+              "result": "B0/(1+exp((z-ZB)/ZA))"
+            }
+          ]
+        },
+        {
+          "sys_type": "xml",
+          "xml_type": "Function",
+          "xml_name": "Br",
+          "content": [
+            {
+              "sys_type": "ini",
+              "component": "1",
+              "kind": "zrFunc",
+              "B0": 1.2,
+              "ZA": 1.5,
+              "ZB": 124.7,
+              "result": "B0/2/ZA*r*exp((z-ZB)/ZA)/((1+exp((z-ZB)/ZA))^2)"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "CircuitModelIn": [],
+  "GlobalSettingIn": [
+    {
+      "sys_type": "ini",
+      "FilterMask": "0",
+      "InterpolateType": "1",
+      "emAdvanceOrder": "1",
+      "ptclTrackNum": "1",
+      "threadnum": "2",
+      "CFLScale": "9.0e-01",
+      "LangdonMarderDivParam": "0.0",
+      "chiParam": "1.0",
+      "emDamping": "1.0e-01",
+      "parabolicDamping": "2.0e-01",
+      "simulationTime": "6e-08",
+      "EMSolver": "picMode",
+      "dynEMkind": "SI_SC_PHM_Matrix",
+      "emDumpSwitch": "ON",
+      "jDumpSwitch": "ON",
+      "materialLib": "D:\\UNIPIC\\Unipic2.5D_Training\\UNIPIC20240819\\bin\\pic\\MyRBWO\\Material\\material.xml",
+      "ptclDensityDumpSwitch": "OFF",
+      "ptclDumpSwitch": "ON",
+      "ptclTrackSwitch": "OFF",
+      "rhoDumpSwitch": "OFF",
+      "dumpStepVec": "[1.0e-09 ]",
+      "dumpTimeNode": "[1.0e-05 ]",
+      "ptclTrackProb": "[ ]",
+      "ptclTrackTypes": "[ ]"
+    }
+  ],
+  "FieldsDgnIn": [
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldsDgn",
+      "xml_name": "Dgn1",
+      "content": [
+        {
+          "sys_type": "ini",
+          "kind": "VoltageDgn",
+          "name": "Vin1",
+          "lineDir": "r",
+          "org": "[0.01 0.0078]",
+          "end": "[0.01 0.0178]"
+        }
+      ]
+    },
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldsDgn",
+      "xml_name": "Dgn2",
+      "content": [
+        {
+          "sys_type": "ini",
+          "kind": "PoyntingDgn",
+          "dir": "z",
+          "name": "Poutout1",
+          "lowerBounds": "[0.1217 0]",
+          "upperBounds": "[0.1217 0.0087]"
+        }
+      ]
+    },
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldsDgn",
+      "xml_name": "Dgn3",
+      "content": [
+        {
+          "sys_type": "ini",
+          "kind": "MagDgn",
+          "component": "dynamic",
+          "dir": "z",
+          "name": "Bz1",
+          "location": "[0.11 0.005]"
+        }
+      ]
+    },
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldsDgn",
+      "xml_name": "Dgn4",
+      "content": [
+        {
+          "sys_type": "ini",
+          "kind": "MagDgn",
+          "component": "dynamic",
+          "dir": "r",
+          "name": "Br1",
+          "location": "[0.11 0.005]"
+        }
+      ]
+    },
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldsDgn",
+      "xml_name": "Dgn5",
+      "content": [
+        {
+          "sys_type": "ini",
+          "kind": "MagDgn",
+          "component": "dynamic",
+          "dir": "phi",
+          "name": "Bphi1",
+          "location": "[0.11 0.005]"
+        }
+      ]
+    },
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldsDgn",
+      "xml_name": "Dgn6",
+      "content": [
+        {
+          "sys_type": "ini",
+          "kind": "ElecDgn",
+          "dir": "z",
+          "name": "Ez1",
+          "location": "[0.11 0.005]"
+        }
+      ]
+    },
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldsDgn",
+      "xml_name": "Dgn7",
+      "content": [
+        {
+          "sys_type": "ini",
+          "kind": "ElecDgn",
+          "dir": "r",
+          "name": "Er1",
+          "location": "[0.11 0.005]"
+        }
+      ]
+    },
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldsDgn",
+      "xml_name": "Dgn8",
+      "content": [
+        {
+          "sys_type": "ini",
+          "kind": "ElecDgn",
+          "dir": "phi",
+          "name": "Ephi1",
+          "location": "[0.11 0.005]"
+        }
+      ]
+    },
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldsDgn",
+      "xml_name": "Dgn9",
+      "content": [
+        {
+          "sys_type": "ini",
+          "kind": "MagDgn",
+          "component": "dynamic",
+          "dir": "phi",
+          "name": "Bphi2",
+          "location": "[0.0757 0.0066]"
+        }
+      ]
+    },
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldsDgn",
+      "xml_name": "Dgn10",
+      "content": [
+        {
+          "sys_type": "ini",
+          "kind": "MagDgn",
+          "component": "dynamic",
+          "dir": "r",
+          "name": "Br2",
+          "location": "[0.0757 0.0066]"
+        }
+      ]
+    },
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldsDgn",
+      "xml_name": "Dgn11",
+      "content": [
+        {
+          "sys_type": "ini",
+          "kind": "ElecDgn",
+          "dir": "z",
+          "name": "Ez2",
+          "location": "[0.0757 0.0066]"
+        }
+      ]
+    },
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldsDgn",
+      "xml_name": "Dgn12",
+      "content": [
+        {
+          "sys_type": "ini",
+          "kind": "ElecDgn",
+          "dir": "r",
+          "name": "Er2",
+          "location": "[0.0757 0.0066]"
+        }
+      ]
+    },
+    {
+      "sys_type": "xml",
+      "xml_type": "FieldsDgn",
+      "xml_name": "Dgn13",
+      "content": [
+        {
+          "sys_type": "ini",
+          "kind": "ElecDgn",
+          "dir": "phi",
+          "name": "Ephi2",
+          "location": "[0.0757 0.0066]"
+        }
+      ]
+    }
+  ]
+}

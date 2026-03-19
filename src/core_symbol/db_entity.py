@@ -470,8 +470,8 @@ class ChromaDBEntity(VectorDBEntity):
         # 创建"discussion_objects"集合（讨论对象）
         discussion_object_collection = self._get_or_create_collection("discussion_objects")
         
-        print(f"[INFO] ChromaDB initialized at {self.db_path}")
-        print(f"[INFO] Created collections: default, text_segments, discussion_objects")
+        print(f"[info] ChromaDB initialized at {self.db_path}")
+        print(f"[info] Created collections: default, text_segments, discussion_objects")
 
     # ---------------------- CRUD 操作 ---------------------- #
     
@@ -480,7 +480,7 @@ class ChromaDBEntity(VectorDBEntity):
         db = self._get_or_create_collection(collection_name)
         db.add_documents(docs, ids=ids)
         db.persist()
-        print(f"[INFO] Inserted {len(docs)} docs into collection '{collection_name}'")
+        print(f"[info] Inserted {len(docs)} docs into collection '{collection_name}'")
 
     def search_similar(
         self, query: str, top_k: int = 5, collection_name: str = "default"
@@ -518,7 +518,7 @@ class ChromaDBEntity(VectorDBEntity):
         db = self._get_or_create_collection(collection_name)
         db.delete(ids=ids)
         db.persist()
-        print(f"[INFO] Deleted {len(ids)} docs from '{collection_name}'")
+        print(f"[info] Deleted {len(ids)} docs from '{collection_name}'")
 
     def update_doc(
         self, id_: str, new_content: str, metadata: Optional[Dict[str, Any]] = None,
@@ -528,7 +528,7 @@ class ChromaDBEntity(VectorDBEntity):
         self.delete_docs([id_], collection_name)
         new_doc = Document(page_content=new_content, metadata=metadata or {})
         self.insert_docs([new_doc], [id_], collection_name)
-        print(f"[INFO] Updated doc {id_} in '{collection_name}'")
+        print(f"[info] Updated doc {id_} in '{collection_name}'")
 
     def _get_or_create_collection(self, collection_name: str = "default") -> Chroma:
         """获取或创建collection"""

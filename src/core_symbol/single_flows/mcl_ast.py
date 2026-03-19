@@ -121,14 +121,14 @@ class MaterialApplicationNode(ASTNode):
         self.geom_name = geom_name
         self.spec = spec
         self.lineno = lineno
-        print(f"[info] MaterialApplicationNode...{self.mtype}:{self.geom_name}")
+        # print(f"[info] MaterialApplicationNode...{self.mtype}:{self.geom_name}")
     
     def __repr__(self):
         #print("MaterialApplicationNode......\n")
         return f"[info] MaterialApplicationNode({self.mtype}:{self.geom_name})"
 
     def to_expression(self):
-        #print("MaterialApplicationNode......\n")
+        print(f"[info] MaterialApplicationNode...{self.mtype}:{self.geom_name}")
         if hasattr(self, 'spec') and self.spec:
             return f"'mtype': '{self.mtype}', 'geom_name': '{self.geom_name}', 'spec': '{self.spec[0]}'"
         return f"'mtype': '{self.mtype}', 'geom_name': '{self.geom_name}'"

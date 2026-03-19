@@ -1,0 +1,153 @@
+{"lineno": "1", "command": "ASSIGN", "text": "ON  =  1 ;", "para": {"symbol_name": "ON"}}
+{"lineno": "2", "command": "ASSIGN", "text": "OFF  =  0 ;", "para": {"symbol_name": "OFF"}}
+{"lineno": "3", "command": "ASSIGN", "text": "RUNTIME  =  60 * nanosecond ;", "para": {"symbol_name": "RUNTIME"}}
+{"lineno": "4", "command": "ASSIGN", "text": "DR  =  0.5 * mm ;", "para": {"symbol_name": "DR"}}
+{"lineno": "5", "command": "ASSIGN", "text": "DZ  =  0.5 * mm ;", "para": {"symbol_name": "DZ"}}
+{"lineno": "6", "command": "ASSIGN", "text": "DR1  =  0.2 * mm ;", "para": {"symbol_name": "DR1"}}
+{"lineno": "7", "command": "ASSIGN", "text": "DZ1  =  0.2 * mm ;", "para": {"symbol_name": "DZ1"}}
+{"lineno": "8", "command": "ASSIGN", "text": "DR2  =  0.1 * mm ;", "para": {"symbol_name": "DR2"}}
+{"lineno": "9", "command": "ASSIGN", "text": "DZ2  =  0.1 * mm ;", "para": {"symbol_name": "DZ2"}}
+{"lineno": "10", "command": "ASSIGN", "text": "DR3  =  0.05 * mm ;", "para": {"symbol_name": "DR3"}}
+{"lineno": "11", "command": "ASSIGN", "text": "DZ3  =  0.05 * mm ;", "para": {"symbol_name": "DZ3"}}
+{"lineno": "12", "command": "ASSIGN", "text": "R_CATH_OUT  =  7.8 * mm ;", "para": {"symbol_name": "R_CATH_OUT"}}
+{"lineno": "13", "command": "ASSIGN", "text": "R_CATH_IN  =  7.6 * mm ;", "para": {"symbol_name": "R_CATH_IN"}}
+{"lineno": "14", "command": "ASSIGN", "text": "Z_CATH_LEN  =  17.0 * mm ;", "para": {"symbol_name": "Z_CATH_LEN"}}
+{"lineno": "15", "command": "ASSIGN", "text": "Z_CATH_THI  =  13.0 * mm ;", "para": {"symbol_name": "Z_CATH_THI"}}
+{"lineno": "16", "command": "AREA", "text": "AREA CATHODEBASE CONFORMAL 0 * cm , 0 * cm Z_CATH_THI , R_CATH_OUT ;", "para": {"symbol_name": "CATHODEBASE"}}
+{"lineno": "17", "command": "AREA", "text": "AREA CATHODE CONFORMAL Z_CATH_THI , R_CATH_IN Z_CATH_LEN , R_CATH_OUT ;", "para": {"symbol_name": "CATHODE"}}
+{"lineno": "18", "command": "MARK", "text": "MARK CATHODEBASE X1 SIZE DZ ;", "para": {"symbol_name": null}}
+{"lineno": "19", "command": "MARK", "text": "MARK CATHODEBASE X2 SIZE DR ;", "para": {"symbol_name": null}}
+{"lineno": "20", "command": "MARK", "text": "MARK CATHODE X1 SIZE DZ ;", "para": {"symbol_name": null}}
+{"lineno": "21", "command": "MARK", "text": "MARK CATHODE X2 SIZE DR1 ;", "para": {"symbol_name": null}}
+{"lineno": "22", "command": "ASSIGN", "text": "R_ANODE_IN  =  17.8 * mm ;", "para": {"symbol_name": "R_ANODE_IN"}}
+{"lineno": "23", "command": "ASSIGN", "text": "R_ANODE_OUT  =  20.0 * mm ;", "para": {"symbol_name": "R_ANODE_OUT"}}
+{"lineno": "24", "command": "ASSIGN", "text": "Z_AK_LEN  =  5.0 * mm ;", "para": {"symbol_name": "Z_AK_LEN"}}
+{"lineno": "25", "command": "ASSIGN", "text": "Z_BEVEL  =  7.0 * mm ;", "para": {"symbol_name": "Z_BEVEL"}}
+{"lineno": "26", "command": "ASSIGN", "text": "R_DRIFT  =  8.8 * mm ;", "para": {"symbol_name": "R_DRIFT"}}
+{"lineno": "27", "command": "ASSIGN", "text": "Z_DRIFT  =  5.0 * mm ;", "para": {"symbol_name": "Z_DRIFT"}}
+{"lineno": "28", "command": "ASSIGN", "text": "Z_RR  =  8.7 * mm ;", "para": {"symbol_name": "Z_RR"}}
+{"lineno": "29", "command": "ASSIGN", "text": "R_RR  =  14.8 * mm ;", "para": {"symbol_name": "R_RR"}}
+{"lineno": "30", "command": "ASSIGN", "text": "Z_INTERVAL  =  14.3 * mm ;", "para": {"symbol_name": "Z_INTERVAL"}}
+{"lineno": "31", "command": "ASSIGN", "text": "Z_LBRS  =  3.5 * mm ;", "para": {"symbol_name": "Z_LBRS"}}
+{"lineno": "32", "command": "ASSIGN", "text": "Z_ANODE_RR  =  Z_CATH_LEN + Z_AK_LEN + Z_BEVEL + Z_DRIFT + Z_RR + Z_INTERVAL + Z_RR + Z_LBRS ;", "para": {"symbol_name": "Z_ANODE_RR"}}
+{"lineno": "33", "command": "ASSIGN", "text": "ZH1  =  Z_CATH_LEN + Z_AK_LEN ;", "para": {"symbol_name": "ZH1"}}
+{"lineno": "34", "command": "ASSIGN", "text": "ZH2  =  ZH1 + Z_BEVEL ;", "para": {"symbol_name": "ZH2"}}
+{"lineno": "35", "command": "ASSIGN", "text": "ZH3  =  ZH2 + Z_DRIFT ;", "para": {"symbol_name": "ZH3"}}
+{"lineno": "36", "command": "ASSIGN", "text": "ZH4  =  ZH3 + Z_RR ;", "para": {"symbol_name": "ZH4"}}
+{"lineno": "37", "command": "ASSIGN", "text": "ZH5  =  ZH4 + Z_INTERVAL ;", "para": {"symbol_name": "ZH5"}}
+{"lineno": "38", "command": "ASSIGN", "text": "ZH6  =  ZH5 + Z_RR ;", "para": {"symbol_name": "ZH6"}}
+{"lineno": "39", "command": "AREA", "text": "AREA HEAD POLYGONAL 0 * cm , R_ANODE_IN ZH1 , R_ANODE_IN ZH2 , R_DRIFT ZH3 , R_DRIFT ZH3 , R_RR ZH4 , R_RR ZH4 , R_DRIFT ZH5 , R_DRIFT ZH5 , R_RR ZH6 , R_RR ZH6 , R_DRIFT Z_ANODE_RR , R_DRIFT Z_ANODE_RR , R_ANODE_OUT 0 * cm , R_ANODE_OUT 0 * cm , R_ANODE_IN ;", "para": {"symbol_name": "HEAD"}}
+{"lineno": "40", "command": "MARK", "text": "MARK HEAD X1 SIZE DZ ;", "para": {"symbol_name": null}}
+{"lineno": "41", "command": "MARK", "text": "MARK HEAD X2 SIZE DR1 ;", "para": {"symbol_name": null}}
+{"lineno": "42", "command": "ASSIGN", "text": "R_DEVI  =  14.6 * mm ;", "para": {"symbol_name": "R_DEVI"}}
+{"lineno": "43", "command": "ASSIGN", "text": "ZP1  =  0.6 * mm ;", "para": {"symbol_name": "ZP1"}}
+{"lineno": "44", "command": "ASSIGN", "text": "ZP2  =  0.5 * mm ;", "para": {"symbol_name": "ZP2"}}
+{"lineno": "45", "command": "ASSIGN", "text": "ZP3  =  0.3 * mm ;", "para": {"symbol_name": "ZP3"}}
+{"lineno": "46", "command": "ASSIGN", "text": "ZP4  =  0.5 * mm ;", "para": {"symbol_name": "ZP4"}}
+{"lineno": "47", "command": "ASSIGN", "text": "ZP5  =  1.5 * mm ;", "para": {"symbol_name": "ZP5"}}
+{"lineno": "48", "command": "ASSIGN", "text": "RSD  =  0.8 * mm ;", "para": {"symbol_name": "RSD"}}
+{"lineno": "49", "command": "ASSIGN", "text": "RSB  =  R_DRIFT + RSD ;", "para": {"symbol_name": "RSB"}}
+{"lineno": "50", "command": "ASSIGN", "text": "RSS  =  R_DRIFT ;", "para": {"symbol_name": "RSS"}}
+{"lineno": "51", "command": "ASSIGN", "text": "Z_EXTRACT  =  1.3 * mm ;", "para": {"symbol_name": "Z_EXTRACT"}}
+{"lineno": "52", "command": "ASSIGN", "text": "R_EXTRACT  =  12.2 * mm ;", "para": {"symbol_name": "R_EXTRACT"}}
+{"lineno": "53", "command": "ASSIGN", "text": "ZS1  =  Z_ANODE_RR + ZP1 ;", "para": {"symbol_name": "ZS1"}}
+{"lineno": "54", "command": "ASSIGN", "text": "ZS2  =  ZS1 +ZP2 ;", "para": {"symbol_name": "ZS2"}}
+{"lineno": "55", "command": "ASSIGN", "text": "ZS3  =  ZS2 +ZP3 ;", "para": {"symbol_name": "ZS3"}}
+{"lineno": "56", "command": "ASSIGN", "text": "ZS4  =  ZS3 +ZP4 ;", "para": {"symbol_name": "ZS4"}}
+{"lineno": "57", "command": "ASSIGN", "text": "ZS5  =  ZS4 +ZP1 ;", "para": {"symbol_name": "ZS5"}}
+{"lineno": "58", "command": "ASSIGN", "text": "ZS6  =  ZS5 +ZP2 ;", "para": {"symbol_name": "ZS6"}}
+{"lineno": "59", "command": "ASSIGN", "text": "ZS7  =  ZS6 +ZP3 ;", "para": {"symbol_name": "ZS7"}}
+{"lineno": "60", "command": "ASSIGN", "text": "ZS8  =  ZS7 +ZP4 ;", "para": {"symbol_name": "ZS8"}}
+{"lineno": "61", "command": "ASSIGN", "text": "ZS9  =  ZS8 +ZP1 ;", "para": {"symbol_name": "ZS9"}}
+{"lineno": "62", "command": "ASSIGN", "text": "ZS10  =  ZS9 +ZP2 ;", "para": {"symbol_name": "ZS10"}}
+{"lineno": "63", "command": "ASSIGN", "text": "ZS11  =  ZS10 +ZP3 ;", "para": {"symbol_name": "ZS11"}}
+{"lineno": "64", "command": "ASSIGN", "text": "ZS12  =  ZS11 +ZP4 ;", "para": {"symbol_name": "ZS12"}}
+{"lineno": "65", "command": "ASSIGN", "text": "ZS13  =  ZS12 +ZP1 ;", "para": {"symbol_name": "ZS13"}}
+{"lineno": "66", "command": "ASSIGN", "text": "ZS14  =  ZS13 +ZP2 ;", "para": {"symbol_name": "ZS14"}}
+{"lineno": "67", "command": "ASSIGN", "text": "ZS15  =  ZS14 +ZP3 ;", "para": {"symbol_name": "ZS15"}}
+{"lineno": "68", "command": "ASSIGN", "text": "ZS16  =  ZS15 +ZP4 ;", "para": {"symbol_name": "ZS16"}}
+{"lineno": "69", "command": "ASSIGN", "text": "ZS17  =  ZS16 +ZP1 ;", "para": {"symbol_name": "ZS17"}}
+{"lineno": "70", "command": "ASSIGN", "text": "ZS18  =  ZS17 +ZP2 ;", "para": {"symbol_name": "ZS18"}}
+{"lineno": "71", "command": "ASSIGN", "text": "ZS19  =  ZS18 +ZP3 ;", "para": {"symbol_name": "ZS19"}}
+{"lineno": "72", "command": "ASSIGN", "text": "ZS20  =  ZS19 +ZP4 ;", "para": {"symbol_name": "ZS20"}}
+{"lineno": "73", "command": "ASSIGN", "text": "ZS21  =  ZS20 +ZP1 ;", "para": {"symbol_name": "ZS21"}}
+{"lineno": "74", "command": "ASSIGN", "text": "ZS22  =  ZS21 +ZP2 ;", "para": {"symbol_name": "ZS22"}}
+{"lineno": "75", "command": "ASSIGN", "text": "ZS23  =  ZS22 +ZP3 ;", "para": {"symbol_name": "ZS23"}}
+{"lineno": "76", "command": "ASSIGN", "text": "ZS24  =  ZS23 +ZP4 ;", "para": {"symbol_name": "ZS24"}}
+{"lineno": "77", "command": "ASSIGN", "text": "ZS25  =  ZS24 +ZP1 ;", "para": {"symbol_name": "ZS25"}}
+{"lineno": "78", "command": "ASSIGN", "text": "ZS26  =  ZS25 +ZP2 ;", "para": {"symbol_name": "ZS26"}}
+{"lineno": "79", "command": "ASSIGN", "text": "ZS27  =  ZS26 +ZP3 ;", "para": {"symbol_name": "ZS27"}}
+{"lineno": "80", "command": "ASSIGN", "text": "ZS28  =  ZS27 +ZP4 ;", "para": {"symbol_name": "ZS28"}}
+{"lineno": "81", "command": "ASSIGN", "text": "ZS29  =  ZS28 +ZP1 ;", "para": {"symbol_name": "ZS29"}}
+{"lineno": "82", "command": "ASSIGN", "text": "ZS30  =  ZS29 +ZP2 ;", "para": {"symbol_name": "ZS30"}}
+{"lineno": "83", "command": "ASSIGN", "text": "ZS31  =  ZS30 +ZP3 ;", "para": {"symbol_name": "ZS31"}}
+{"lineno": "84", "command": "ASSIGN", "text": "ZS32  =  ZS31 +ZP4 ;", "para": {"symbol_name": "ZS32"}}
+{"lineno": "85", "command": "ASSIGN", "text": "ZS33  =  ZS32 +ZP1 ;", "para": {"symbol_name": "ZS33"}}
+{"lineno": "86", "command": "ASSIGN", "text": "ZS34  =  ZS33 +ZP2 ;", "para": {"symbol_name": "ZS34"}}
+{"lineno": "87", "command": "ASSIGN", "text": "ZS35  =  ZS34 +ZP3 ;", "para": {"symbol_name": "ZS35"}}
+{"lineno": "88", "command": "ASSIGN", "text": "ZS36  =  ZS35 +ZP4 ;", "para": {"symbol_name": "ZS36"}}
+{"lineno": "89", "command": "ASSIGN", "text": "ZS37  =  ZS36 +ZP1 ;", "para": {"symbol_name": "ZS37"}}
+{"lineno": "90", "command": "ASSIGN", "text": "ZS38  =  ZS37 +ZP5 ;", "para": {"symbol_name": "ZS38"}}
+{"lineno": "91", "command": "ASSIGN", "text": "Z_SWS_END  =  ZS38 +Z_EXTRACT ;", "para": {"symbol_name": "Z_SWS_END"}}
+{"lineno": "92", "command": "AREA", "text": "AREA SWS POLYGONAL Z_ANODE_RR , RSB ZS1 , RSB ZS2 , RSS ZS3 , RSS ZS4 , RSB ZS5 , RSB ZS6 , RSS ZS7 , RSS ZS8 , RSB ZS9 , RSB ZS10 , RSS ZS11 , RSS ZS12 , RSB ZS13 , RSB ZS14 , RSS ZS15 , RSS ZS16 , RSB ZS17 , RSB ZS18 , RSS ZS19 , RSS ZS20 , RSB ZS21 , RSB ZS22 , RSS ZS23 , RSS ZS24 , RSB ZS25 , RSB ZS26 , RSS ZS27 , RSS ZS28 , RSB ZS29 , RSB ZS30 , RSS ZS31 , RSS ZS32 , RSB ZS33 , RSB ZS34 , RSS ZS35 , RSS ZS36 , RSB ZS37 , RSB ZS37 , RSS ZS38 , RSS ZS38 , R_EXTRACT Z_SWS_END , R_EXTRACT Z_SWS_END , R_DEVI Z_ANODE_RR , R_DEVI Z_ANODE_RR , RSB ;", "para": {"symbol_name": "SWS"}}
+{"lineno": "93", "command": "MARK", "text": "MARK SWS X1 SIZE DZ1 ;", "para": {"symbol_name": null}}
+{"lineno": "94", "command": "MARK", "text": "MARK SWS X2 SIZE DR1 ;", "para": {"symbol_name": null}}
+{"lineno": "95", "command": "ASSIGN", "text": "R_COLLECT  =  8.7 * mm ;", "para": {"symbol_name": "R_COLLECT"}}
+{"lineno": "96", "command": "ASSIGN", "text": "Z_COLLECT  =  32.0 * mm ;", "para": {"symbol_name": "Z_COLLECT"}}
+{"lineno": "97", "command": "ASSIGN", "text": "ZC1  =  Z_SWS_END + Z_COLLECT ;", "para": {"symbol_name": "ZC1"}}
+{"lineno": "98", "command": "AREA", "text": "AREA COLLECT CONFORMAL Z_SWS_END , R_COLLECT ZC1 , R_DEVI ;", "para": {"symbol_name": "COLLECT"}}
+{"lineno": "99", "command": "MARK", "text": "MARK COLLECT X1 SIZE DZ ;", "para": {"symbol_name": null}}
+{"lineno": "100", "command": "MARK", "text": "MARK COLLECT X2 SIZE DR ;", "para": {"symbol_name": null}}
+{"lineno": "101", "command": "CONDUCTOR", "text": "CONDUCTOR CATHODEBASE ;", "para": {"symbol_name": null}}
+{"lineno": "102", "command": "CONDUCTOR", "text": "CONDUCTOR CATHODE ;", "para": {"symbol_name": null}}
+{"lineno": "103", "command": "CONDUCTOR", "text": "CONDUCTOR HEAD ;", "para": {"symbol_name": null}}
+{"lineno": "104", "command": "CONDUCTOR", "text": "CONDUCTOR SWS ;", "para": {"symbol_name": null}}
+{"lineno": "105", "command": "CONDUCTOR", "text": "CONDUCTOR COLLECT ;", "para": {"symbol_name": null}}
+{"lineno": "106", "command": "ASSIGN", "text": "VOL.MAX  =  460 * kilovolt ;", "para": {"symbol_name": "VOL.MAX"}}
+{"lineno": "107", "command": "ASSIGN", "text": "TRISE  =  1 * nanosecond ;", "para": {"symbol_name": "TRISE"}}
+{"lineno": "108", "command": "ASSIGN", "text": "TFALL  =  5 * nanosecond ;", "para": {"symbol_name": "TFALL"}}
+{"lineno": "109", "command": "ASSIGN", "text": "TSTAY  =  60 * nanosecond ;", "para": {"symbol_name": "TSTAY"}}
+{"lineno": "110", "command": "FUNCTION", "text": "FUNCTION RAMP1 ( T )   =  MIN ( 1 , T / TRISE )  ;", "para": {"symbol_name": ")"}}
+{"lineno": "111", "command": "FUNCTION", "text": "FUNCTION FTEMPORAL ( T )   =  VOL.MAX  *  MIN ( 1 , T / TRISE )   *  MIN ( 1 ,  ( TRISE  +  TSTAY  +  TFALL  -  T )  / TFALL )  ;", "para": {"symbol_name": ")"}}
+{"lineno": "112", "command": "LINE", "text": "LINE INLET STRAIGHT 0 * cm , R_CATH_OUT 0 * m , R_ANODE_IN ;", "para": {"symbol_name": "INLET"}}
+{"lineno": "113", "command": "FUNCTION", "text": "FUNCTION GX1 ( Z , R )   =  1 / R ;", "para": {"symbol_name": ")"}}
+{"lineno": "114", "command": "FUNCTION", "text": "FUNCTION GX2 ( Z , R )   =  0 ;", "para": {"symbol_name": ")"}}
+{"lineno": "115", "command": "PORT", "text": "PORT INLET POSITIVE INCOMING FTEMPORAL FUNCTION E2 GX1 E3 GX2 NORMALIZATION VOLTAGE INLET ;", "para": {"symbol_name": null}}
+{"lineno": "116", "command": "LINE", "text": "LINE OUTPORTA STRAIGHT ZC1 , 0 * cm ZC1 , R_COLLECT ;", "para": {"symbol_name": "OUTPORTA"}}
+{"lineno": "117", "command": "PORT", "text": "PORT OUTPORTA NEGATIVE ;", "para": {"symbol_name": null}}
+{"lineno": "118", "command": "ASSIGN", "text": "ZI  =  0 * mm ;", "para": {"symbol_name": "ZI"}}
+{"lineno": "119", "command": "ASSIGN", "text": "ZF  =  Z_CATH_LEN - 0.1  *  DZ ;", "para": {"symbol_name": "ZF"}}
+{"lineno": "120", "command": "ASSIGN", "text": "RI  =  0 * mm ;", "para": {"symbol_name": "RI"}}
+{"lineno": "121", "command": "ASSIGN", "text": "RF  =  R_CATH_OUT + DR ;", "para": {"symbol_name": "RF"}}
+{"lineno": "122", "command": "AREA", "text": "AREA NO_EMISSION CONFORMAL ZI , RI ZF , RF ;", "para": {"symbol_name": "NO_EMISSION"}}
+{"lineno": "123", "command": "EMISSION EXPLOSIVE", "text": "EMISSION EXPLOSIVE NUMBER 10 ;", "para": {"symbol_name": null}}
+{"lineno": "124", "command": "EMIT", "text": "EMIT EXPLOSIVE CATHODE EXCLUDE NO_EMISSION ;", "para": {"symbol_name": null}}
+{"lineno": "125", "command": "ASSIGN", "text": "B0  =  1.2 * tesla ;", "para": {"symbol_name": "B0"}}
+{"lineno": "126", "command": "ASSIGN", "text": "ZA  =  1.5 * cm ;", "para": {"symbol_name": "ZA"}}
+{"lineno": "127", "command": "ASSIGN", "text": "ZB  =  Z_SWS_END + 3.5 * cm ;", "para": {"symbol_name": "ZB"}}
+{"lineno": "128", "command": "FUNCTION", "text": "FUNCTION BZ ( Z , R )   =  B0 /  ( 1 + EXP (  ( Z - ZB )  / ZA )  )  ;", "para": {"symbol_name": ")"}}
+{"lineno": "129", "command": "FUNCTION", "text": "FUNCTION BR ( Z , R )   =  B0 / 2 / ZA * R * EXP (  ( Z - ZB )  / ZA )  /  (  ( 1 + EXP (  ( Z - ZB )  / ZA )  )  ** 2 )  ;", "para": {"symbol_name": ")"}}
+{"lineno": "130", "command": "PRESET", "text": "PRESET B1ST FUNCTION BZ ;", "para": {"symbol_name": null}}
+{"lineno": "131", "command": "PRESET", "text": "PRESET B2ST FUNCTION BR ;", "para": {"symbol_name": null}}
+{"lineno": "132", "command": "ASSIGN", "text": "Z_OBS_1  =  1.8 * cm ;", "para": {"symbol_name": "Z_OBS_1"}}
+{"lineno": "133", "command": "ASSIGN", "text": "ZI  =  ZH6 + 1.0 * cm ;", "para": {"symbol_name": "ZI"}}
+{"lineno": "134", "command": "ASSIGN", "text": "ZOUT  =  9.5 * cm ;", "para": {"symbol_name": "ZOUT"}}
+{"lineno": "135", "command": "POINT", "text": "POINT OBS1 ZI , 0.66 * cm ;", "para": {"symbol_name": "OBS1"}}
+{"lineno": "136", "command": "POINT", "text": "POINT OBS2 ZI , 0.76 * cm ;", "para": {"symbol_name": "OBS2"}}
+{"lineno": "137", "command": "POINT", "text": "POINT OUT1 ZOUT , 0.66 * cm ;", "para": {"symbol_name": "OUT1"}}
+{"lineno": "138", "command": "POINT", "text": "POINT OUT2 ZOUT , 0.76 * cm ;", "para": {"symbol_name": "OUT2"}}
+{"lineno": "139", "command": "OBSERVE FIELD_INTEGRAL", "text": "OBSERVE FIELD_INTEGRAL E.DL INLET ;", "para": {"symbol_name": null}}
+{"lineno": "140", "command": "OBSERVE FIELD_POWER", "text": "OBSERVE FIELD_POWER S.DA OUTPORTA ;", "para": {"symbol_name": null}}
+{"lineno": "141", "command": "POINT", "text": "POINT OBSEB1 110 * mm , 5 * mm ;", "para": {"symbol_name": "OBSEB1"}}
+{"lineno": "142", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD B1 OBSEB1 ;", "para": {"symbol_name": null}}
+{"lineno": "143", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD B2 OBSEB1 ;", "para": {"symbol_name": null}}
+{"lineno": "144", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD B3 OBSEB1 ;", "para": {"symbol_name": null}}
+{"lineno": "145", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD E1 OBSEB1 ;", "para": {"symbol_name": null}}
+{"lineno": "146", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD E2 OBSEB1 ;", "para": {"symbol_name": null}}
+{"lineno": "147", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD E3 OBSEB1 ;", "para": {"symbol_name": null}}
+{"lineno": "148", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD B3 OBS1 ;", "para": {"symbol_name": null}}
+{"lineno": "149", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD B2 OBS1 ;", "para": {"symbol_name": null}}
+{"lineno": "150", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD E1 OBS1 ;", "para": {"symbol_name": null}}
+{"lineno": "151", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD E2 OBS1 ;", "para": {"symbol_name": null}}
+{"lineno": "152", "command": "OBSERVE FIELD", "text": "OBSERVE FIELD E3 OBS1 ;", "para": {"symbol_name": null}}
+{"lineno": "153", "command": "ASSIGN", "text": "DD0  =  0 * mm  ;", "para": {"symbol_name": "DD0"}}
