@@ -418,7 +418,7 @@ class MCLPreprocess:
 
 
     # ======================================================
-    # 总入口：三阶段流水线
+    # 总入口：五阶段流水线
     # ======================================================
     def mcl_preprocess(self, input_lines: List[str]) -> List[Dict[str, str]]:
         s1 = self.collect_raw_commands(input_lines)

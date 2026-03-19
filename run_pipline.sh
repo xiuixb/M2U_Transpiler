@@ -3,10 +3,10 @@
 # 设置输入和输出文件路径
 
 # data\BWO\BWO.m2d
-M2D_FILE1="D:\AAA_PIC\Parser\M2U_Transpiler\data\BWO\BWO.m2d"
+M2D_FILE="D:\AAA_PIC\Parser\M2U_Transpiler\data\BWO\BWO.m2d"
 
 # data\MILO_new\milo_new.m2d
-M2D_FILE="D:\AAA_PIC\Parser\M2U_Transpiler\data\MILO_new\milo_new.m2d"
+M2D_FILE2="D:\AAA_PIC\Parser\M2U_Transpiler\data\MILO_new\milo_new.m2d"
 
 # data\Mitl\Mitl.m2d
 M2D_FILE3="D:\AAA_PIC\Parser\M2U_Transpiler\data\Mitl\Mitl.m2d"
@@ -22,7 +22,7 @@ M2D_FILE6="D:\AAA_PIC\Parser\M2U_Transpiler\data\XCT_PB\XCT_PB_3.m2d"
 
 start_time=$(date '+%Y-%m-%d %H:%M:%S.%3N')
 
-python src/m2u_transpiler/magic2unipic.py "$M2D_FILE"
+python src/m2u_transpiler/magic2unipic.py -I "$M2D_FILE"
 
 end_time=$(date '+%Y-%m-%d %H:%M:%S.%3N')
 
