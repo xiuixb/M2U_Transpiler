@@ -1,0 +1,273 @@
+import os
+import sys
+import time
+import argparse
+import json
+from pathlib import Path
+
+# 获取项目根目录路径
+current_dir = os.path.dirname(os.path.abspath(__file__))
+while not os.path.exists(os.path.join(current_dir, ".project_mark")):
+    parent_dir = os.path.dirname(current_dir)
+    if    parent_dir != current_dir: current_dir = parent_dir
+    else: raise FileNotFoundError("未找到项目根目录，检查.project_mark文件")
+project_root = current_dir
+sys.path.append(project_root)
+
+from src.domain.config.symbolBase import *
+
+from src.domain.config.cmd_dic import PreprocessCmd
+from src.domain.core.m2u_parser_route import parse_route_cfg
+from src.domain.mclparse.parser_classifier import ParserClassifier
+
+from src.domain.mclparse.mcl_llmpreprocess import MCLPreprocess
+from src.domain.mclparse.mcl_parseflow import MCLParseFlow
+
+from src.domain.config.m2u_convconst import init_constants, alldebug
+from src.domain.core.geom_cac import GeomCac
+
+from src.domain.core.dependency_retriever import DependencyRetriever
+from src.domain.mclconv.mcl2midsT_conv import MCL2MID_STConv
+from src.domain.mclconv.mid_sTconv import MID_STConv
+from src.domain.unigenerate.mid2uni_sTconv import MID2UNI_STConv
+from src.domain.unigenerate.uni2Files import Uni2Files
+from src.domain.core.mid2Files import Mid2Files
+from src.domain.unigenerate.uni2inFiles import Uni2InFiles
+
+
+class MAGIC2UNIPIC:
+    def __init__(self,
+                 input_file: str
+                 ):
+        self.input_file = input_file
+        self.parser_classifier = ParserClassifier(route_config=parse_route_cfg)
+        self.preprocessor = MCLPreprocess(rules=PreprocessCmd())
+        self.allparser = MCLParseFlow(parser_classifier=self.parser_classifier)
+        self.input_file = input_file
+        
+        self.input_file_path = Path(input_file)
+        self.base_name = self.input_file_path.parent.name      
+        self.constants = init_constants(self.base_name)
+        self.geom_cac = GeomCac()
+        self.magic_symbols = MagicSymbolTable()
+        self.mid_symbols = MidSymbolTable()
+        self.uni_symbols = Unipic25dSymbolTable()
+
+        self.dependency_retriever = DependencyRetriever()
+        self.mcl2mid_conv = MCL2MID_STConv(magic_symbols=self.magic_symbols, mid_symbols=self.mid_symbols, dependency_retriever=self.dependency_retriever)
+        self.mid_conv = MID_STConv(mid_symbols=self.mid_symbols, geom_conv=self.geom_cac)
+        self.mid2uni_conv = MID2UNI_STConv(mid_symbols=self.mid_symbols, uni_symbols=self.uni_symbols,geo_c=self.constants.geo_c)
+        self.uni2files = Uni2Files()
+        self.mid2files = Mid2Files()
+        self.uni2infiles = Uni2InFiles()
+
+
+
+    def m2u_pipeline(self, workdir: str = "workdir"):
+        """
+        读取 input_file -> 分流 -> 写入一个 JSON 文件（包含三组）
+        返回分流后的 dict（同 route_items）
+        """
+        input_file = self.input_file
+        start_time = time.time()
+        p = self.input_file_path
+        constants = self.constants
+        out_dir = p.parent / workdir
+        out_dir.mkdir(exist_ok=True)        
+
+        # --- Step 1 ---
+        print("=====> Step 1: Preprocessing")
+        time_preprocess_start = time.time()
+        
+        with open(input_file, "r") as f:
+            input_str = f.read()
+
+        lines = input_str.splitlines(keepends=False)
+        pre_items = self.preprocessor.mcl_preprocess(lines)
+        
+        time_preprocess_end = time.time()
+        
+        with open(constants.pre_jsonl, "w", encoding="utf-8") as fj:
+            for it in pre_items:
+                fj.write(json.dumps(it, ensure_ascii=False) + "\n")
+
+        # --- Step 2 ---
+        print("=====> Step 2: Parsing")
+        time_parse_start = time.time()
+        
+        filtered_items = [
+            it for it in pre_items
+            if not (it.get("para", {}).get("ignore") == "yes")  # type: ignore
+        ]
+
+        parsed_dicts = self.allparser.mclparser_in_memory(filtered_items)
+        
+        time_parse_end = time.time()
+        
+        with open(constants.parsed_json, "w", encoding="utf-8") as fp:
+            json.dump(parsed_dicts, fp, ensure_ascii=False, indent=2)
+
+
+        # --- Step 3 ---
+        print("=====> Step 3: Converting to UNI")
+        time_conv_start = time.time()
+        
+        print("[info] 转换器一轮处理……")
+        self.mcl2mid_conv.load_list(
+            parsed_dicts=parsed_dicts, 
+            unit_lr=constants.unit_lr,
+            axis_mcl_dir=constants.axis_mcl_dir,
+            geo_c=constants.geo_c,
+            area_debug=alldebug.area_debug,
+            variable_debug=alldebug.variable_debug,
+            function_debug=alldebug.function_debug,
+            port_debug=alldebug.port_debug,
+            llmconv_debug=alldebug.llmconv_debug,
+            )
+        self.mid_symbols, self.llmconv_list = self.mcl2mid_conv.mcl2mid_sTconv()
+
+        with open(constants.mid_symbol1_json, "w", encoding="utf-8") as f:
+            json.dump(self.mid_symbols.to_dict(), f, ensure_ascii=False, indent=2)
+
+        with open(constants.llmconv_json, "w", encoding="utf-8") as f:
+            json.dump(self.llmconv_list, f, ensure_ascii=False, indent=2)
+
+        with open(constants.llm_prompt_txt, "w", encoding="utf-8") as f:
+            for test_item in self.mid_symbols.sT["test"]:
+                f.write(test_item["txt"] + "\n\n\n\n")
+
+
+        print("[info] 转换器二轮处理……")
+        time_mcl2mid_end = time.time()
+        self.mid_conv.load_data(self.mid_symbols)
+        
+        self.mid_symbols = self.mid_conv.mid_sTconv(
+            IF_Conv2Void=constants.IF_Conv2Void,
+            conduct2void_debug=alldebug.conduct2void_debug,
+            emit_debug=alldebug.emit_debug
+        )
+        
+        # print(f"[info] sT 真空区计算结果: \n{self.mid_symbols.sT['geometry']['area_cac_result']['void_area']}")
+        
+        
+        print("[info] 转换器三轮处理……")
+        time_mid_conv_end = time.time()
+        self.mid2uni_conv.load_data(self.mid_symbols)
+        self.uni_symbols = self.mid2uni_conv.mid2uni_sTconv(
+            symbols_file=str(constants.symbols_json),
+            unit_lr=constants.unit_lr,
+            axis_mcl_dir=constants.axis_mcl_dir,
+            geo_c=constants.geo_c,
+            ywaveResolutionRatio=constants.ywaveResolutionRatio,
+            zwaveResolutionRatio=constants.zwaveResolutionRatio,
+            IF_Conv2Void=constants.IF_Conv2Void,
+            bool_Revo_vector=constants.bool_Revo_vector,
+            material_dir=constants.material_dir,
+        )
+        with open(constants.mid_symbol2_json, "w", encoding="utf-8") as f:
+            json.dump(self.mid_symbols.to_dict(), f, ensure_ascii=False, indent=2)
+
+        # --- Step 4 ---
+        print("=====> Step 4: Outputting files")
+        time_save_start = time.time()
+        
+        self.mid2files.load_data(self.mid_symbols)
+        self.mid2files.save_data_to_json(str(constants.mid_symbols_json))
+        print(f"Mid symbols: {constants.mid_symbols_json}")
+
+        self.uni2files.load_data(self.uni_symbols)
+        self.uni2files.save_data_to_json(str(constants.uni_symbols_json))
+        print(f"Uni symbols: {constants.uni_symbols_json}")
+
+        self.uni2infiles.load_data(self.uni_symbols, constants.infile_dir)
+        self.uni2infiles.write_all()
+        print(f"Uni in files: {constants.infile_dir}")
+
+        time_save_end = time.time()
+
+        # --- Done ---
+        print("\n\n=================================")
+        print("[done] Pipeline completed.")
+        print(f"Preprocess: {constants.pre_jsonl}")
+        print(f"Parse:      {constants.parsed_json}")
+        # 计算各阶段时间
+        total_time = time.time() - start_time
+        preprocess_time = time_preprocess_end - time_preprocess_start
+        parse_time = time_parse_end - time_parse_start
+        conv_time = time_save_start - time_conv_start
+        save_time = time_save_end - time_save_start
+        
+        print(f"Total Time: {total_time:.2f}s")
+        print(f"Preprocess time: {preprocess_time:.2f}s")
+        print(f"Parse time:      {parse_time:.2f}s (包含LLM解析)")
+        print(f"Conv time:       {conv_time:.2f}s")
+        print(f"Save time:       {save_time:.2f}s")
+        
+        # 显示时间占比
+        print(f"\n时间占比:")
+        print(f"  预处理: {preprocess_time/total_time*100:.1f}%")
+        print(f"  解析:   {parse_time/total_time*100:.1f}%")
+        print(f"  转换:   {conv_time/total_time*100:.1f}%")
+        print(f"  保存:   {save_time/total_time*100:.1f}%")
+
+        # --- Step 5 如果以后需要解析汇总展示 ---
+        #self._print_parse_summary(parsed_dicts)
+
+
+
+
+    # ============================================================
+    # 解析结果汇总展示（全流程结束后）
+    # ============================================================
+    def _print_parse_summary(self, parsed_dicts: list[dict]):
+        """
+        统计解析成功/失败、按解析器类型分类、失败行号展示。
+        """
+        from collections import defaultdict
+
+        total = len(parsed_dicts)
+        ok_cnt = sum(1 for r in parsed_dicts if r.get("ok"))
+        fail_cnt = total - ok_cnt
+
+        by_kind = defaultdict(lambda: {"ok": 0, "fail": 0})
+        failed_items = []
+
+        for r in parsed_dicts:
+            kind = r.get("parser_kind", "UNKNOWN")
+            if r.get("ok"):
+                by_kind[kind]["ok"] += 1
+            else:
+                by_kind[kind]["fail"] += 1
+                failed_items.append(r)
+
+        print("\n================ 解析统计总结 (Parse Summary) ================")
+        print(f"总解析条目 (total):     {total}")
+        print(f"解析成功 (success):     {ok_cnt}")
+        print(f"解析失败 (failed):      {fail_cnt}\n")
+
+        print("按解析器类型统计 (by parser_kind):")
+        for kind, stat in by_kind.items():
+            print(f"  - {kind:6s}  ok={stat['ok']:4d}  fail={stat['fail']:4d}")
+
+        if failed_items:
+            print("\n失败条目一览 (failed items):")
+            for r in failed_items:
+                lineno = r.get("lineno")
+                parser = r.get("parser_kind", "")
+                cmd = r.get("command", "")
+                errs = "; ".join(r.get("errors", []))[:200]
+                print(f"  line={lineno:4d}, parser={parser:6s}, cmd={cmd}, errors={errs}")
+        else:
+            print("\n无失败条目 (no failed items).")
+
+        print("===============================================================\n")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="MAGIC2UNIPIC Pipeline")
+    parser.add_argument("-I", "--input_file", type=str, help="Path to the input file")
+    parser.add_argument("--workdir", type=str, default="workdir", help="Path to the work directory")
+    args = parser.parse_args()
+
+    m2u = MAGIC2UNIPIC(input_file=args.input_file)
+    m2u.m2u_pipeline()

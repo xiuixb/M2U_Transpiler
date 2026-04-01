@@ -10,13 +10,11 @@ while not os.path.exists(os.path.join(current_dir, ".project_mark")):
 project_root = current_dir
 sys.path.append(project_root)
 
-from m2u_transpiler.magic2unipic import MAGIC2UNIPIC
+from src.application.magic2unipic import MAGIC2UNIPIC
 
 import argparse
-import time
 from pathlib import Path
 from multiprocessing import Pool, cpu_count
-
 
 
 # ----------------------------------------------------------------------
