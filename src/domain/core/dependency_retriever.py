@@ -1,6 +1,6 @@
 import re
 from typing import List, Dict, Set, Any, Tuple
-from src.domain.config.mcl2mid_cmddict import MCL2MID_CmdDict
+from src.domain.config.cmd_dic import MCL2MID_CmdDict
 
 class DependencyRetriever:
     """

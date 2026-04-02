@@ -468,6 +468,8 @@ class MID2UNI_STConv():
                       port_info: dict
                       ):
         print(f"[info] Saving FaceBndInIn")
+
+        print(port_num_dict)
         
         positive_port_mask_num = port_num_dict['positive_port_mask_num']
         FieldSrc_Function_kind = "tFunc"

@@ -3,7 +3,7 @@
 # 设置输入和输出文件路径
 
 # data\BWO\BWO.m2d
-M2D_FILE="D:\AAA_PIC\Parser\M2U_Transpiler\data\BWO\BWO.m2d"
+M2D_FILE1="D:\AAA_PIC\Parser\M2U_Transpiler\data\BWO\BWO.m2d"
 
 # data\MILO_new\milo_new.m2d
 M2D_FILE2="D:\AAA_PIC\Parser\M2U_Transpiler\data\MILO_new\milo_new.m2d"
@@ -20,9 +20,15 @@ M2D_FILE5="D:\AAA_PIC\Parser\M2U_Transpiler\data\vir100_25\vir100_25.m2d"
 # data\XCT_PB\XCT_PB_3.m2d         有很多弧形和真空区域，还没加东西
 M2D_FILE6="D:\AAA_PIC\Parser\M2U_Transpiler\data\XCT_PB\XCT_PB_3.m2d"
 
+# data\RKLYS\RKLYS.m2d
+M2D_FILE7="D:\AAA_PIC\Parser\M2U_Transpiler\data\RKLYS\RKLYS.m2d"
+
+
 start_time=$(date '+%Y-%m-%d %H:%M:%S.%3N')
 
-python src/application/magic2unipic.py -I "$M2D_FILE"
+M2D_FILE=$M2D_FILE1
+
+python src/application/m2u_llm.py -I "$M2D_FILE"
 
 end_time=$(date '+%Y-%m-%d %H:%M:%S.%3N')
 

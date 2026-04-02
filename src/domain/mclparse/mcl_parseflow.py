@@ -225,7 +225,7 @@ class MCLParseFlow:
                         )
                     )
                 else:
-                    # ✅ 解析成功的结果要 append 出去
+                    # 解析成功的结果要 append 出去
                     out.append(r)
 
             except Exception as e:
@@ -311,7 +311,7 @@ class MCLParseFlow:
             print("[info] LLM解析: 没有有效的命令需要处理")
             return out
         
-        # 🚀 关键优化：创建所有批次任务列表，实现真正的全并发
+        # 关键优化：创建所有批次任务列表，实现真正的全并发
         all_batch_tasks = []
         total_batches_count = 0
         
@@ -337,10 +337,10 @@ class MCLParseFlow:
                 all_batch_tasks.append(task_info)
                 total_batches_count += 1
         
-        print(f"[info] LLM解析: 🚀 总共创建 {len(all_batch_tasks)} 个批次任务，准备全并发处理")
-        print(f"[info] LLM解析: 💡 优化效果：所有批次将同时并行，不再受命令类型限制")
+        print(f"[info] LLM解析: [parallel] 总共创建 {len(all_batch_tasks)} 个批次任务，准备全并发处理")
+        print(f"[info] LLM解析: [parallel] 所有批次将同时并行，不再受命令类型限制")
         
-        # 🚀 使用更大的线程池，实现真正的全并发
+        # 使用更大的线程池，实现真正的全并发
         # 激进配置：使用12个并发批次，充分利用API性能
         max_concurrent_batches = min(12, len(all_batch_tasks))  # 激进配置：最多12个批次同时处理
         
@@ -373,10 +373,10 @@ class MCLParseFlow:
                     
                     completed_count += 1
                     batch_duration = batch_end_time - llm_start_time
-                    print(f"[info] LLM解析: ✅ [{batch_end_timestamp}] {command_type} 批次 {batch_index + 1} 完成 (全局批次 {global_batch_id + 1}, 进度 {completed_count}/{len(all_batch_tasks)}, 耗时 {batch_duration:.1f}s)")
+                    print(f"[info] LLM解析: [done] [{batch_end_timestamp}] {command_type} 批次 {batch_index + 1} 完成 (全局批次 {global_batch_id + 1}, 进度 {completed_count}/{len(all_batch_tasks)}, 耗时 {batch_duration:.1f}s)")
                     
                 except Exception as e:
-                    print(f"[ERROR] LLM解析: ❌ [{batch_end_timestamp}] {command_type} 批次 {batch_index + 1} 时出错: {e}")
+                    print(f"[ERROR] LLM解析: [failed] [{batch_end_timestamp}] {command_type} 批次 {batch_index + 1} 时出错: {e}")
                     # 为该批次的所有项目返回失败结果
                     batch = task_info['batch']
                     for item in batch:
@@ -393,13 +393,13 @@ class MCLParseFlow:
                         )
                         total_failed += 1
         
-        print(f"[info] LLM解析: 🎉 批量解析完成，成功 {total_success} 条，失败 {total_failed} 条")
+        print(f"[info] LLM解析: [summary] 批量解析完成，成功 {total_success} 条，失败 {total_failed} 条")
         
         # 记录LLM解析结束时间
         llm_end_time = time.time()
         llm_duration = llm_end_time - llm_start_time
         print(f"[info] LLM解析: 结束时间 {time.strftime('%H:%M:%S', time.localtime(llm_end_time))}")
-        print(f"[info] LLM解析: ⚡ 总耗时 {llm_duration:.2f}秒 (全并发优化)")
+        print(f"[info] LLM解析: [timing] 总耗时 {llm_duration:.2f}秒 (全并发优化)")
         
         # 按行号排序返回结果
         out.sort(key=lambda r: r.lineno)
@@ -431,7 +431,7 @@ class MCLParseFlow:
         failed_count = 0
         
         try:
-            print(f"[info] LLM解析: 🚀 [{batch_start_timestamp}] 开始处理 {command_type} 批次 {batch_index + 1} (全局批次 {global_batch_id + 1})，共 {len(batch)} 条命令")
+            print(f"[info] LLM解析: [start] [{batch_start_timestamp}] 开始处理 {command_type} 批次 {batch_index + 1} (全局批次 {global_batch_id + 1})，共 {len(batch)} 条命令")
             
             # 直接调用LLM解析器处理这个批次
             model_name = "qwen-plus"
@@ -446,7 +446,7 @@ class MCLParseFlow:
             
             # 处理LLM返回的结构化结果
             if llm_results and isinstance(llm_results, list):
-                print(f"[info] LLM解析: 📝 [{llm_end_timestamp}] {command_type} 批次 {batch_index + 1} LLM调用完成，耗时 {llm_duration:.1f}s，开始后处理")
+                print(f"[info] LLM解析: [post] [{llm_end_timestamp}] {command_type} 批次 {batch_index + 1} LLM调用完成，耗时 {llm_duration:.1f}s，开始后处理")
                 
                 # 处理每个LLM解析结果
                 for llm_result in llm_results:
@@ -524,7 +524,7 @@ class MCLParseFlow:
                 batch_end_time = time.time()
                 total_duration = batch_end_time - batch_start_time
                 batch_end_timestamp = time.strftime('%H:%M:%S', time.localtime(batch_end_time))
-                print(f"[info] LLM解析: ✅ [{batch_end_timestamp}] {command_type} 批次 {batch_index + 1} 处理完成，总耗时 {total_duration:.1f}s，成功 {success_count}，失败 {failed_count}")
+                print(f"[info] LLM解析: [done] [{batch_end_timestamp}] {command_type} 批次 {batch_index + 1} 处理完成，总耗时 {total_duration:.1f}s，成功 {success_count}，失败 {failed_count}")
                 
             else:
                 # LLM返回空结果或格式错误

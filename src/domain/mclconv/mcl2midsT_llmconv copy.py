@@ -108,37 +108,6 @@ class MCL2MIDST_LLMConv:
     def _mesh_store(self):
         return self.mid_symbols.sT["mesh"]
 
-    def _to_lr(self, v):
-        """将 v 转到 constants.unit_lr 的数值；v 可以是 Quantity 或 float（已是 self.unit_lr）"""
-        if hasattr(v, "to"):
-            return float(v.to(self.unit_lr).magnitude)
-        return float(v)
-
-    def _lr_pair_to_m_str(self, z_lr: float, r_lr: float, nd: int = 10) -> str:
-        """把以 self.unit_lr 表示的 (z, r) 数值转为以米表示的字符串: '[z r]'"""
-        lr_to_m = float(self.unit_lr.to(ureg.meter).magnitude)
-        z_m = round(z_lr * lr_to_m, nd)
-        r_m = round(r_lr * lr_to_m, nd)
-        return f"[{z_m:g} {r_m:g}]"
-
-    def _pt_to_unipic(self, qx, qy, axis_mcl_dir) -> tuple:
-        """
-        将几何平面点 (x,y) 转成 UNIPIC 三元组 (0, r, z)
-        MCL 的轴向选择由 axis_mcl_dir 控制：
-        - 'X'：x->z, y->r
-        - 'Y'：x->r, y->z
-        """
-        x = self._to_lr(qx)
-        y = self._to_lr(qy)
-        if axis_mcl_dir == 'X':
-            z, r = x, y
-        else:
-            r, z = x, y
-        return (0.0, r, z)
-
-    def _print_handler_result(self, message: str):
-        print(f"       -> {message}")
-
 
 
 
@@ -166,6 +135,8 @@ class MCL2MIDST_LLMConv:
             kind = payload.get("kind", "").upper()
             name = payload.get("sys_name", "") or payload.get("geom_name", "")
             lineno = record.get("lineno", "?")
+
+            print(f"[info] ====> @ Line {lineno}: {kind} {name}")
 
             self.process_record(idx, record)
 
@@ -204,10 +175,8 @@ class MCL2MIDST_LLMConv:
         
         # 正式转换
         if cmd_type in llm_route_config.mcl2mid_llmconv_commands:
-            lineno = record.get("lineno", "?")
-            payload = record.get("payload", {})
-            name = payload.get("sys_name") or payload.get("geom_name") or ""
-            print(f"[info] ====> @ Line {lineno}: [LLM] {cmd_type} {name}".rstrip())
+            print(f"       LLM处理: {cmd_type}")
+            print(f"       loading dependency_retriever for {kind} {record['command']}")
             if cmd_type in self.cmd_no:
                 cmd_no = self.cmd_no[cmd_type] + 1
                 self.cmd_no[cmd_type] = cmd_no
@@ -220,10 +189,7 @@ class MCL2MIDST_LLMConv:
                 print(f"[error] 未处理的条目类型: {cmd_type_single}")
             return
         else:
-            lineno = record.get("lineno", "?")
-            payload = record.get("payload", {})
-            name = payload.get("sys_name") or payload.get("geom_name") or ""
-            print(f"[info] ====> @ Line {lineno}: [RULE] {cmd_type} {name}".rstrip())
+            print(f"       规则处理的条目类型: {cmd_type}")
             handler_name = f"_process_{kind}"
             handler = getattr(self, handler_name, None)
             if handler is None:
@@ -272,7 +238,6 @@ class MCL2MIDST_LLMConv:
             }
         }
         self.inserter.upsert_one(self.llmconvlist, llmconv_item)
-        self._print_handler_result(f"queued for LLM batch: {mcl_command_type_single}")
 
     
     # ==========================
@@ -335,7 +300,6 @@ class MCL2MIDST_LLMConv:
                 },
                 "dependencies": []
             }
-            self._print_handler_result(f"value={value} unit={unit}")
 
         except Exception as e:
             print(f"[error] 变量 {name} 处理失败: {e}")
@@ -375,7 +339,6 @@ class MCL2MIDST_LLMConv:
                 "geom_unit": "mm"
             }
         }
-        self._print_handler_result(f"point=({x_mm}, {y_mm}) mm")
 
     def _process_line(self, idx: int, record):
         #print(record)
@@ -411,7 +374,6 @@ class MCL2MIDST_LLMConv:
                 "geom_unit": "mm"
             }
         }
-        self._print_handler_result(f"points={len(data_mm)} unit=mm")
         #print("_process_line:\n",self.mid_symbols.sT["geometry"]["line"][name])
 
 
@@ -463,7 +425,6 @@ class MCL2MIDST_LLMConv:
                     "geom_unit": "mm"
                 }  
             }
-            self._print_handler_result(f"area_type={a_type} points={len(geom_num)} unit=mm")
 
         elif a_type == "POLYGONAL":
             tokens = params.get("points", [])
@@ -486,7 +447,6 @@ class MCL2MIDST_LLMConv:
                     "geom_unit": "mm"
                 }  
             }
-            self._print_handler_result(f"area_type={a_type} points={len(geom_num)} unit=mm")
 
         elif a_type == "FUNCTIONAL":
             self.mid_symbols.sT["geometry"]["area"][name] = {
@@ -496,7 +456,6 @@ class MCL2MIDST_LLMConv:
                 },
                 "cac_result":{}
             }
-            self._print_handler_result(f"area_type={a_type} expr=function")
 
         elif a_type == "FILLET":
             p_tokens = params.get("points") or [params.get("p1"), params.get("p2")]
@@ -518,7 +477,6 @@ class MCL2MIDST_LLMConv:
                     "geom_unit": "mm"
                 }  
             }
-            self._print_handler_result(f"area_type={a_type} radius={UnitTool.qty_mag_mm(rad_q)} mm")
 
         elif a_type == "QUARTERROUND":
             (cx, cy) = parse_point_token(params["center"], self.mid_symbols.sT["variable"], self.mid_symbols.sT["geometry"]["point"], self.unit_lr)
@@ -534,7 +492,6 @@ class MCL2MIDST_LLMConv:
                 },
                 "cac_result":{}
             }
-            self._print_handler_result(f"area_type={a_type} center={center} radius={UnitTool.qty_mag_mm(rad_q)} mm")
 
         elif a_type == "SINUSOID":
             raise ValueError(f"[sinusoid] 未实现")
@@ -626,17 +583,11 @@ class MCL2MIDST_LLMConv:
     ###############
 
 
+
     def _process_material_assign(self, idx, record):
         entry = record["payload"]
         geom_name = entry.get("geom_name", "")
-        raw_mtype = entry.get("mtype", "")
-        material_map = {
-            "CONDUCTOR": "PEC",
-            "VOID": "VOID",
-            "PEC": "PEC",
-            "FREESPACE": "VOID",
-        }
-        mtype = material_map.get(raw_mtype, raw_mtype)
+        mtype = entry.get("mtype", "")
         
         insert_cmd = {
             "sys_type": "material_assign",
@@ -647,7 +598,9 @@ class MCL2MIDST_LLMConv:
         }
         
         self.inserter.upsert_one(self.mid_symbols.sT, insert_cmd)
-        self._print_handler_result(f"material={mtype}")
+        
+        print(f"[info] 已为几何体 {geom_name} 添加材料 {mtype}")
+        print(self.mid_symbols.sT["materials"]["material_assign"])
 
 
     def _process_mark(self, idx, record):
@@ -771,7 +724,7 @@ class MCL2MIDST_LLMConv:
             if norm_set:
                 self.mid_symbols.sT["boundaries"]["port"][-1]["parameters"].update(norm_set)
 
-            self._print_handler_result(f"port={PORT_type} direction={direction}")
+            print(f"[info] 注入波端口 {geom_name} 定义成功")
 
         elif direction == "NEGATIVE":
             kind = "OPENPORT"
@@ -789,7 +742,7 @@ class MCL2MIDST_LLMConv:
                 "cac_result": {},
                 "dependencies": []
             })
-            self._print_handler_result(f"port={PORT_type} direction={direction}")
+            print(f"[info] 开放端口 {geom_name} 定义成功")
         else:
             raise ValueError(f"[port] 方向不合法：{direction}")
 
@@ -863,7 +816,7 @@ class MCL2MIDST_LLMConv:
         
         print(f"[info] PRESET {preset_name}:  {self.mid_symbols.sT["physics_entities"]['electromagnetic_field']}")
 
-    def _process_inductor(self, idx, record):
+    def _process_inductor(self, entry):
         """
         entry (from REGEX_PARSER):
         {
@@ -874,15 +827,14 @@ class MCL2MIDST_LLMConv:
         # 未来可扩展: material/frequency/resistivity/resistance/number ...
         }
         """
-        entry = record["payload"]
         unit_lr = self.unit_lr
         axis_mcl_dir = self.axis_mcl_dir
         line = entry.get("line_name")
         if not line or line not in self.mid_symbols.sT["geometry"]["line"]:
             raise ValueError(f"[inductor] 目标线不存在：{line}")
 
-        # 1) 线的几何（从 sT.line.cac_result.geom_num 读取）
-        pts_q = self.mid_symbols.sT["geometry"]["line"][line]["cac_result"]["geom_num"]
+        # 1) 线的几何（Quantity -> UNIPIC 三元组 -> 取首尾两点）
+        pts_q = self.mid_symbols.sT["geometry"]["line"][line]                 # [(qx,qy), ...] 仍是 Quantity
         if len(pts_q) < 2:
             raise ValueError(f"[inductor] 线 {line} 至少需要两个点")
 
@@ -964,13 +916,11 @@ class MCL2MIDST_LLMConv:
             "diameter_expr": diameter_expr     # 留作后续需要时再数值化
             #"inductance_per_m": inductance_pm   # 原样保留（便于追溯）
         })
-        self._print_handler_result(f"inductor={line} dir={direc} length_m={float(f'{length_m:.10g}')}")
     
-    def _process_freespace(self, idx, record):
+    def _process_freespace(self, entry):
         return None
     
-    def _process_timer(self, idx, record):
-        entry = record["payload"]
+    def _process_timer(self, entry):
         timer_name = entry.get("timer_name") or entry.get("sys_name")
         timer_mode = entry.get("timer_mode") or entry.get("mode")
         timer_type = entry.get("timer_type") or entry.get("time_type")
@@ -987,7 +937,6 @@ class MCL2MIDST_LLMConv:
             "timer_type": timer_type,
             "timer_opts": timer_opts,
         }
-        self._print_handler_result(f"timer={timer_name} mode={timer_mode} type={timer_type}")
     ##################
     # 处理 OBSERVE 命令
     ##################

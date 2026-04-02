@@ -15,9 +15,9 @@ while not os.path.exists(os.path.join(current_dir, ".project_mark")):
 project_root = current_dir
 sys.path.append(project_root)
 
-from src.domain.config.mcl2mid_cmddict import MCL2MID_CmdDict
+from src.domain.config.cmd_dic import MCL2MID_CmdDict
 from src.infrastructure.llm_entity import OpenAILLMEntity
-from src.domain.config.llm_flows import MCLPromptBuildFlow
+from src.domain.core.llm_flows import MCLPromptBuildFlow
 from src.domain.config.prompt import mcl2mid_mclcontext_dict, mcl2mid_midcontext_dict, mcl2mid_json_dict
 
 
@@ -45,7 +45,8 @@ class LLMConv:
     def process_list(self):
         processed_mcl_list = {}
         for mcl_type in self.mcl_list.keys():
-            print(f"[debug] 处理MCL类型: {mcl_type}")
+            if self.mcl_list[mcl_type]:
+                print(f"[debug] 处理MCL类型: {mcl_type}")
             if self.mcl_list[mcl_type]:
                 processed_mcl_list[mcl_type] = self.mcl_list[mcl_type]
 
@@ -80,7 +81,7 @@ class LLMConv:
         start_time = datetime.now().strftime('%H:%M:%S.%f')[:-3]
         print(f"[info] 开始时间 {start_time}")
         # 使用线程池并发处理各个批次
-        # 🚀 激进配置：使用更高的并发数量，充分利用API性能
+        # 提高并发数量，尽量利用 API 吞吐
         max_concurrent = min(self.concurrent_num, len(batches))  # 并发批次计算
         
         batch_results = [None] * len(batches)
@@ -101,11 +102,11 @@ class LLMConv:
                     
                     # 添加时间戳
                     completion_time = datetime.now().strftime('%H:%M:%S.%f')[:-3]
-                    print(f"\n[info] LLM批次: ✅ [{completion_time}] 批次 {batch_index + 1}/{len(batches)} 完成")
+                    print(f"\n[info] LLM批次: [done] [{completion_time}] 批次 {batch_index + 1}/{len(batches)} 完成")
                 except Exception as e:
                     import traceback
                     error_time = datetime.now().strftime('%H:%M:%S.%f')[:-3]
-                    print(f"[ERROR] LLM批次: ❌ [{error_time}] 解析批次 {batch_index + 1} 时发生错误: {e}")
+                    print(f"[ERROR] LLM批次: [failed] [{error_time}] 解析批次 {batch_index + 1} 时发生错误: {e}")
                     print(f"[ERROR] 错误详情: {traceback.format_exc()}")
                     batch_results[batch_index] = None
         print(f"[debug] 处理批次结果:\n {batch_results}")
@@ -149,7 +150,7 @@ class LLMConv:
                 if attempt > 0:
                     wait_time = min(2 ** attempt, 10)  # 指数退避，最多10秒
                     retry_time = datetime.now().strftime('%H:%M:%S.%f')[:-3]
-                    print(f"[info] LLM重试JSON: 🔄 [{retry_time}] 批次 {batch_index + 1} 第 {attempt} 次重试，等待 {wait_time} 秒...")
+                    print(f"[info] LLM重试JSON: [retry] [{retry_time}] 批次 {batch_index + 1} 第 {attempt} 次重试，等待 {wait_time} 秒...")
                     time.sleep(wait_time)
                 
                 raw_result = self._conv(model_name, cmd_type, batch, llmconv_debug)

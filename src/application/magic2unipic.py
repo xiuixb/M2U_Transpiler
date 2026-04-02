@@ -1,10 +1,10 @@
-import os
-import sys
 import time
 import argparse
 import json
 from pathlib import Path
 
+import os
+import sys
 # 获取项目根目录路径
 current_dir = os.path.dirname(os.path.abspath(__file__))
 while not os.path.exists(os.path.join(current_dir, ".project_mark")):
@@ -16,14 +16,13 @@ sys.path.append(project_root)
 
 from src.domain.config.symbolBase import *
 from src.domain.config.cmd_dic import PreprocessCmd
-from src.domain.core.m2u_parser_route import parse_route_cfg
-from src.domain.mclparse.parser_classifier import ParserClassifier
-from src.domain.mclparse.mcl_plypreprocess import MCLPreprocess
-from src.domain.mclparse.mcl_parseflow import MCLParseFlow
+from src.domain.mclparse.mcl_plypreprocess import PlyPreprocess
+from src.domain.mclparse.mcl_plyparser import PLYParser
+from src.domain.mclparse.mcl_ast_visit import ASTVisitor
 
 from src.domain.config.m2u_convconst import init_constants, alldebug
 from src.domain.core.geom_cac import GeomCac
-from src.domain.mclconv.mcl2midsT_conv import MCL2MID_STConv
+from src.domain.mclconv.mcl2midsT_plyconv import MCL2MIDST_PLYConv
 from src.domain.mclconv.mid_sTconv import MID_STConv
 from src.domain.unigenerate.mid2uni_sTconv import MID2UNI_STConv
 from src.domain.unigenerate.uni2Files import Uni2Files
@@ -36,9 +35,9 @@ class MAGIC2UNIPIC:
                  input_file: str
                  ):
         self.input_file = input_file
-        self.parser_classifier = ParserClassifier(route_config=parse_route_cfg)
-        self.preprocessor = MCLPreprocess(rules=PreprocessCmd())
-        self.allparser = MCLParseFlow(parser_classifier=self.parser_classifier)
+        self.preprocessor = PlyPreprocess(rules=PreprocessCmd())
+        self.ply_parser = PLYParser()
+        self.ast_visitor = ASTVisitor()
         self.input_file = input_file
         
         self.input_file_path = Path(input_file)
@@ -49,7 +48,7 @@ class MAGIC2UNIPIC:
         self.mid_symbols = MidSymbolTable()
         self.uni_symbols = Unipic25dSymbolTable()
 
-        self.mcl2mid_conv = MCL2MID_STConv(magic_symbols=self.magic_symbols, mid_symbols=self.mid_symbols)
+        self.mcl2mid_conv = MCL2MIDST_PLYConv(magic_symbols=self.magic_symbols, mid_symbols=self.mid_symbols)
         self.mid_conv = MID_STConv(mid_symbols=self.mid_symbols, geom_conv=self.geom_cac)
         self.mid2uni_conv = MID2UNI_STConv(mid_symbols=self.mid_symbols, uni_symbols=self.uni_symbols,geo_c=self.constants.geo_c)
         self.uni2files = Uni2Files()
@@ -95,7 +94,7 @@ class MAGIC2UNIPIC:
             if not (it.get("para", {}).get("ignore") == "yes")  # type: ignore
         ]
 
-        parsed_dicts = self.allparser.mclparser_in_memory(filtered_items)
+        parsed_dicts = self._parse_with_ply(filtered_items)
         
         time_parse_end = time.time()
         
@@ -177,7 +176,7 @@ class MAGIC2UNIPIC:
         
         print(f"Total Time: {total_time:.2f}s")
         print(f"Preprocess time: {preprocess_time:.2f}s")
-        print(f"Parse time:      {parse_time:.2f}s (包含LLM解析)")
+        print(f"Parse time:      {parse_time:.2f}s")
         print(f"Conv time:       {conv_time:.2f}s")
         print(f"Save time:       {save_time:.2f}s")
         
@@ -190,6 +189,34 @@ class MAGIC2UNIPIC:
 
         # --- Step 5 如果以后需要解析汇总展示 ---
         #self._print_parse_summary(parsed_dicts)
+
+    def _parse_with_ply(self, items: list[dict]) -> list[dict]:
+        line_index = {
+            int(it["lineno"]): {"command": it["command"], "text": it["text"]}
+            for it in items
+        }
+
+        program = self.ply_parser.parse_ply_batch(items)
+        results = self.ast_visitor.build_sequence(
+            program,
+            parser_name="PLY",
+            line_index=line_index,
+        )
+
+        parsed_dicts = []
+        for r in results:
+            parsed_dicts.append({
+                "lineno": r.lineno,
+                "command": r.command,
+                "payload": r.payload,
+                "parser_kind": r.parser_kind,
+                "ok": r.ok,
+                "errors": r.errors,
+                "text": r.text,
+            })
+
+        parsed_dicts.sort(key=lambda x: x.get("lineno", 0))
+        return parsed_dicts
 
 
 

@@ -138,6 +138,7 @@ class PreprocessCmd:
     # 1. 变量和函数
     "CONTROL",
     "MCLDIALOG",
+    #"PARAMETER",
 
     # 2. 逻辑命令
     "CALL",

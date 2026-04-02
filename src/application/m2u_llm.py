@@ -20,14 +20,15 @@ from src.domain.config.cmd_dic import PreprocessCmd
 from src.domain.core.m2u_parser_route import parse_route_cfg
 from src.domain.mclparse.parser_classifier import ParserClassifier
 
-from src.domain.mclparse.mcl_llmpreprocess import MCLPreprocess
+
+from src.domain.mclparse.mcl_llmpreprocess import LLMPreprocess
 from src.domain.mclparse.mcl_parseflow import MCLParseFlow
 
 from src.domain.config.m2u_convconst import init_constants, alldebug
 from src.domain.core.geom_cac import GeomCac
 
 from src.domain.core.dependency_retriever import DependencyRetriever
-from src.domain.mclconv.mcl2midsT_conv import MCL2MID_STConv
+from src.domain.mclconv.mcl2midsT_llmconv import MCL2MIDST_LLMConv
 from src.domain.mclconv.mid_sTconv import MID_STConv
 from src.domain.unigenerate.mid2uni_sTconv import MID2UNI_STConv
 from src.domain.unigenerate.uni2Files import Uni2Files
@@ -41,7 +42,7 @@ class MAGIC2UNIPIC:
                  ):
         self.input_file = input_file
         self.parser_classifier = ParserClassifier(route_config=parse_route_cfg)
-        self.preprocessor = MCLPreprocess(rules=PreprocessCmd())
+        self.preprocessor = LLMPreprocess(rules=PreprocessCmd())
         self.allparser = MCLParseFlow(parser_classifier=self.parser_classifier)
         self.input_file = input_file
         
@@ -54,7 +55,7 @@ class MAGIC2UNIPIC:
         self.uni_symbols = Unipic25dSymbolTable()
 
         self.dependency_retriever = DependencyRetriever()
-        self.mcl2mid_conv = MCL2MID_STConv(magic_symbols=self.magic_symbols, mid_symbols=self.mid_symbols, dependency_retriever=self.dependency_retriever)
+        self.mcl2mid_conv = MCL2MIDST_LLMConv(magic_symbols=self.magic_symbols, mid_symbols=self.mid_symbols, dependency_retriever=self.dependency_retriever)
         self.mid_conv = MID_STConv(mid_symbols=self.mid_symbols, geom_conv=self.geom_cac)
         self.mid2uni_conv = MID2UNI_STConv(mid_symbols=self.mid_symbols, uni_symbols=self.uni_symbols,geo_c=self.constants.geo_c)
         self.uni2files = Uni2Files()
@@ -79,7 +80,7 @@ class MAGIC2UNIPIC:
         print("=====> Step 1: Preprocessing")
         time_preprocess_start = time.time()
         
-        with open(input_file, "r") as f:
+        with open(input_file, "r", encoding="utf-8", errors="replace") as f:
             input_str = f.read()
 
         lines = input_str.splitlines(keepends=False)
@@ -118,6 +119,7 @@ class MAGIC2UNIPIC:
             unit_lr=constants.unit_lr,
             axis_mcl_dir=constants.axis_mcl_dir,
             geo_c=constants.geo_c,
+            llm_io_dir=constants.llm_io_dir,
             area_debug=alldebug.area_debug,
             variable_debug=alldebug.variable_debug,
             function_debug=alldebug.function_debug,
@@ -125,6 +127,9 @@ class MAGIC2UNIPIC:
             llmconv_debug=alldebug.llmconv_debug,
             )
         self.mid_symbols, self.llmconv_list = self.mcl2mid_conv.mcl2mid_sTconv()
+
+        with open(constants.parsed_json, "w", encoding="utf-8") as f:
+            json.dump(self.magic_symbols.cmds_list, f, ensure_ascii=False, indent=2)
 
         with open(constants.mid_symbol1_json, "w", encoding="utf-8") as f:
             json.dump(self.mid_symbols.to_dict(), f, ensure_ascii=False, indent=2)
@@ -137,7 +142,7 @@ class MAGIC2UNIPIC:
                 f.write(test_item["txt"] + "\n\n\n\n")
 
 
-        print("[info] 转换器二轮处理……")
+        print("\n\n[info] 转换器二轮处理……")
         time_mcl2mid_end = time.time()
         self.mid_conv.load_data(self.mid_symbols)
         
@@ -147,10 +152,10 @@ class MAGIC2UNIPIC:
             emit_debug=alldebug.emit_debug
         )
         
-        # print(f"[info] sT 真空区计算结果: \n{self.mid_symbols.sT['geometry']['area_cac_result']['void_area']}")
+        # print(f"[info] 转换后真空区域: \n{self.mid_symbols.sT["geometry"]['area_cac_result']['void_area']}")
         
         
-        print("[info] 转换器三轮处理……")
+        print("\n\n[info] 转换器三轮处理……")
         time_mid_conv_end = time.time()
         self.mid2uni_conv.load_data(self.mid_symbols)
         self.uni_symbols = self.mid2uni_conv.mid2uni_sTconv(
@@ -186,10 +191,13 @@ class MAGIC2UNIPIC:
         time_save_end = time.time()
 
         # --- Done ---
-        print("\n\n=================================")
+        print("\n=================================")
         print("[done] Pipeline completed.")
         print(f"Preprocess: {constants.pre_jsonl}")
         print(f"Parse:      {constants.parsed_json}")
+        print(f"Conv_mcl2mid:  {constants.mid_symbol1_json}")
+        print(f"Conv_mid:      {constants.mid_symbol2_json}")
+        print(f"Conv_mid2uni:  {constants.uni_symbols_json}")
         # 计算各阶段时间
         total_time = time.time() - start_time
         preprocess_time = time_preprocess_end - time_preprocess_start
@@ -197,7 +205,7 @@ class MAGIC2UNIPIC:
         conv_time = time_save_start - time_conv_start
         save_time = time_save_end - time_save_start
         
-        print(f"Total Time: {total_time:.2f}s")
+        print(f"\nTotal Time: {total_time:.2f}s")
         print(f"Preprocess time: {preprocess_time:.2f}s")
         print(f"Parse time:      {parse_time:.2f}s (包含LLM解析)")
         print(f"Conv time:       {conv_time:.2f}s")
@@ -263,6 +271,8 @@ class MAGIC2UNIPIC:
         print("===============================================================\n")
 
 
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="MAGIC2UNIPIC Pipeline")
     parser.add_argument("-I", "--input_file", type=str, help="Path to the input file")
@@ -271,3 +281,4 @@ if __name__ == "__main__":
 
     m2u = MAGIC2UNIPIC(input_file=args.input_file)
     m2u.m2u_pipeline()
+

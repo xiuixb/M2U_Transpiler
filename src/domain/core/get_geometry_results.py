@@ -1,6 +1,5 @@
 
 import numpy as np
-import matplotlib.pyplot as plt
 from sympy.printing.latex import other_symbols
 from typing import Iterable, List, Tuple
 import pint
@@ -248,12 +247,6 @@ class GeomUtils:
             new_contour = np.vstack([new_contour, new_contour[0]])
         
         return new_contour
-
-    def plot_contour(self, contour, color='blue', linestyle='--', label='Contour'):
-        """可视化单个轮廓"""
-        x, y = zip(*contour)
-        plt.plot(x + (x[0],), y + (y[0],), color=color, linestyle=linestyle, label=label)
-        plt.scatter(x, y, color=color, s=5)
 
     def get_union_contour_result(self, result_contour, void_contours):
         

@@ -12,8 +12,6 @@ project_root = current_dir
 sys.path.append(project_root)
 
 from typing import List, Dict, Any
-import PyPDF2
-import docx2txt
 
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -158,79 +156,3 @@ class MCLPromptBuildFlow:
         return prompt
 
 
-
-class FileLoadingFlow:
-    """加载并解析文档（PDF/Word/TXT 等）"""
-    def load_text(self, file_path: str) -> str:
-        """加载并解析各种格式的文档文件
-        参数:
-            file_path: 文件路径
-        返回:
-            解析后的文本内容
-        """
-        file_extension = os.path.splitext(file_path)[1].lower()
-        
-        if file_extension == '.pdf':
-            # 加载 PDF 文件
-            text = ""
-            with open(file_path, 'rb') as file:
-                reader = PyPDF2.PdfReader(file)
-                for page_num in range(len(reader.pages)):
-                    page = reader.pages[page_num]
-                    text += page.extract_text() + "\n"
-            return text
-        
-        elif file_extension == '.docx':
-            # 加载 Word 文档
-            return docx2txt.process(file_path)
-        
-        elif file_extension == '.txt':
-            # 加载文本文件
-            with open(file_path, 'r', encoding='utf-8') as file:
-                return file.read()
-        
-        else:
-            raise ValueError(f"不支持的文件格式: {file_extension}")
-
-    def chunk_text(self, text: str, chunk_size=500, chunk_overlap=50) -> List[Document]:
-        """将文本分块成适当大小的文档
-        参数:
-            text: 要分块的文本
-            chunk_size: 块的最大大小
-            chunk_overlap: 块之间的重叠大小
-        返回:
-            文档块列表
-        """
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=chunk_size,
-            chunk_overlap=chunk_overlap,
-            length_function=len,
-            separators=["\n\n", "\n", " ", ""]
-        )
-        
-        # 将文本分块并创建 Document 对象
-        chunks = text_splitter.create_documents([text])
-        return chunks
-    
-    def load_and_chunk_file(self, file_path: str, chunk_size=500) -> List[Document]:
-        """加载文件并直接分块
-        参数:
-            file_path: 文件路径
-            chunk_size: 块的最大大小
-        返回:
-            文档块列表
-        """
-        text = self.load_text(file_path)
-        return self.chunk_text(text, chunk_size)
-    
-    def add_metadata_to_chunks(self, chunks: List[Document], metadata: Dict[str, Any]) -> List[Document]:
-        """为文档块添加元数据
-        参数:
-            chunks: 文档块列表
-            metadata: 要添加的元数据字典
-        返回:
-            添加元数据后的文档块列表
-        """
-        for chunk in chunks:
-            chunk.metadata.update(metadata)
-        return chunks

@@ -22,7 +22,7 @@ sys.path.append(project_root)
 from src.domain.config.cmd_dic import CMD_KEYWORDS_MULTI, CMD_KEYWORDS_SINGLE, PreprocessCmd
 from src.domain.config.mcl_unit import mcl_units
 
-class MCLPreprocess:
+class PlyPreprocess:
     def __init__(self, rules: PreprocessCmd):
         self.rules = rules
 
@@ -463,6 +463,6 @@ if __name__ == "__main__":
     argparser.add_argument("input_file", help="输入 .m2d 文件路径")
     args = argparser.parse_args()
     """
-    preprocessor = MCLPreprocess(rules=PreprocessCmd())
+    preprocessor = PlyPreprocess(rules=PreprocessCmd())
     res = preprocessor.process_assign_units("A = 1.05VOLTS")
     print(res)

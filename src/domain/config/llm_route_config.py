@@ -52,16 +52,26 @@ class LLMRouteConfig:
 
     # mcl2mid转换器的命令类型(kind)
     mcl2mid_llmconv_commands: tuple = (
-        
-        "mark", 
-        "material_assign", 
-        "port",
-        "emission", 
-        "emit", 
-        "preset", 
-        "inductor", 
-        "resistor", 
-        "foil"
+            #"ASSIGN", "PARAMETER", "CHARACTER", "REAL", "INTEGER",
+
+            #"FUNCTION",
+
+            #"POINT","LINE", "AREA",
+
+            "MARK",
+
+            #"CONDUCTOR", "VOID",
+
+            #"PORT", "FREESPACE",
+
+            #"EMISSION", "EMIT",
+            #"INDUCTOR",
+            #"RESISTOR",
+            #"FOIL",
+            #"PRESET",
+
+            #"OBSERVE"
+
     )
 
 llm_route_config = LLMRouteConfig()

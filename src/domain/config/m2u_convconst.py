@@ -59,6 +59,7 @@ class ConvConstants:
 
         self.llmconv_json = self.data_dir / 'workdir/llmconv.json'
         self.llm_prompt_txt = self.data_dir / 'workdir/llm_prompt.txt'
+        self.llm_io_dir = self.data_dir / 'workdir/llm_io_log.txt'
 
 
         self.IF_Conv2Void = True
@@ -92,7 +93,7 @@ class AllDebug:
         self.str2qty_debug = False
 
         self.emit_debug = False
-        self.area_debug = True
+        self.area_debug = False
         self.port_debug = False
 
         self.conduct2void_debug = False

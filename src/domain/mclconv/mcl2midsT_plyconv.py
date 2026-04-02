@@ -19,7 +19,7 @@ from pint import Quantity, UnitRegistry
 
 
 
-class MCL2MID_STConv:
+class MCL2MIDST_PLYConv:
     def __init__(self,
                  magic_symbols: MagicSymbolTable,
                  mid_symbols: MidSymbolTable
@@ -75,7 +75,8 @@ class MCL2MID_STConv:
     def _mesh_store(self):
         return self.mid_symbols.sT["mesh"]
 
-    
+
+
 
 
     def mcl2mid_sTconv(self):
@@ -300,7 +301,6 @@ class MCL2MID_STConv:
             },
         }
 
-
     def _process_area(self, entry):
         """
         统一把面转成顶点序列（ZR 平面），内部存储为数量列表。
@@ -311,7 +311,8 @@ class MCL2MID_STConv:
         area_debug = self.area_debug
 
         if area_debug:
-            print(f"entry: {entry}")
+            #print(f"entry: {entry}")
+            pass
 
         name = self._entry_name(entry)
         a_type = entry["area_type"]
@@ -826,7 +827,6 @@ class MCL2MID_STConv:
             self.mid_symbols.sT["diagnostic"].append(diagnostic_item)
 
 
-   
     def _process_mark(self, entry):
         
         axis = entry.get("axis")
@@ -949,5 +949,7 @@ class MCL2MID_STConv:
             #"inductance_per_m": inductance_pm   # 原样保留（便于追溯）
         })
     
+
     def _process_freespace(self, entry):
         return None
+

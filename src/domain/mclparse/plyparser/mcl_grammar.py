@@ -772,6 +772,7 @@ def p_assignment(p):
                   | K_ASSIGN IDENTITY '=' expr ';'
                   | K_REAL IDENTITY '=' expr ';'
                   | K_INTEGER IDENTITY '=' expr ';'
+                  | K_PARAMETER IDENTITY '=' expr ';'
                   | K_CHARACTER IDENTITY '=' STRING_LITERAL ';'"""
     if len(p) == 5:  # 处理 IDENTITY = expr;
         var_name = p[1]
@@ -784,7 +785,7 @@ def p_assignment(p):
             var_name = p[2]
             value = p[4]
             decl_type = None
-        elif keyword in ('REAL', 'INTEGER'):
+        elif keyword in ('REAL', 'INTEGER', 'PARAMETER'):
             var_name = p[2]
             value = p[4]
             decl_type = keyword

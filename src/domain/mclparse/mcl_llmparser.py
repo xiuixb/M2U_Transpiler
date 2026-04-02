@@ -60,7 +60,7 @@ class LLMParser:
         print(f"总共 {len(input_list)} 个项，分为 {len(batches)} 个批次，每批次 ≤ {batch_size} 个项")
         
         # 使用线程池并发处理各个批次
-        # 🚀 激进配置：使用更高的并发数量，充分利用API性能
+        # 激进配置：使用更高的并发数量，充分利用API性能
         max_concurrent = min(10, len(batches))  # 激进配置：最多10个并发批次
         batch_results = [None] * len(batches)
         
@@ -79,10 +79,10 @@ class LLMParser:
                     
                     # 添加时间戳
                     completion_time = time.strftime('%H:%M:%S', time.localtime())
-                    print(f"[info] LLM批次: ✅ [{completion_time}] 批次 {batch_index + 1}/{len(batches)} 完成")
+                    print(f"[info] LLM批次: [done] [{completion_time}] 批次 {batch_index + 1}/{len(batches)} 完成")
                 except Exception as e:
                     error_time = time.strftime('%H:%M:%S', time.localtime())
-                    print(f"[ERROR] LLM批次: ❌ [{error_time}] 解析批次 {batch_index + 1} 时发生错误: {e}")
+                    print(f"[ERROR] LLM批次: [failed] [{error_time}] 解析批次 {batch_index + 1} 时发生错误: {e}")
                     batch_results[batch_index] = None
         
         # 合并所有批次的JSON结果
