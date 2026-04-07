@@ -15,7 +15,7 @@ while not os.path.exists(os.path.join(current_dir, ".project_mark")):
 project_root = current_dir
 sys.path.append(project_root)
 
-from src.domain.config.cmd_dic import MCL2MID_CmdDict
+from src.domain.config.cmd_dic_loader import MCL2MID_CmdDict
 from src.infrastructure.llm_entity import OpenAILLMEntity
 from src.domain.core.llm_flows import MCLPromptBuildFlow
 from src.domain.config.prompt import mcl2mid_mclcontext_dict, mcl2mid_midcontext_dict, mcl2mid_json_dict
@@ -29,7 +29,8 @@ class LLMConv:
                     mcl2mid_dict: MCL2MID_CmdDict,
                     api_key,
                     prompt_flow: MCLPromptBuildFlow = None,
-                    concurrent = 10                    
+                    concurrent = 10,
+                    llm_io_log_path: str | None = None,
                     ):
         """加载大模型和提示词构造器"""
         self.model = OpenAILLMEntity(api_key=api_key)
@@ -41,6 +42,7 @@ class LLMConv:
             self.prompt_flow = prompt_flow
 
         self.llm_io_log = ""
+        self.llm_io_log_path = llm_io_log_path
 
     def process_list(self):
         processed_mcl_list = {}
@@ -55,6 +57,7 @@ class LLMConv:
     def llmconv_mcl2mid(self, 
                     mcl_list: Dict[str, List[dict]],
                     model_name, 
+                    llm_io_dir: str | None = None,
                     llmconv_debug=False,
                     batch_size=4,
                     result_wait_time=60):
@@ -120,8 +123,10 @@ class LLMConv:
         #print(merged_results)
         #print(json.dumps(merged_results, ensure_ascii=False, indent=2))
 
-        with open("data\\BWO\\workdir\\llm_io_log.txt", "w", encoding="utf-8") as f:
-            f.write(self.llm_io_log)
+        if self.llm_io_log_path:
+            os.makedirs(os.path.dirname(self.llm_io_log_path), exist_ok=True)
+            with open(self.llm_io_log_path, "w", encoding="utf-8") as f:
+                f.write(self.llm_io_log)
 
         return merged_results
     

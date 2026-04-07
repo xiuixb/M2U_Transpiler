@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-import traceback
 
 # 获取项目根目录路径
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -30,7 +29,7 @@ from src.domain.core.unit_tool import UnitTool
 from src.domain.mclconv.mcl2midsT_plyconv import MCL2MIDST_PLYConv
 
 
-class MCL2MIDST_LLMConv:
+class MCL2MID_STConv:
     def __init__(self,
                  magic_symbols: MagicSymbolTable,
                  mid_symbols: MidSymbolTable,
@@ -40,7 +39,7 @@ class MCL2MIDST_LLMConv:
         self.mid_symbols = mid_symbols
         self.dependency_retriever = dependency_retriever
         self.inserter = TreeListUpserter()
-        self.mcl2mid_dict = MCL2MID_CmdDict()
+        self.mcl2mid_dict = MCL2MID_Dict()
         self.llm_route_config = load_llm_route_config()
         self.MCL2MID_dict = self.mcl2mid_dict.MID_dict
         self.llmconvlist = self.mcl2mid_dict.MCL2MID_llmconv_List
@@ -53,7 +52,6 @@ class MCL2MIDST_LLMConv:
             api_key = llm_config.api_key,
             prompt_flow = MCLPromptBuildFlow(),
         )
-        self.mcl2mid_conv = MCL2MIDST_PLYConv(magic_symbols=self.magic_symbols, mid_symbols=self.mid_symbols)
        
 
         
@@ -68,7 +66,7 @@ class MCL2MIDST_LLMConv:
                   variable_debug: bool = False,
                   function_debug: bool = False,
                   port_debug: bool = False,
-                  llmconv_debug: bool = True,
+                  llmconv_debug: bool = False,
                   ):
         self.magic_symbols.load_list(parsed_dicts)
         self.unit_lr = unit_lr
@@ -80,91 +78,12 @@ class MCL2MIDST_LLMConv:
         self.port_debug = port_debug
         self.llmconv_debug = llmconv_debug
         self.llm_io_dir = llm_io_dir
-        self.llmconv.llm_io_log_path = str(llm_io_dir)
-
-    def _entry_name(self, entry: dict) -> str:
-        return entry.get("name") or entry.get("sys_name") or ""
-
-    def _var_table(self):
-        return self.mid_symbols.sT["variable"]
-
-    def _point_store(self):
-        return {
-            name: tuple(point_info["cac_result"]["geom_num"])
-            for name, point_info in self.mid_symbols.sT["geometry"]["point"].items()
-            if point_info.get("cac_result", {}).get("geom_num") is not None
-        }
-
-    def _line_store(self):
-        return {
-            name: line_info["cac_result"]["geom_num"]
-            for name, line_info in self.mid_symbols.sT["geometry"]["line"].items()
-            if line_info.get("cac_result", {}).get("geom_num") is not None
-        }
-
-    def _observe_field_target_point(self, obj: str):
-        point_store = self._point_store()
-        if obj in point_store:
-            return point_store[obj]
-
-        line_store = self._line_store()
-        if obj in line_store and line_store[obj]:
-            points = line_store[obj]
-            if len(points) == 1:
-                return tuple(points[0])
-            first_x, first_y = points[0]
-            last_x, last_y = points[-1]
-            return ((first_x + last_x) / 2.0, (first_y + last_y) / 2.0)
-
-        raise ValueError(f"[observe_field] 参考点不存在：{obj}")
-
-    def _area_store(self):
-        return self.mid_symbols.sT["geometry"]["area"]
-
-    def _function_store(self):
-        return self.mid_symbols.sT["function"]
-
-    def _mesh_store(self):
-        return self.mid_symbols.sT["mesh"]
-
-    def _to_lr(self, v):
-        """将 v 转到 constants.unit_lr 的数值；v 可以是 Quantity 或 float（已是 self.unit_lr）"""
-        if hasattr(v, "to"):
-            return float(v.to(self.unit_lr).magnitude)
-        return float(v)
-
-    def _lr_pair_to_m_str(self, z_lr: float, r_lr: float, nd: int = 10) -> str:
-        """把以 self.unit_lr 表示的 (z, r) 数值转为以米表示的字符串: '[z r]'"""
-        lr_to_m = float(self.unit_lr.to(ureg.meter).magnitude)
-        z_m = round(z_lr * lr_to_m, nd)
-        r_m = round(r_lr * lr_to_m, nd)
-        return f"[{z_m:g} {r_m:g}]"
-
-    def _pt_to_unipic(self, qx, qy, axis_mcl_dir) -> tuple:
-        """
-        将几何平面点 (x,y) 转成 UNIPIC 三元组 (0, r, z)
-        MCL 的轴向选择由 axis_mcl_dir 控制：
-        - 'X'：x->z, y->r
-        - 'Y'：x->r, y->z
-        """
-        x = self._to_lr(qx)
-        y = self._to_lr(qy)
-        if axis_mcl_dir == 'X':
-            z, r = x, y
-        else:
-            r, z = x, y
-        return (0.0, r, z)
-
-    def _print_handler_result(self, message: str):
-        print(f"       -> {message}")
-
-
 
 
 
     def mcl2mid_sTconv(self):
         """
-        将解析结果写入 sT 中间表示。
+        将MCL符号表转换为中间符号表
         """
         # ======================================================
         # 1️⃣ 过滤并排序有效条目
@@ -186,6 +105,8 @@ class MCL2MIDST_LLMConv:
             kind = payload.get("kind", "").upper()
             name = payload.get("sys_name", "") or payload.get("geom_name", "")
             lineno = record.get("lineno", "?")
+
+            print(f"[info] ====> @ Line {lineno}: {kind} {name}")
 
             self.process_record(idx, record)
 
@@ -210,7 +131,7 @@ class MCL2MIDST_LLMConv:
             # print(f"[debug] 处理LLM转换条目:", json.dumps(llmconv_item, ensure_ascii=False, indent=4))
             self.inserter.upsert_one(self.mid_symbols.sT, llmconv_item)
 
-        return self.mid_symbols, self.llmconvlist
+        return self.magic_symbols, self.mid_symbols, self.llmconvlist
 
     def process_record(self, idx: int, record: dict):
         """
@@ -223,41 +144,51 @@ class MCL2MIDST_LLMConv:
             print("[error] 无法识别条目 kind，已跳过。")
             return
         
-        # 正式转换
-        if cmd_type in self.llm_route_config.mcl2mid_llmconv_commands:
-            lineno = record.get("lineno", "?")
-            payload = record.get("payload", {})
-            name = payload.get("sys_name") or payload.get("geom_name") or ""
-            print(f"[info] ====> @ Line {lineno}: [LLM] {cmd_type} {name}".rstrip())
-            if cmd_type in self.cmd_no:
-                cmd_no = self.cmd_no[cmd_type] + 1
-                self.cmd_no[cmd_type] = cmd_no
-                record["payload"]["cmd_no"] = cmd_no
-            cmd_type_single = cmd_type.split()[0]
-            shouldConvert = cmd_type_single in self.MCL2MID_dict
-            if shouldConvert:
-                self._process_llmconv(idx, record)
-            else:
-                print(f"[error] 未处理的条目类型: {cmd_type_single}")
-            return
-        else:
-            lineno = record.get("lineno", "?")
-            payload = record.get("payload", {})
-            name = payload.get("sys_name") or payload.get("geom_name") or ""
-            print(f"[info] ====> @ Line {lineno}: [RULE] {cmd_type} {name}".rstrip())
-            handler_name = f"_process_{kind}"
-            handler = getattr(self, handler_name, None)
-            if handler is None:
-                print(f"[error] 未处理的条目类型: {kind}")
+        if not self.llmconv_debug:
+            if kind in self.llm_route_config.mcl2mid_llmconv_commands:
+                print(f"       LLM处理的条目类型: {cmd_type}")
+                if cmd_type in self.cmd_no:
+                    cmd_no = self.cmd_no[cmd_type] + 1
+                    self.cmd_no[cmd_type] = cmd_no
+                    record["payload"]["cmd_no"] = cmd_no
+                cmd_type_single = cmd_type.split()[0]
+                shouldConvert = cmd_type_single in self.MCL2MID_dict
+                if shouldConvert:
+                    self._process_llmconv(idx, record)
                 return
+            else:
+                handler_name = f"_process_{kind}"
+                handler = getattr(self, handler_name, None)
+                if handler is None:
+                    print(f"[error] 未处理的条目类型: {kind}")
+                    return
 
-            try:
-                handler(idx, record)
-            except Exception as e:
-                print(f"[error] 处理 {kind} 时出错: {e}")
-                traceback.print_exc()
-                raise
-            
+                try:
+                    handler(idx, record)
+                except Exception as e:
+                    print(f"[error] 处理 {kind} 时出错: {e}")
+                    traceback.print_exc()
+                    raise
+        else:
+            if kind in self.llm_route_config.mcl2mid_llmconv_commands:
+                print(f"       LLM处理的条目类型: {cmd_type}")
+                cmd_type_single = cmd_type.split()[0]
+                shouldConvert = cmd_type_single in self.MCL2MID_dict
+                if shouldConvert:
+                    self._process_llmconv(idx, record)
+                return
+            else:
+                handler_name = f"_process_{kind}"
+                handler = getattr(self, handler_name, None)
+                if handler is None:
+                    print(f"[error] 未处理的条目类型: {kind}")
+                    return
+                try:
+                    handler(idx, record)
+                except Exception as e:
+                    print(f"[error] 处理 {kind} 时出错: {e}")
+                    traceback.print_exc()
+                    raise
 
 
     def _process_llmconv(self, idx: int, record: dict):
@@ -293,8 +224,70 @@ class MCL2MIDST_LLMConv:
             }
         }
         self.inserter.upsert_one(self.llmconvlist, llmconv_item)
-        self._print_handler_result(f"queued for LLM batch: {mcl_command_type_single}")
 
+        
+    # ==========================
+    # 工具方法
+    # ==========================
+    def _eval_length_in_meter(self, size_str: str, str2qty_debug) -> float:
+        q = eval_qty(size_str, self.mid_symbols.sT["variable"], self.unit_lr, str2qty_debug).to(ureg.meter)
+        return float(q.magnitude)
+    
+    def get_point_str(self, name: str, unit=None) -> str:
+        qx, qy = self.mid_symbols.sT["geometry"]["point"][name]
+        return format_point(qx, qy, unit or self.unit_lr)
+
+    def get_line_str(self, name: str, unit=None) -> str:
+        pts = self.mid_symbols.sT["geometry"]["line"][name]
+        return format_line(pts, unit or self.unit_lr)
+
+    def get_area_polygon_str(self, name: str, unit=None, close=True) -> str:
+        info = self.mid_symbols.sT["geometry"]["area"][name]
+        if "points" not in info:
+            raise ValueError(f"AREA {name} 不是点列表类型（{info['type']}），无法格式化为 polygon")
+        pts = info["points"]
+        if close and pts and pts[0] != pts[-1]:
+            pts = pts + [pts[0]]
+        return format_line(pts, unit or self.unit_lr)
+    
+    def _to_lr(self, v):
+        """将 v 转到 constants.unit_lr 的数值；v 可以是 Quantity 或 float（已是 self.unit_lr）"""
+        if hasattr(v, "to"):
+            return float(v.to(self.unit_lr).magnitude)
+        return float(v)
+
+
+    def to_number_or_str(self, expr):
+        """能转数字就转 float，转不了就保留为字符串"""
+        try:
+            v = float(parse_expr(str(expr)))
+            return v
+        except Exception:
+            return str(expr)
+        
+    def _lr_pair_to_m_str(self, z_lr: float, r_lr: float, nd: int = 10) -> str:
+        """把以 self.unit_lr 表示的 (z, r) 数值转为以米表示的字符串: '[z r]'"""
+        lr_to_m = float(self.unit_lr.to(ureg.meter).magnitude)
+        z_m = round(z_lr * lr_to_m, nd)
+        r_m = round(r_lr * lr_to_m, nd)
+        # 用 :g 避免 0.0000000000 这类冗长格式
+        return f"[{z_m:g} {r_m:g}]"
+
+
+    def _pt_to_unipic(self, qx, qy, axis_mcl_dir) -> tuple:
+        """
+        将几何平面点 (x,y) 转成 UNIPIC 三元组 (0, r, z)
+        MCL 的轴向选择由 axis_mcl_dir 控制：
+        - 'X'：x->z, y->r
+        - 'Y'：x->r, y->z
+        """
+        x = self._to_lr(qx)
+        y = self._to_lr(qy)
+        if axis_mcl_dir == 'X':
+            z, r = x, y
+        else:  # 'Y'
+            r, z = x, y
+        return (0.0, r, z)
     
     # ==========================
     # 各类处理函数
@@ -305,13 +298,11 @@ class MCL2MIDST_LLMConv:
         expr_str = record.get("payload", "").get("value", "")
         name = record.get("payload", "").get("sys_name", "")
         try:
-            qty = eval_qty(
-                expr_str,
-                self.mid_symbols.sT["variable"],
-                self.unit_lr,
-                variable_debug,
-                allow_dimensionless=True,
-            )
+            #sym = parse_expr(str(expr_str))
+            #if varible_debug:
+            #    print(f"       变量 {name} 值表达式: {sym}")
+            substituted_expr = substitute_variable(expr_str, self.mid_symbols.sT["variable"])  # 替换变量名为符号表中对应的值和单位
+            qty = ureg.parse_expression(substituted_expr)  # 解析表达式为数量
             
 
             # 纯数
@@ -323,21 +314,19 @@ class MCL2MIDST_LLMConv:
                 q = qty
                 dim = q.dimensionality
                 try:
-                    if getattr(q, "dimensionless", False):
-                        q = q.to_base_units()
-                    elif dim == ureg.volt.dimensionality:
+                    if dim == ureg.volt.dimensionality:
                         q = q.to(ureg.volt)                 # 电压 -> V
                     elif dim == ureg.nanosecond.dimensionality:
                         q = q.to(ureg.nanosecond)               # 时间 -> ns
                     elif dim == ureg.hertz.dimensionality:
-                        q = q.to(ureg.gigahertz)           # 频率 -> GHz
+                        q = q.to(ureg.hertz)                # 频率 -> Hz
                     # 其它维度：保持原单位不变
                 except Exception:
                     # 单位不可转换时，保持原样
                     q = qty
 
                 value = round(float(q.magnitude), 10)
-                unit = "dimensionless" if getattr(q, "dimensionless", False) else str(q.units)
+                unit = str(q.units)
                 if variable_debug:
                     print(f"       变量 {name} 原始值: {expr_str} -> {value} {unit}")
 
@@ -360,7 +349,6 @@ class MCL2MIDST_LLMConv:
                 },
                 "dependencies": []
             }
-            self._print_handler_result(f"value={value}       unit={unit}")
 
         except Exception as e:
             print(f"[error] 变量 {name} 处理失败: {e}")
@@ -400,7 +388,6 @@ class MCL2MIDST_LLMConv:
                 "geom_unit": "mm"
             }
         }
-        self._print_handler_result(f"point=({x_mm}, {y_mm}) mm")
 
     def _process_line(self, idx: int, record):
         #print(record)
@@ -436,7 +423,6 @@ class MCL2MIDST_LLMConv:
                 "geom_unit": "mm"
             }
         }
-        self._print_handler_result(f"points={len(data_mm)} unit=mm")
         #print("_process_line:\n",self.mid_symbols.sT["geometry"]["line"][name])
 
 
@@ -456,7 +442,7 @@ class MCL2MIDST_LLMConv:
         params = entry.get("params", {})
         if area_debug:
             print(f"       {a_type} 原始点: {params}")
-            print(f"[info] sT.variable: {self.mid_symbols.sT["variable"]}")
+            print(f"[info] 符号表: {self.mid_symbols.sT["variable"]}")
 
         if a_type in ("CONFORMAL", "RECTANGULAR"):
             p_tokens = params.get("points") or [params.get("p1"), params.get("p2")]
@@ -465,13 +451,11 @@ class MCL2MIDST_LLMConv:
                 raise ValueError(f"{a_type} 需要两个对角点")
             (x1, y1) = parse_point_token(p_tokens[0], self.mid_symbols.sT["variable"], self.mid_symbols.sT["geometry"]["point"], self.unit_lr)
             (x2, y2) = parse_point_token(p_tokens[1], self.mid_symbols.sT["variable"], self.mid_symbols.sT["geometry"]["point"], self.unit_lr)
-            xmin, xmax = sorted([x1, x2], key=lambda q: float(q.to(self.unit_lr).magnitude) if hasattr(q, "to") else float(q))
-            ymin, ymax = sorted([y1, y2], key=lambda q: float(q.to(self.unit_lr).magnitude) if hasattr(q, "to") else float(q))
-            # 统一归一化为稳定的矩形点序，避免对角点输入顺序影响几何方向
-            p1 = (xmin, ymin)
-            p2 = (xmax, ymin)
-            p3 = (xmax, ymax)
-            p4 = (xmin, ymax)
+            # 四角（闭合，首尾相接可按需要决定是否重复首点）
+            p1 = (x1, y1)
+            p2 = (x2, y1)
+            p3 = (x2, y2)
+            p4 = (x1, y2)
             poly = [p1, p2, p3, p4, p1]
 
             # 保存成 mm 的纯浮点
@@ -490,7 +474,6 @@ class MCL2MIDST_LLMConv:
                     "geom_unit": "mm"
                 }  
             }
-            self._print_handler_result(f"area_type={a_type} points={len(geom_num)} unit=mm")
 
         elif a_type == "POLYGONAL":
             tokens = params.get("points", [])
@@ -513,7 +496,6 @@ class MCL2MIDST_LLMConv:
                     "geom_unit": "mm"
                 }  
             }
-            self._print_handler_result(f"area_type={a_type} points={len(geom_num)} unit=mm")
 
         elif a_type == "FUNCTIONAL":
             self.mid_symbols.sT["geometry"]["area"][name] = {
@@ -523,7 +505,6 @@ class MCL2MIDST_LLMConv:
                 },
                 "cac_result":{}
             }
-            self._print_handler_result(f"area_type={a_type} expr=function")
 
         elif a_type == "FILLET":
             p_tokens = params.get("points") or [params.get("p1"), params.get("p2")]
@@ -545,7 +526,6 @@ class MCL2MIDST_LLMConv:
                     "geom_unit": "mm"
                 }  
             }
-            self._print_handler_result(f"area_type={a_type} radius={UnitTool.qty_mag_mm(rad_q)} mm")
 
         elif a_type == "QUARTERROUND":
             (cx, cy) = parse_point_token(params["center"], self.mid_symbols.sT["variable"], self.mid_symbols.sT["geometry"]["point"], self.unit_lr)
@@ -561,7 +541,6 @@ class MCL2MIDST_LLMConv:
                 },
                 "cac_result":{}
             }
-            self._print_handler_result(f"area_type={a_type} center={center} radius={UnitTool.qty_mag_mm(rad_q)} mm")
 
         elif a_type == "SINUSOID":
             raise ValueError(f"[sinusoid] 未实现")
@@ -657,27 +636,20 @@ class MCL2MIDST_LLMConv:
     def _process_material_assign(self, idx, record):
         entry = record["payload"]
         geom_name = entry.get("geom_name", "")
-        raw_mtype = entry.get("mtype", "")
-        lineno = record.get("lineno")
-        material_map = {
-            "CONDUCTOR": "PEC",
-            "VOID": "VOID",
-            "PEC": "PEC",
-            "FREESPACE": "VOID",
-        }
-        mtype = material_map.get(raw_mtype, raw_mtype)
+        mtype = entry.get("mtype", "")
         
         insert_cmd = {
             "sys_type": "material_assign",
             "value": {
                 "geom_name": geom_name,
-                "mat_name": mtype,
-                "lineno": lineno,
+                "mat_name": mtype
             }
         }
         
         self.inserter.upsert_one(self.mid_symbols.sT, insert_cmd)
-        self._print_handler_result(f"material={mtype}")
+        
+        print(f"[info] 已为几何体 {geom_name} 添加材料 {mtype}")
+        print(self.mid_symbols.sT["material"]["material_assign"])
 
 
     def _process_mark(self, idx, record):
@@ -687,21 +659,15 @@ class MCL2MIDST_LLMConv:
         axis = entry.get("axis")
         mesh_size = entry.get("size")
 
+        # eval_qty 返回带单位，转米
+        size_num = float(eval_qty(mesh_size, self.mid_symbols.sT["variable"], self.unit_lr).to(ureg.mm).magnitude)
 
-        if not axis or not mesh_size:
-            print("[error] MARK 缺少必要字段，已忽略。")
-            return
-        try:
-            size_num = float(eval_qty(mesh_size, self.mid_symbols.sT["variable"], self.unit_lr).to(ureg.mm).magnitude)
-            self.mid_symbols.sT["mesh"]["mark"].append({
-                "geom_name": geom_name,
-                "axis": axis,
-                "size_num": size_num,
-                "size_unit": "mm",
-            })
-            self._print_handler_result(f"mark target={geom_name} axis={axis} size={size_num} mm")
-        except Exception as e:
-            print(f"[error] MARK 处理失败: {e}")
+        self.mid_symbols.sT["mesh"]["mark"].append({
+            "geom_name": geom_name,
+            "axis": axis,
+            "size_num": size_num,
+            "size_unit": "mm"
+        })
 
     def _process_port(self, idx, record):
 
@@ -773,7 +739,7 @@ class MCL2MIDST_LLMConv:
                         "norm_geom_value": norm_geom_value
                     }
 
-            self.mid_symbols.sT["boundaries"]["port"].append({
+            self.mid_symbols.sT["boundary"]["port"].append({
                 "PORT_type": PORT_type,
                 "sys_no": f"{self.cmd_no["PORT"]}",
                 "parameters": {
@@ -786,7 +752,7 @@ class MCL2MIDST_LLMConv:
                 "dependencies": [],
                 "cac_result": {}
             })
-            self.mid_symbols.sT["physics_entities"]["field_excitation"].append({
+            self.mid_symbols.sT["physics_entity"]["field_excitation"].append({
                 "port_no": f"{self.cmd_no["PORT"]}",
                 "parameters": {
                     "incoming_func_body": incoming_func_body,
@@ -797,15 +763,15 @@ class MCL2MIDST_LLMConv:
                 "cac_result": {}
             })
             if norm_set:
-                self.mid_symbols.sT["boundaries"]["port"][-1]["parameters"].update(norm_set)
+                self.mid_symbols.sT["boundary"]["port"][-1]["parameters"].update(norm_set)
 
-            self._print_handler_result(f"port={PORT_type} direction={direction}")
-
+            print(f"[info] 注入波端口 {geom_name} 定义成功")
+            
 
         elif direction == "NEGATIVE":
             kind = "OPENPORT"
             PORT_type = "OPENPORT"
-            self.mid_symbols.sT["boundaries"]["port"].append({
+            self.mid_symbols.sT["boundary"]["port"].append({
                 "PORT_type": PORT_type,
                 "sys_no": f"{self.cmd_no["PORT"]}",
                 "parameters": {
@@ -818,13 +784,13 @@ class MCL2MIDST_LLMConv:
                 "cac_result": {},
                 "dependencies": []
             })
-            self._print_handler_result(f"port={PORT_type} direction={direction}")
+            print(f"[info] 开放端口 {geom_name} 定义成功")
         else:
             raise ValueError(f"[port] 方向不合法：{direction}")
 
     def _process_emit(self, idx, record):
         entry = record["payload"]
-        self.mid_symbols.sT["physics_entities"]["emit_apply"].append({
+        self.mid_symbols.sT["physics_entity"]["emit_apply"].append({
             "sys_type": "emit_apply",
             "emission_name": entry["model"],
             "parameters": {
@@ -836,7 +802,7 @@ class MCL2MIDST_LLMConv:
 
     def _process_emission(self, idx, record):
         entry = record["payload"]
-        self.mid_symbols.sT["physics_entities"]["emission_model"].append({
+        self.mid_symbols.sT["physics_entity"]["emission_model"].append({
             "sys_type": "emission_model",
             "sys_name": entry["process_args"]["process"],
             "parameters": {
@@ -853,42 +819,35 @@ class MCL2MIDST_LLMConv:
         preset_func_name = entry["func_name"]
 
         if preset_name == "B1ST":
-            component = "0"
-            field_func_name = "Bz"
+            component = "0"; func_kind = "Bz"
         elif preset_name == "B2ST":
-            component = "1"
-            field_func_name = "Br"
+            component = "1"; func_kind = "Br"
         else:
             raise ValueError(f"[preset] 未支持的预设：{preset_name}")
 
         preset_func = self.mid_symbols.sT["function"].get(preset_func_name)
-        preset_var = self.mid_symbols.sT["variable"].get(preset_func_name)
+        if not preset_func:
+            raise ValueError(f"[preset] 未定义函数：{preset_func_name}")
 
-        if preset_func:
-            preset_func_body = self.func_mcl2unipic(preset_func["parameters"]["func_body"])
-            preset_func_vars_list = self.funcvars_mcl2unipic(preset_func["cac_result"]["func_vars"])
-            preset_func_vars = {k: v for d in preset_func_vars_list for k, v in d.items()}
+        preset_func_body = self.func_mcl2unipic(preset_func["parameters"]["func_body"])
+        preset_func_vars_list = self.funcvars_mcl2unipic(preset_func["cac_result"]["func_vars"])
 
-            params = set(preset_func.get("parameters", {}).get("func_params", []))
-            if "T" in params:
-                preset_func_kind = "tFunc"
-            elif ("Z" in params) and ("R" in params):
-                preset_func_kind = "zrFunc"
-            else:
-                raise ValueError(f"[preset] 函数参数不符合预期，应包含T或(Z,R)：{preset_func_name}")
-        elif preset_var and preset_var.get("cac_result"):
-            preset_func_body = str(preset_var["cac_result"]["var_num"])
-            preset_func_vars = {}
+        preset_func_vars = {k: v for d in preset_func_vars_list for k, v in d.items()}
+
+        params = set(preset_func.get("parameters", {}).get("func_params", []))
+        if "T" in params:
+            preset_func_kind = "tFunc"
+        elif ("Z" in params) and ("R" in params):
             preset_func_kind = "zrFunc"
         else:
-            raise ValueError(f"[preset] 未定义函数或变量：{preset_func_name}")
+            raise ValueError(f"[preset] 函数参数不符合预期，应包含T或(Z,R)：{preset_func_name}")
 
 
-        self.mid_symbols.sT["physics_entities"]['electromagnetic_field'].append({
+        self.mid_symbols.sT["physics_entity"]['electromagnetic_field'].append({
             "sys_name": preset_name,
             "parameters": {
                 "component": component,
-                "func_name": field_func_name,
+                "func_name": preset_func_name,
                 "kind": preset_func_kind,
             },
             "cac_result": {
@@ -897,7 +856,7 @@ class MCL2MIDST_LLMConv:
             },
         })
         
-        print(f"[info] PRESET {preset_name}:  {self.mid_symbols.sT["physics_entities"]['electromagnetic_field']}")
+        print(f"[info] PRESET {preset_name}:  {self.mid_symbols.sT["physics_entity"]['electromagnetic_field']}")
 
     def _process_inductor(self, idx, record):
         """
@@ -917,8 +876,8 @@ class MCL2MIDST_LLMConv:
         if not line or line not in self.mid_symbols.sT["geometry"]["line"]:
             raise ValueError(f"[inductor] 目标线不存在：{line}")
 
-        # 1) 线的几何（从 sT.line.cac_result.geom_num 读取）
-        pts_q = self.mid_symbols.sT["geometry"]["line"][line]["cac_result"]["geom_num"]
+        # 1) 线的几何（Quantity -> UNIPIC 三元组 -> 取首尾两点）
+        pts_q = self.mid_symbols.sT["geometry"]["line"][line]                 # [(qx,qy), ...] 仍是 Quantity
         if len(pts_q) < 2:
             raise ValueError(f"[inductor] 线 {line} 至少需要两个点")
 
@@ -989,7 +948,7 @@ class MCL2MIDST_LLMConv:
                 print(f"[error] INDUCTOR 解析强制电感失败：{inductance_pm}")
 
         # 5) 缓存 JSON-safe 结果，留给 saveCircuitModelIn()
-        self.mid_symbols.sT["physics_entities"]["inductor"].append({
+        self.mid_symbols.sT["physics_entity"]["inductor"].append({
             "sys_name": line,                       # 以线名作为逻辑名（保存时会生成 inductor1/2/...）
             "kind": "Inductor",
             "L":  inductance_pm, #None if L_total is None else float(f"{L_total:.10g}"),  # H
@@ -1000,30 +959,28 @@ class MCL2MIDST_LLMConv:
             "diameter_expr": diameter_expr     # 留作后续需要时再数值化
             #"inductance_per_m": inductance_pm   # 原样保留（便于追溯）
         })
-        self._print_handler_result(f"inductor={line} dir={direc} length_m={float(f'{length_m:.10g}')}")
     
-    def _process_freespace(self, idx, record):
+    def _process_freespace(self, entry):
         return None
     
-    def _process_timer(self, idx, record):
-        entry = record["payload"]
+    def _process_timer(self, entry):
         timer_name = entry.get("timer_name") or entry.get("sys_name")
         timer_mode = entry.get("timer_mode") or entry.get("mode")
         timer_type = entry.get("timer_type") or entry.get("time_type")
         timer_opts = list(entry.get("timer_opt", []))
 
         # 变量展开
-        variable_expr_map = {n: f"{v['cac_result']['var_num']} * {v['cac_result']['var_unit']}" for n, v in self.mid_symbols.sT["variable"].items()}
+        symbol_table = {n: f"{v['value']} * {v['unit']}" for n, v in self.mid_symbols.sT["variable"].items()}
         for i, opt in enumerate(timer_opts):
-            timer_opts[i] = variable_expr_map.get(opt, opt)
+            timer_opts[i] = symbol_table.get(opt, opt)
 
-        self.mid_symbols.sT["global_settings"].setdefault("timers", {})[timer_name] = {
+        self.mid_symbols.timers[timer_name] = {
             "timer_name": timer_name,
             "timer_mode": timer_mode,
             "timer_type": timer_type,
             "timer_opts": timer_opts,
         }
-        self._print_handler_result(f"timer={timer_name} mode={timer_mode} type={timer_type}")
+
     ##################
     # 处理 OBSERVE 命令
     ##################
@@ -1049,11 +1006,13 @@ class MCL2MIDST_LLMConv:
         ikind = entry["integral_kind"]
         gname = entry["geom_name"]
 
-        line_store = self._line_store()
-        if gname not in line_store:
+        if gname not in self.mid_symbols.sT["geometry"]["line"]:
             raise ValueError(f"[observe_field_integral] 参考对象应为 LINE：{gname}")
 
-        pts = [self._pt_to_unipic(qx, qy, axis_mcl_dir) for (qx, qy) in line_store[gname]]
+        geom_num = self.mid_symbols.sT["geometry"]["line"][gname]["cac_result"]["geom_num"]
+        # print(f"[observe_field_integral] {geom_num}")
+        pts = [self._pt_to_unipic(qx, qy, axis_mcl_dir) for (qx, qy) in geom_num]
+
         (_, r1, z1), (_, r2, z2) = pts[0], pts[-1]   # 这里 r1,z1 等仍是 self.unit_lr 下的数
 
         if ikind == "E.DL":
@@ -1061,7 +1020,7 @@ class MCL2MIDST_LLMConv:
             org = self._lr_pair_to_m_str(z1, r1)
             end = self._lr_pair_to_m_str(z2, r2)
             result_dic.update({
-                "observe_type": "observe_field_integral",
+                "observe_type": "field_integral",
                 "kind": "VoltageDgn",
                 "sys_name": f"Vin{geo_c.get_voltageDgn_count()}",
                 "lineDir": "r",
@@ -1073,7 +1032,7 @@ class MCL2MIDST_LLMConv:
             lo = self._lr_pair_to_m_str(min(z1, z2), r1 if z1 <= z2 else r2)
             hi = self._lr_pair_to_m_str(max(z1, z2), r2 if z2 >= z1 else r1)
             result_dic.update({
-                "observe_type": "observe_field_integral",
+                "observe_type": "field_integral",
                 "kind": "CurrentDgn",
                 "sys_name": f"Iz{geo_c.get_currentDgn_count()}",
                 "dir": "r",
@@ -1085,22 +1044,22 @@ class MCL2MIDST_LLMConv:
 
         # 选项占位...
         observe_opts = entry.get("observe_opt", [])
+
         if result_dic:
             self.mid_symbols.sT["diagnostic"].append(result_dic)
 
 
+    # 单点的场值观测
     def _process_observe_field(self, idx, record):
         entry = record["payload"]
-        
         result_dic = {}
         field_kind = entry["field_kind"]
         obj = entry["object_kind"]
 
-        point_store = {obj: self._observe_field_target_point(obj)}
-        if obj not in point_store:
+        if obj not in self.mid_symbols.sT["geometry"]["point"]:
             raise ValueError(f"[observe_field] 参考点不存在：{obj}")
 
-        qx, qy = point_store[obj]
+        qx, qy = self.mid_symbols.sT["geometry"]["point"][obj]["cac_result"]["geom_num"]
         _, r_lr, z_lr = self._pt_to_unipic(qx, qy, self.axis_mcl_dir)   # self.unit_lr 下
 
         # 写文件用米
@@ -1114,7 +1073,7 @@ class MCL2MIDST_LLMConv:
             raise ValueError(f"[observe_field] 不支持的场分量：{field_kind}")
 
         result_dic.update({
-            "observe_type": "observe_field",
+            "observe_type": "field",
             "field_kind": field_kind,
             "dir": dir_dic[field_kind],
             "sys_name": name_dic[field_kind],
@@ -1125,22 +1084,23 @@ class MCL2MIDST_LLMConv:
         if result_dic:
             self.mid_symbols.sT["diagnostic"].append(result_dic)
 
-
+    # 功率观测
     def _process_observe_field_power(self, idx, record):
         entry = record["payload"]
-        
         result_dic = {}
+        unit_lr = self.unit_lr
         axis_mcl_dir = self.axis_mcl_dir
         geo_c = self.geo_c
 
         if entry["power_variable"] != "S.DA":
             raise ValueError(f"[observe_field_power] 仅支持 S.DA")
         obj = entry["object_kind"]
-        line_store = self._line_store()
-        if obj not in line_store:
+        if obj not in self.mid_symbols.sT["geometry"]["line"]:
             raise ValueError(f"[observe_field_power] 参考对象应为 LINE：{obj}")
 
-        pts = [self._pt_to_unipic(qx, qy, axis_mcl_dir) for (qx, qy) in line_store[obj]]
+        geom_num = self.mid_symbols.sT["geometry"]["line"][obj]["cac_result"]["geom_num"]
+        # print(f"[observe_field_power] {geom_num}")
+        pts = [self._pt_to_unipic(qx, qy, axis_mcl_dir) for (qx, qy) in geom_num]
         (_, r1, z1), (_, r2, z2) = pts[0], pts[-1]
 
         # 统一下界<上界（按 z），并转米
@@ -1148,7 +1108,7 @@ class MCL2MIDST_LLMConv:
         hi = self._lr_pair_to_m_str(max(z1, z2), r2 if z2 >= z1 else r1)
 
         result_dic.update({
-            "observe_type": "observe_field_power",
+            "observe_type": "field_power",
             "kind": "PoyntingDgn",
             "dir": "z",
             "sys_name": f"Poutout{geo_c.get_PoyntingDgn_count()}",

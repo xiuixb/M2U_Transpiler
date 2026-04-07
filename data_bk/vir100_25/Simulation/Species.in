@@ -1,7 +1,0 @@
-<Species Species>
-  charge = -1.6022e-19
-  mass = 9.109e-31
-  ptclCreationRate = 3.0
-  kind = electron
-  name = Species
-</Species>

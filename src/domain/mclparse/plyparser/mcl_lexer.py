@@ -10,6 +10,7 @@ src/domain/mclparse/plyparser/mcl_lexer.py
 
 import os
 import sys
+import re
 
 # 获取项目根目录路径
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -21,6 +22,7 @@ project_root = current_dir
 sys.path.append(project_root)
 
 import ply.lex as lex
+from src.domain.config.mcl_unit import mcl_units
 
 
 states = (
@@ -75,16 +77,6 @@ reserved = {
     'CONDUCTOR': 'K_CONDUCTOR',
     'DIELECTRIC': 'K_DIELECTRIC',
     'VOID':'K_VOID',
-    'MATERIAL':'K_MATERIAL',
-
-    #材料属性
-    'ATOMIC_NUMBER': 'K_ATOMIC_NUMBER',
-    'ATOMIC_MASS': 'K_ATOMIC_MASS',
-    'MOLECULAR_CHARGE': 'K_MOLECULAR_CHARGE',
-    'MOLECULAR_MASS': 'K_MOLECULAR_MASS',
-    'CONDUCTIVITY': 'K_CONDUCTIVITY',
-    'MASS_DENSITY': 'K_MASS_DENSITY',
-    'PERMITTIVITY': 'K_PERMITTIVITY',
 
     #端口
     'PORT': 'K_PORT',
@@ -175,7 +167,6 @@ reserved = {
 # 定义所有的 tokens，包括 reserved
 tokens = [
     # 关键字
-    'K_COMMENT',
     'K_ASSIGN',
     'K_CHARACTER',
     'K_INTEGER',
@@ -213,6 +204,7 @@ tokens = [
 
     # 标识符和字面量
     'IDENTITY',
+    'UNIT_LITERAL',
     'INTEGER_LITERAL',
     'FLOAT_LITERAL',
     'STRING_LITERAL',
@@ -241,17 +233,6 @@ tokens = [
     'K_CONDUCTOR',
     'K_DIELECTRIC',
     'K_VOID',
-    'K_MATERIAL',
-
-    #材料属性
-    'K_ATOMIC_NUMBER',
-    'K_ATOMIC_MASS',
-    'K_MOLECULAR_CHARGE',
-    'K_MOLECULAR_MASS',
-    'K_CONDUCTIVITY',
-    'K_MASS_DENSITY',
-    'K_PERMITTIVITY',
-
     #端口
     'K_PORT',
     'K_OUTGOING',
@@ -351,11 +332,6 @@ t_O_EQ        = r'=='
 t_O_NE        = r'!='
 
 
-def t_K_COMMENT(t):
-    r'COMMENT'
-    #print(f"Found COMMENT: {t.value}")
-    return t
-
 def t_FUNCTION(t):
     r'FUNCTION\b'  # 精确匹配关键字
     # 当其不在基础状态时，将其视为普通标识符
@@ -434,26 +410,62 @@ def t_STRING_LITERAL(t):
 
 
 def t_FLOAT_LITERAL(t):
-    r'[+-]?([0-9]+([.][0-9]*)?([eE][+-]?[0-9]+)?|[.][0-9]+([eE][+-]?[0-9]+)?)'
+    r'(?:(?:[0-9]+\.[0-9]*|\.[0-9]+|[0-9]+)(?:[eE]\s*[+-]?\s*[0-9]+)?)'
+    normalized = re.sub(r'\s+', '', t.value)
+    normalized_lower = normalized.lower()
     try:
-        t.value = float(t.value)
+        if "." not in normalized and "e" not in normalized_lower:
+            t.type = 'INTEGER_LITERAL'
+            t.value = int(normalized)
+        else:
+            t.type = 'FLOAT_LITERAL'
+            t.value = float(normalized_lower)
     except ValueError:
-        print(f"Float value too large {t.value}")
-        t.value = 0.0
+        print(f"Numeric value too large {t.value}")
+        if "." not in normalized and "e" not in normalized_lower:
+            t.type = 'INTEGER_LITERAL'
+            t.value = 0
+        else:
+            t.type = 'FLOAT_LITERAL'
+            t.value = 0.0
     return t
 
-def t_INTEGER_LITERAL(t):
-    r'[+-]?([0-9])+'
-    try:
-        t.value = int(t.value)
-    except ValueError:
-        print(f"Integer value too large {t.value}")
-        t.value = 0
-    return t
+
+UNIT_CANONICAL_MAP = {
+    "hz": "hertz",
+    "khz": "kilohertz",
+    "mhz": "megahertz",
+    "ghz": "gigahertz",
+    "thz": "terahertz",
+    "kv": "kilovolt",
+}
+
+
+def _canonicalize_unit_name(unit: str) -> str:
+    unit_key = unit.lower().lstrip("_").rstrip("s")
+    return UNIT_CANONICAL_MAP.get(unit_key, unit_key)
+
+
+def _is_number_prefixed_unit(lexer, lexpos: int) -> bool:
+    prefix = lexer.lexdata[:lexpos]
+    return re.search(
+        r'(?:\d+\.\d*|\.\d+|\d+)(?:[eE]\s*[+-]?\s*\d+)?\s*$',
+        prefix
+    ) is not None
 
 def t_IDENTITY(t):
-    r'[\.\_a-zA-Z][\.\$\%\&\<\>\?\_\~\`\@\#\^\|\{\}\[\]a-zA-Z0-9]*'
-    t.type = reserved.get(t.value.upper(), 'IDENTITY')  # 检查是否为关键字
+    r'[._A-Za-z][.\-$%&<>?_~`@#^|{}\[\]A-Za-z0-9]*'
+    reserved_type = reserved.get(t.value.upper())
+    if reserved_type is not None:
+        t.type = reserved_type
+        return t
+
+    unit_name = _canonicalize_unit_name(t.value)
+    if unit_name in mcl_units and _is_number_prefixed_unit(t.lexer, t.lexpos):
+        t.type = 'UNIT_LITERAL'
+        t.value = unit_name
+    else:
+        t.type = 'IDENTITY'
     return t
 
 def t_newline(t):

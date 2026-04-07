@@ -1,0 +1,15 @@
+{
+  "multiword_prefixes": [
+    "EMISSION",
+    "OBSERVE"
+  ],
+  "regexparse_commands": [
+    "INDUCTOR"
+  ],
+  "llmparse_commands": [],
+  "llmparse_prefixes": [
+    "   "
+  ],
+  "llmparse_patterns": [],
+  "mcl2mid_llmconv_commands": []
+}

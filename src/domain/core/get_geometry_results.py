@@ -378,6 +378,8 @@ class GeomUtils:
         x_max = max(p[0] for p in upper_parts)
         x_min = min(p[0] for p in upper_parts)
         area_contour = [(x_min, 0.0), *upper_parts, (x_max, 0.0)]
+        print('[info] "上包络 + y=0"外壳:')
+        print({"OUTER_SHELL": {"points": area_contour}})
         all_area = self.Polygon(area_contour)
 
         # 对"下半部分的所有非连通区域"和"上半部分区域"都做差集

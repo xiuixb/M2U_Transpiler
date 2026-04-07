@@ -1,4 +1,5 @@
 /data
+/bat
 /.vscode
 /count_lines.py
 /fft.py

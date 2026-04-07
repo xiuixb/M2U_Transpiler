@@ -8,21 +8,23 @@ class SysConfigStore:
     系统配置存储。
 
     负责：
-    - 读取/创建 `src/sys_config.json`
+    - 读取/创建 `src/infrastructure/sys_config.json`
     - 保存当前器件路径，供系统启动恢复
     """
 
     FILENAME = "sys_config.json"
 
-    def __init__(self, src_root: Path | None = None):
-        self.src_root = src_root or Path(__file__).resolve().parents[1]
-        self.path = self.src_root / self.FILENAME
+    def __init__(self, infra_root: Path | None = None):
+        self.infra_root = infra_root or Path(__file__).resolve().parent
+        self.path = self.infra_root / self.FILENAME
+        self.legacy_path = self.infra_root.parent / self.FILENAME
 
     def load(self) -> dict[str, Any]:
         default_config = {
             "current_input_file": "",
             "last_device_name": "",
         }
+        self._migrate_legacy_file()
         if not self.path.exists():
             self.save(default_config)
             return default_config
@@ -33,6 +35,12 @@ class SysConfigStore:
         with open(self.path, "w", encoding="utf-8") as f:
             json.dump(config_data, f, ensure_ascii=False, indent=2)
         return self.path
+
+    def _migrate_legacy_file(self) -> None:
+        if self.path.exists() or not self.legacy_path.exists():
+            return
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self.path.write_text(self.legacy_path.read_text(encoding="utf-8"), encoding="utf-8")
 
     def get_current_input_file(self) -> str:
         return self.load().get("current_input_file", "")

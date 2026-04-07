@@ -16,7 +16,7 @@ sys.path.append(project_root)
 
 from src.domain.config.symbolBase import *
 
-from src.domain.config.cmd_dic import PreprocessCmd
+from src.domain.config.cmd_dic_loader import PreprocessCmd
 from src.domain.core.m2u_parser_route import parse_route_cfg
 from src.domain.mclparse.parser_classifier import ParserClassifier
 
@@ -110,10 +110,10 @@ class MAGIC2UNIPIC:
 
 
         # --- Step 3 ---
-        print("=====> Step 3: Converting to UNI")
+        print("=====> Step 3: Converting")
         time_conv_start = time.time()
         
-        print("[info] 转换器一轮处理……")
+        print(f"\n\n{'='*25}\n[info] 转换器-符号处理……\n{'='*25}")
         self.mcl2mid_conv.load_list(
             parsed_dicts=parsed_dicts, 
             unit_lr=constants.unit_lr,
@@ -142,7 +142,7 @@ class MAGIC2UNIPIC:
                 f.write(test_item["txt"] + "\n\n\n\n")
 
 
-        print("\n\n[info] 转换器二轮处理……")
+        print(f"\n{'='*25}\n[info] 转换器-差异转换……\n{'='*25}")
         time_mcl2mid_end = time.time()
         self.mid_conv.load_data(self.mid_symbols)
         
@@ -154,8 +154,9 @@ class MAGIC2UNIPIC:
         
         # print(f"[info] 转换后真空区域: \n{self.mid_symbols.sT["geometry"]['area_cac_result']['void_area']}")
         
+        print("\n\n=====> Step 4: Generating UNI symbols")
         
-        print("\n\n[info] 转换器三轮处理……")
+        print("[info] 生成目标符号……")
         time_mid_conv_end = time.time()
         self.mid2uni_conv.load_data(self.mid_symbols)
         self.uni_symbols = self.mid2uni_conv.mid2uni_sTconv(
@@ -173,7 +174,7 @@ class MAGIC2UNIPIC:
             json.dump(self.mid_symbols.to_dict(), f, ensure_ascii=False, indent=2)
 
         # --- Step 4 ---
-        print("=====> Step 4: Outputting files")
+        print("=====> Step 5: Outputting files")
         time_save_start = time.time()
         
         self.mid2files.load_data(self.mid_symbols)
@@ -195,8 +196,9 @@ class MAGIC2UNIPIC:
         print("[done] Pipeline completed.")
         print(f"Preprocess: {constants.pre_jsonl}")
         print(f"Parse:      {constants.parsed_json}")
-        print(f"Conv_mcl2mid:  {constants.mid_symbol1_json}")
-        print(f"Conv_mid:      {constants.mid_symbol2_json}")
+        print(f"Conv_round1:   {constants.mid_symbol1_json}")
+        print(f"Conv_round2:   {constants.mid_symbol2_json}")
+        print(f"mid_symbol:   {constants.mid_symbols_json}")
         print(f"Conv_mid2uni:  {constants.uni_symbols_json}")
         # 计算各阶段时间
         total_time = time.time() - start_time

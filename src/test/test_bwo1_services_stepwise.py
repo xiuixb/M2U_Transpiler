@@ -7,7 +7,7 @@ from src.application.services import ConfigService, PipelineService
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 INPUT_FILE = PROJECT_ROOT / "data" / "BWO1" / "BWO1.m2d"
-SRC_SYS_CONFIG = PROJECT_ROOT / "src" / "sys_config.json"
+SRC_SYS_CONFIG = PROJECT_ROOT / "src" / "infrastructure" / "sys_config.json"
 
 
 class TestBWO1ServicesStepwise(unittest.TestCase):
@@ -54,7 +54,7 @@ class TestBWO1ServicesStepwise(unittest.TestCase):
 
         self.assertTrue(result["ok"])
         self.assertEqual(result["step"], 3)
-        self.assertTrue(Path(result["artifacts"]["mid_symbol1_json"]).exists())
+        self.assertTrue(Path(result["artifacts"]["mid_round1_json"]).exists())
         self.assertTrue(Path(result["artifacts"]["llmconv_json"]).exists())
 
     def test_04_run_step_4_convert_round2(self):
@@ -62,7 +62,7 @@ class TestBWO1ServicesStepwise(unittest.TestCase):
 
         self.assertTrue(result["ok"])
         self.assertEqual(result["step"], 4)
-        self.assertTrue(Path(result["artifacts"]["mid_symbol2_json"]).exists())
+        self.assertTrue(Path(result["artifacts"]["mid_round2_json"]).exists())
 
     def test_05_run_step_5_generate_files(self):
         result = self.pipeline_service.run_step(mode="llm", step=5, input_file=self.input_file)

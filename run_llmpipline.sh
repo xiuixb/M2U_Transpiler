@@ -11,14 +11,8 @@ M2D_FILE2="D:\AAA_PIC\Parser\M2U_Transpiler\data\MILO_new\milo_new.m2d"
 # data\Mitl\Mitl.m2d
 M2D_FILE3="D:\AAA_PIC\Parser\M2U_Transpiler\data\Mitl\Mitl.m2d"
 
-# data\TM03_60GHz_Double\TM03_60GHz_Double.m2d    OBSERVE_EMITTED未处理
-M2D_FILE4="D:\AAA_PIC\Parser\M2U_Transpiler\data\TM03_60GHz_Double\TM03_60GHz_Double.m2d"
-
 # data\vir100_25\vir100_25.m2d
 M2D_FILE5="D:\AAA_PIC\Parser\M2U_Transpiler\data\vir100_25\vir100_25.m2d"
-
-# data\XCT_PB\XCT_PB_3.m2d         有很多弧形和真空区域，还没加东西
-M2D_FILE6="D:\AAA_PIC\Parser\M2U_Transpiler\data\XCT_PB\XCT_PB_3.m2d"
 
 # data\RKLYS\RKLYS.m2d
 M2D_FILE7="D:\AAA_PIC\Parser\M2U_Transpiler\data\RKLYS\RKLYS.m2d"
@@ -26,7 +20,7 @@ M2D_FILE7="D:\AAA_PIC\Parser\M2U_Transpiler\data\RKLYS\RKLYS.m2d"
 
 start_time=$(date '+%Y-%m-%d %H:%M:%S.%3N')
 
-M2D_FILE=$M2D_FILE1
+M2D_FILE=$M2D_FILE2
 
 python src/application/m2u_llm.py -I "$M2D_FILE"
 

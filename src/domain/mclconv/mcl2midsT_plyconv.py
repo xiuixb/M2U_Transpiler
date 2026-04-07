@@ -66,6 +66,22 @@ class MCL2MIDST_PLYConv:
             if line_info.get("cac_result", {}).get("geom_num") is not None
         }
 
+    def _observe_field_target_point(self, obj: str):
+        point_store = self._point_store()
+        if obj in point_store:
+            return point_store[obj]
+
+        line_store = self._line_store()
+        if obj in line_store and line_store[obj]:
+            points = line_store[obj]
+            if len(points) == 1:
+                return tuple(points[0])
+            first_x, first_y = points[0]
+            last_x, last_y = points[-1]
+            return ((first_x + last_x) / 2.0, (first_y + last_y) / 2.0)
+
+        raise ValueError(f"[observe_field] 参考点不存在：{obj}")
+
     def _area_store(self):
         return self.mid_symbols.sT["geometry"]["area"]
 
@@ -96,7 +112,8 @@ class MCL2MIDST_PLYConv:
         print("[info] 转换器一轮处理……")
 
         for record in sorted_entries:
-            payload = record["payload"]
+            payload = dict(record["payload"])
+            payload.setdefault("lineno", record.get("lineno"))
             kind = payload.get("kind", "").upper()
             name = self._entry_name(payload) or payload.get("geom_name", "")
             lineno = record.get("lineno", "?")
@@ -170,7 +187,7 @@ class MCL2MIDST_PLYConv:
     def to_number_or_str(self, expr):
         """能转数字就转 float，转不了就保留为字符串"""
         try:
-            v = float(parse_expr(str(expr)))
+            v = float(ureg.parse_expression(str(expr)))
             return v
         except Exception:
             return str(expr)
@@ -222,21 +239,22 @@ class MCL2MIDST_PLYConv:
             else:
                 # === 规范化到指定 SI/默认单位 ===
                 q = qty
-                dim = q.dimensionality
                 try:
-                    if dim == ureg.volt.dimensionality:
+                    if getattr(q, "dimensionless", False):
+                        q = q.to_base_units()
+                    elif q.dimensionality == ureg.volt.dimensionality:
                         q = q.to(ureg.volt)                 # 电压 -> V
-                    elif dim == ureg.second.dimensionality:
+                    elif q.dimensionality == ureg.second.dimensionality:
                         q = q.to(ureg.second)               # 时间 -> s
-                    elif dim == ureg.hertz.dimensionality:
-                        q = q.to(ureg.hertz)                # 频率 -> Hz
+                    elif q.dimensionality == ureg.hertz.dimensionality:
+                        q = q.to(ureg.gigahertz)            # 频率 -> GHz
                     # 其它维度：保持原单位不变
                 except Exception:
                     # 单位不可转换时，保持原样
                     q = qty
 
                 value = round(float(q.magnitude), 10)
-                unit = str(q.units)
+                unit = "dimensionless" if getattr(q, "dimensionless", False) else str(q.units)
                 if variable_debug:
                     print(f"       变量 {name} 原始值: {expr_str} -> {value} {unit}")
 
@@ -328,11 +346,13 @@ class MCL2MIDST_PLYConv:
                 raise ValueError(f"{a_type} 需要两个对角点")
             (x1, y1) = parse_point_token(p_tokens[0], self._var_table(), self._point_store(), self.unit_lr)
             (x2, y2) = parse_point_token(p_tokens[1], self._var_table(), self._point_store(), self.unit_lr)
-            # 四角（闭合，首尾相接可按需要决定是否重复首点）
-            p1 = (x1, y1)
-            p2 = (x2, y1)
-            p3 = (x2, y2)
-            p4 = (x1, y2)
+            xmin, xmax = sorted([x1, x2], key=lambda q: float(q.to(self.unit_lr).magnitude) if hasattr(q, "to") else float(q))
+            ymin, ymax = sorted([y1, y2], key=lambda q: float(q.to(self.unit_lr).magnitude) if hasattr(q, "to") else float(q))
+            # 统一归一化为稳定的矩形点序，避免对角点输入顺序影响几何方向
+            p1 = (xmin, ymin)
+            p2 = (xmax, ymin)
+            p3 = (xmax, ymax)
+            p4 = (xmin, ymax)
             poly = [p1, p2, p3, p4, p1]
             points = convert_to_xy_pairs(poly)
             self.mid_symbols.sT["geometry"]["area"][name] = {
@@ -429,26 +449,10 @@ class MCL2MIDST_PLYConv:
         else:
             raise ValueError(f"未知 AREA 类型: {a_type}")
 
-    def _process_material_apply(self, entry):
-        geom_name = entry.get("geom_name", "")
-        raw_mtype = entry.get("mtype", "")
-        material_map = {
-            "CONDUCTOR": "PEC",
-            "VOID": "VOID",
-            "PEC": "PEC",
-            "FREESPACE": "VOID",
-        }
-        mtype = material_map.get(raw_mtype, raw_mtype)
-        area = self._area_store().get(geom_name)
-        if not area:
-            raise ValueError(f"[material_apply] 几何体不存在：{geom_name}")
-        # 直接在 area 信息上挂材料
-        area.setdefault("parameters", {})["material"] = mtype
-        print(f"       已为几何体 {geom_name} 添加材料 {mtype}")
-
     def _process_material_assign(self, entry):
         geom_name = entry.get("geom_name", "")
         raw_mtype = entry.get("mtype", "")
+        lineno = entry.get("lineno")
         material_map = {
             "CONDUCTOR": "PEC",
             "VOID": "VOID",
@@ -461,9 +465,9 @@ class MCL2MIDST_PLYConv:
             "sys_type": "material_assign",
             "geom_name": geom_name,
             "mat_name": mtype,
+            "lineno": lineno,
         })
-
-        self._process_material_apply(entry)
+        print(f"       已记录材料绑定 {geom_name} -> {mtype}")
 
     ###############
     # cmd_func
@@ -763,7 +767,7 @@ class MCL2MIDST_PLYConv:
         field_kind = entry["field_kind"]
         obj = entry["object_kind"]
 
-        point_store = self._point_store()
+        point_store = {obj: self._observe_field_target_point(obj)}
         if obj not in point_store:
             raise ValueError(f"[observe_field] 参考点不存在：{obj}")
 
@@ -828,22 +832,21 @@ class MCL2MIDST_PLYConv:
 
 
     def _process_mark(self, entry):
-        
+        geom_name = entry.get("geom_name", "")
         axis = entry.get("axis")
         size_token = entry.get("size")
         if not axis or not size_token:
             print("[error] MARK 缺少必要字段，已忽略。")
             return
         try:
-            # eval_qty 返回带单位，转米
-            size_m = float(eval_qty(size_token, self._var_table(), self.unit_lr).to(ureg.meter).magnitude)
-            mesh = self._mesh_store()
-            prev = mesh.get(axis) or -1.0
-            
-            if (prev <= 0.0) or (size_m < prev):
-                mesh[axis] = size_m
-                
-            print(f"       Grid=> {axis} = {mesh[axis]} m")
+            size_num = float(eval_qty(size_token, self._var_table(), self.unit_lr).to(ureg.mm).magnitude)
+            self._mesh_store()["mark"].append({
+                "geom_name": geom_name,
+                "axis": axis,
+                "size_num": size_num,
+                "size_unit": "mm",
+            })
+            print(f"       -> mark target={geom_name} axis={axis} size={size_num} mm")
         except Exception as e:
             print(f"[error] MARK 处理失败: {e}")
 

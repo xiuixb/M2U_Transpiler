@@ -18,7 +18,7 @@ project_root = current_dir
 sys.path.append(project_root)
 
 from src.domain.config.symbolBase import MagicSymbolTable, MidSymbolTable, Unipic25dSymbolTable
-from src.domain.config.cmd_dic import PreprocessCmd
+from src.domain.config.cmd_dic_loader import PreprocessCmd
 from src.domain.core.m2u_parser_route import parse_route_cfg
 from src.domain.mclparse.parser_classifier import ParserClassifier
 from src.domain.mclparse.mcl_llmpreprocess import LLMPreprocess

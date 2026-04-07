@@ -861,12 +861,16 @@ def p_primary(p):
     """primary : '(' expr ')'
                | function_call
                | IDENTITY
+               | FLOAT_LITERAL UNIT_LITERAL
+               | INTEGER_LITERAL UNIT_LITERAL
                | FLOAT_LITERAL
                | INTEGER_LITERAL"""
     if len(p) == 4:
         p[0] = p[2]  # 括号表达式，直接返回内部表达式
-    elif isinstance(p[1], str) and re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', p[1]):
-        p[0] = VariableNode(p[1])       # 变量名
+    elif len(p) == 3:
+        p[0] = BinaryOpNode('*', LiteralNode(p[1]), VariableNode(p[2]))
+    elif p.slice[1].type == 'IDENTITY':
+        p[0] = VariableNode(p[1])       # 标识符，允许带点号等词法层已接受的形式
     elif isinstance(p[1], (int, float)):
         p[0] = LiteralNode(p[1])          # 数字字面量
     else:

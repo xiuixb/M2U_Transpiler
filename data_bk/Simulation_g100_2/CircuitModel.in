@@ -1,8 +1,0 @@
-<CircuitModel inductor1>
-  name = inductor1
-  kind = Inductor
-  L = 100e-9
-  dir = r
-  lowerBounds = [0.8 0.0965]
-  upperBounds = [0.8 0.143]
-</CircuitModel>

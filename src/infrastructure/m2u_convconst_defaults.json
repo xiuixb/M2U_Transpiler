@@ -1,0 +1,23 @@
+{
+  "runtime_defaults": {
+    "bool_Revo_vector": false,
+    "IF_Conv2Void": true,
+    "axis_mcl_dir": "X",
+    "axis_unipic_dir": "Z",
+    "ywaveResolutionRatio": 200,
+    "zwaveResolutionRatio": 200,
+    "unit_lr": "1e-3 meter",
+    "emitter_type": "",
+    "material_dir": "D:\\UNIPIC\\Unipic2.5D_Training\\UNIPIC20240819\\bin\\pic\\MyRBWO\\Material\\material.xml"
+  },
+  "debug_defaults": {
+    "variable_debug": true,
+    "function_debug": false,
+    "str2qty_debug": false,
+    "emit_debug": false,
+    "area_debug": false,
+    "port_debug": false,
+    "conduct2void_debug": false,
+    "llmconv_debug": false
+  }
+}

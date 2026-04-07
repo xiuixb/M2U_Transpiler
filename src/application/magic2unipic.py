@@ -15,7 +15,7 @@ project_root = current_dir
 sys.path.append(project_root)
 
 from src.domain.config.symbolBase import *
-from src.domain.config.cmd_dic import PreprocessCmd
+from src.domain.config.cmd_dic_loader import PreprocessCmd
 from src.domain.mclparse.mcl_plypreprocess import PlyPreprocess
 from src.domain.mclparse.mcl_plyparser import PLYParser
 from src.domain.mclparse.mcl_ast_visit import ASTVisitor

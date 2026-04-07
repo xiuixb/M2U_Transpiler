@@ -19,12 +19,25 @@ while not os.path.exists(os.path.join(current_dir, ".project_mark")):
 project_root = current_dir
 sys.path.append(project_root)
 
-from src.domain.config.cmd_dic import CMD_KEYWORDS_MULTI, CMD_KEYWORDS_SINGLE, PreprocessCmd
+from src.domain.config.cmd_dic_loader import CMD_KEYWORDS_MULTI, CMD_KEYWORDS_SINGLE, PreprocessCmd
 from src.domain.config.mcl_unit import mcl_units
 
 class PlyPreprocess:
+    UNIT_CANONICAL_MAP = {
+        "hz": "hertz",
+        "khz": "kilohertz",
+        "mhz": "megahertz",
+        "ghz": "gigahertz",
+        "thz": "terahertz",
+        "kv": "kilovolt",
+    }
+
     def __init__(self, rules: PreprocessCmd):
         self.rules = rules
+
+    def _canonicalize_unit_name(self, unit: str) -> str:
+        unit_key = unit.lower().rstrip("s")
+        return self.UNIT_CANONICAL_MAP.get(unit_key, unit_key)
 
     # ======================================================
     # Stage 1：注释过滤 + 多行命令合并
@@ -184,15 +197,8 @@ class PlyPreprocess:
                 if tokens and tokens[0] in CMD_KEYWORDS_SINGLE:
                     command = tokens[0]
 
-            # function
-            if command == "FUNCTION":
-                text = (
-                    text.replace("+", " + ")
-                        .replace("-", " - ")
-                        .replace("/", " / ")
-                        .replace("(", " ( ")
-                        .replace(")", " ) ")
-                )
+            if command in {"FUNCTION", "ASSIGN"}:
+                text = self._normalize_expr_spacing(text)
 
             items.append({
                 "lineno": str(new_lineno),
@@ -201,6 +207,26 @@ class PlyPreprocess:
             })
 
         return items
+
+    def _normalize_expr_spacing(self, text: str) -> str:
+        text = text.replace("**", " __EXP__ ")
+        text = (
+            text.replace("+", " + ")
+                .replace("-", " - ")
+                .replace("/", " / ")
+                .replace("*", " * ")
+                .replace("(", " ( ")
+                .replace(")", " ) ")
+                .replace(",", " , ")
+        )
+        text = text.replace("__EXP__", "**")
+        text = re.sub(r"\s+", " ", text).strip()
+        text = re.sub(
+            r"(?P<mantissa>[+-]?(?:\d+(?:\.\d*)?|\.\d+)[eE])\s*(?P<sign>[+-])\s*(?P<exp>\d+)",
+            r"\g<mantissa>\g<sign>\g<exp>",
+            text,
+        )
+        return text
     
     # ======================================================
     # Stage 4：单位处理、默认单位补充、单位转换、变量名识别
@@ -211,14 +237,14 @@ class PlyPreprocess:
             cmd  = it["command"]
             text = it["text"]
             # print(f"[source]  {text}")
-            if cmd == "ASSIGN":                
-                text = self.process_assign_units(text)                
-            elif cmd == "POINT":                
+            if cmd == "POINT":                
                 text = self.process_point_units(text)                
             elif cmd == "LINE":                
                 text = self.process_line_units(text)                
             elif cmd == "AREA":                
-                text = self.process_area_units(text)                
+                text = self.process_area_units(text)
+            elif cmd == "MARK":
+                text = self.process_mark_units(text)
             #print(f"[processed]  {text}")
             processed.append({
                 "lineno": it["lineno"],
@@ -233,6 +259,7 @@ class PlyPreprocess:
 
     def _format_unit(self, text: str) -> str:
         FLOAT_UNIT_PATTERN = re.compile(
+        r"(?<![A-Za-z0-9_\.])"
         r"(?P<num>[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)"
         r"\s*"
         r"(?P<unit>[A-Za-z_][A-Za-z0-9_]*)"
@@ -240,8 +267,8 @@ class PlyPreprocess:
         """数字 + 单位 → num * unit（幂等）"""
         def repl(m):
             num = m.group("num")
-            unit = m.group("unit").rstrip("s")  # 去复数
-            return f"{num} * {unit.lower()}"
+            unit = self._canonicalize_unit_name(m.group("unit"))
+            return f"{num} * {unit}"
         return FLOAT_UNIT_PATTERN.sub(repl, text)
 
     def _ensure_default_unit(self, tokens, skip, default_unit="m"):
@@ -250,7 +277,6 @@ class PlyPreprocess:
         skip: 需要跳过的头部 token 数（LINE=2, AREA=3）
         """
         result = tokens.copy()
-        i = skip
         for i in range(skip, len(result)):
             tok = result[i]
 
@@ -258,9 +284,17 @@ class PlyPreprocess:
             if "*" in tok:
                 continue
 
+            # 如果数字后面已经显式跟了单位 token，则不补默认单位
+            next_tok = result[i + 1] if i + 1 < len(result) else ""
+            next_next_tok = result[i + 2] if i + 2 < len(result) else ""
+            if next_tok and next_tok.lower().rstrip("s") in mcl_units:
+                continue
+            if next_tok == "*" and next_next_tok and next_next_tok.lower().rstrip("s") in mcl_units:
+                continue
+
             # 如果 token 是“数字” → 补默认单位
             if re.fullmatch(r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?", tok):
-                result[i] = f"{tok} * {default_unit}"
+                result[i] = f"{tok} {default_unit}"
 
         return result
     
@@ -287,8 +321,8 @@ class PlyPreprocess:
         return None
 
 
-    def process_assign_units(self, text: str) -> str:
-        """ASSIGN：全文扫描单位"""
+    def normalize_inline_units(self, text: str) -> str:
+        """全命令通用：将粘连的“数字+单位”统一拆成 `num * unit`。"""
 
         # 预处理下划线连接的数字 + 单位，例如 60_NANOSECONDS
         text = re.sub(
@@ -300,6 +334,7 @@ class PlyPreprocess:
         UNIT_PATTERN = "|".join(sorted(mcl_units, key=len, reverse=True))
         ASSIGN_UNIT_PATTERN = re.compile(
             rf"""
+            (?<![A-Za-z0-9_\.])     # 前面不能是标识符字符，避免把 X2 SIZE 识别成 2 size
             (?P<num>                # 捕获数字
                 [+-]?               # 正负号
                 (?:\d+\.\d*|\.\d+|\d+)   # 小数 or 整数
@@ -315,24 +350,14 @@ class PlyPreprocess:
         )
         def repl(m):
             num = m.group("num")
-            unit = m.group("unit").lower().rstrip("s")
-            return f"{num} * {unit.lower()}"
+            unit = self._canonicalize_unit_name(m.group("unit"))
+            return f"{num} * {unit}"
         return ASSIGN_UNIT_PATTERN.sub(repl, text)
         
 
     def process_point_units(self, text: str) -> str:
         """POINT <name> x y ... ;"""
-        tokens = text.split()
-        if len(tokens) <= 2:
-            return text
-
-        head = tokens[:2]
-        body = tokens[2:]
-
-        body_str = " ".join(body)
-        body_str = self._format_unit(body_str)
-
-        return " ".join(head) + " " + body_str
+        return text
 
 
     def process_line_units(self, text: str) -> str:
@@ -342,14 +367,7 @@ class PlyPreprocess:
             return text
         
         tokens = self._ensure_default_unit(tokens, skip=2)
-
-        head = tokens[:2]     # LINE + name
-        body = tokens[2:]
-
-        body_str = " ".join(body)
-        body_str = self._format_unit(body_str)
-
-        return " ".join(head) + " " + body_str
+        return " ".join(tokens)
 
 
     def process_area_units(self, text: str) -> str:
@@ -362,14 +380,11 @@ class PlyPreprocess:
             tokens[2] = "RECTANGULAR"
         
         tokens = self._ensure_default_unit(tokens, skip=3)
+        return " ".join(tokens)
 
-        head = tokens[:3]     # AREA + name + option
-        body = tokens[3:]
-
-        body_str = " ".join(body)
-        body_str = self._format_unit(body_str)
-
-        return " ".join(head) + " " + body_str
+    def process_mark_units(self, text: str) -> str:
+        """MARK <target> ... ;"""
+        return text
     
     # ======================================================
     # Stage 5: 处理 SYS$xxx 引用
@@ -464,5 +479,5 @@ if __name__ == "__main__":
     args = argparser.parse_args()
     """
     preprocessor = PlyPreprocess(rules=PreprocessCmd())
-    res = preprocessor.process_assign_units("A = 1.05VOLTS")
+    res = preprocessor.normalize_inline_units("MARK INPUT.COAX X2 SIZE 0.02CM ;")
     print(res)

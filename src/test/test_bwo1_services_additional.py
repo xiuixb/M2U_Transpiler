@@ -8,8 +8,8 @@ from src.infrastructure.sys_config import SysConfigStore
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 INPUT_FILE = PROJECT_ROOT / "data" / "BWO1" / "BWO1.m2d"
-SRC_ROOT = PROJECT_ROOT / "src"
-SRC_SYS_CONFIG = SRC_ROOT / "sys_config.json"
+INFRA_ROOT = PROJECT_ROOT / "src" / "infrastructure"
+SRC_SYS_CONFIG = INFRA_ROOT / "sys_config.json"
 
 
 class TestBWO1ServicesAdditional(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestBWO1ServicesAdditional(unittest.TestCase):
         cls.config_service = ConfigService()
         cls.pipeline_service = PipelineService()
         cls.artifact_service = ArtifactService()
-        cls.sys_store = SysConfigStore(SRC_ROOT)
+        cls.sys_store = SysConfigStore(INFRA_ROOT)
 
         cls._sys_config_backup = (
             SRC_SYS_CONFIG.read_text(encoding="utf-8") if SRC_SYS_CONFIG.exists() else None

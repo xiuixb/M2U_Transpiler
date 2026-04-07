@@ -572,15 +572,18 @@ class MID2UNI_STConv():
             observe_type = observe_entry['observe_type']
             if observe_type == "observe_field":
                 observe_para_dic = {k: v for k, v in observe_entry.items() if k not in ['observe_type', 'field_kind']}
-                observe_field_name = observe_para_dic["name"]
+                observe_field_name = observe_para_dic["sys_name"]
                 method_name = f"get_{observe_field_name}_count"
                 func = getattr(geo_c, method_name)()  # 反射调用方法
-                observe_para_dic["name"] = observe_para_dic["name"] + str(func)
+                observe_para_dic["name"] = observe_para_dic["sys_name"] + str(func)
+                observe_para_dic.pop("sys_name", None)
                 
                 FieldsDgn_content.update(observe_para_dic)
             
             elif observe_type == "observe_field_power" or observe_type == "observe_field_integral":
                 observe_field_dic = {k: v for k, v in observe_entry.items() if k not in ['observe_type']}
+                observe_field_dic["name"] = observe_field_dic["sys_name"]
+                observe_field_dic.pop("sys_name", None)
                 FieldsDgn_content.update(observe_field_dic)
             
             Dgn = {

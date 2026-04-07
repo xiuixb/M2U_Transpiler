@@ -23,8 +23,8 @@ class ArtifactService:
         artifact_map = [
             ("preprocessed", constants.pre_jsonl),
             ("parsed", constants.parsed_json),
-            ("mid_symbol1", constants.mid_symbol1_json),
-            ("mid_symbol2", constants.mid_symbol2_json),
+            ("mid_round1", constants.mid_symbol1_json),
+            ("mid_round2", constants.mid_symbol2_json),
             ("mid_symbols", constants.mid_symbols_json),
             ("llmconv", constants.llmconv_json),
             ("llm_prompt", constants.llm_prompt_txt),

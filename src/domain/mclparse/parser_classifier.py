@@ -24,13 +24,14 @@ import json
 from pathlib import Path
 from typing import Dict, List
 from src.domain.core.m2u_parser_route import ParseRouteConfig
-from src.domain.config.llm_route_config import llm_route_config
+from src.domain.config.llm_route_config_loader import load_llm_route_config
 
 class ParserClassifier:
     """命令分类器，将命令按照路由规则分配给不同的解析器"""
     
     def __init__(self, route_config: ParseRouteConfig):
         self.route_config = route_config
+        llm_route_config = load_llm_route_config()
         self.route_config.load_config(
             llm_route_config.multiword_prefixes,
             llm_route_config.regexparse_commands,
