@@ -29,6 +29,16 @@ def _normalize_prompt_config(data: dict[str, dict[str, str]]) -> dict[str, dict[
     }
 
 
+def _sort_prompt_config(data: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
+    return {
+        group: {
+            key: entries[key]
+            for key in sorted(entries)
+        }
+        for group, entries in sorted(data.items())
+    }
+
+
 def load_prompt_config() -> dict[str, dict[str, str]]:
     path = get_prompt_config_path()
     raw: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
@@ -39,6 +49,6 @@ def load_prompt_config() -> dict[str, dict[str, str]]:
 def save_prompt_config(data: dict[str, dict[str, str]]) -> Path:
     path = get_prompt_config_path()
     path.parent.mkdir(parents=True, exist_ok=True)
-    normalized = _normalize_prompt_config(data)
+    normalized = _sort_prompt_config(_normalize_prompt_config(data))
     path.write_text(json.dumps(normalized, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return path

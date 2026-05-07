@@ -18,7 +18,11 @@ sys.path.append(project_root)
 from src.domain.config.cmd_dic_loader import MCL2MID_CmdDict
 from src.infrastructure.llm_entity import OpenAILLMEntity
 from src.domain.core.llm_flows import MCLPromptBuildFlow
-from src.domain.config.prompt import mcl2mid_mclcontext_dict, mcl2mid_midcontext_dict, mcl2mid_json_dict
+from src.domain.config.prompt import (
+    get_mcl2mid_json_dict,
+    get_mcl2mid_mclcontext_dict,
+    get_mcl2mid_midcontext_dict,
+)
 
 
 class LLMConv:
@@ -222,15 +226,15 @@ class LLMConv:
         mid_elements = self.MID_dict[mcl_type_single]
 
         ## mcl命令背景知识
-        mcl_cmd_context = mcl2mid_mclcontext_dict[mcl_type_single]    
+        mcl_cmd_context = get_mcl2mid_mclcontext_dict()[mcl_type_single]
         
         mid_cmd_context = ""
         ## mid符号参数背景知识
         for mid_element in mid_elements:
-            mid_cmd_context += f"### {mid_element}背景知识:\n" + mcl2mid_midcontext_dict[mid_element] + "\n"    
+            mid_cmd_context += f"### {mid_element}背景知识:\n" + get_mcl2mid_midcontext_dict()[mid_element] + "\n"
 
         ## mcl2mid 输出json示例
-        mcl2mid_json = mcl2mid_json_dict[mcl_type]  
+        mcl2mid_json = get_mcl2mid_json_dict()[mcl_type]
 
         
         # 2. 构建带上下文的提示词

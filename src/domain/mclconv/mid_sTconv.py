@@ -33,10 +33,15 @@ class MID_STConv:
                        conduct2void_debug: bool = False,
                        emit_debug: bool = False
                        ):
+        
+        # 网格计算
         print("[info] 网格计算......")
         self.calc_mesh_X1X2()
+
+        # 薄箔处理
+        self.process_foil_model()
         
-        ## 处理area实体的基本参数
+        ## 金属建模
         area_entities = self.get_area_entities(
             areas=self.mid_symbols.sT["geometry"]["area"],
             material_assigns=self.mid_symbols.sT["materials"]["material_assign"]
@@ -109,6 +114,36 @@ class MID_STConv:
         print(f"[info] mesh X1: {mesh['X1']}, X2: {mesh['X2']}")
         return mesh["X1"], mesh["X2"]
     
+    def process_foil_model(self):
+        """
+        处理 sT 中的薄箔模型。
+        """
+        for foil_idx, foil in enumerate(self.mid_symbols.sT["physics_entities"]["foil_model"]):
+            geom_name = foil["parameters"]["geom_name"]
+            
+            # 添加真空材料到材料绑定列表
+            self.mid_symbols.sT["materials"]["material_assign"].append({
+                "geom_name": geom_name,
+                "mat_name": "VOID",
+                "lineno": self.mid_symbols.sT["meta"]["max_lineno"] + 1
+            })
+
+            # 计算薄箔几何位置
+            geom_num = self.mid_symbols.sT["geometry"]["area"][geom_name]["cac_result"]["geom_num"]
+            if not geom_num or len(geom_num) < 4:
+                print(f"[warn] 薄箔模型 {foil_idx} 区域 {geom_name} -> 未定义或点数不足4个，跳过")
+                continue
+
+            xmin = min(point[0] for point in geom_num)
+            ymin = min(point[1] for point in geom_num)
+            xmax = max(point[0] for point in geom_num)
+            ymax = max(point[1] for point in geom_num)
+
+            self.mid_symbols.sT["physics_entities"]["foil_model"][foil_idx]["cac_result"]["lowerBounds"] = f"[{xmin/1000:.3f}, {ymin/1000:.3f}]"
+            self.mid_symbols.sT["physics_entities"]["foil_model"][foil_idx]["cac_result"]["upperBounds"] = f"[{xmax/1000:.3f}, {ymin/1000:.3f}]"
+
+
+       
     def get_area_entities(self,
                           areas: dict,
                           material_assigns: list

@@ -238,6 +238,15 @@ class ASTVisitor:
             "spec": node.spec
             #"location": node.lineno,
         }
+    
+    def _visit_FoilCommandNode(self, node: FoilCommandNode):
+        return {
+            "kind": "foil",
+            "geom_name": node.geom_name,
+            "thickness": node.thickness,
+            "material": node.material
+            #"location": node.lineno,
+        }
 
     # ---- 边界/端口 ----
     def _visit_PortCommandNode(self, node: PortCommandNode):

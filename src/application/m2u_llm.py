@@ -154,7 +154,7 @@ class MAGIC2UNIPIC:
         
         # print(f"[info] 转换后真空区域: \n{self.mid_symbols.sT["geometry"]['area_cac_result']['void_area']}")
         
-        print("\n\n=====> Step 4: Generating UNI symbols")
+        print("\n\n=====> Step 4: Generating UNI symbols\n")
         
         print("[info] 生成目标符号……")
         time_mid_conv_end = time.time()
@@ -174,7 +174,7 @@ class MAGIC2UNIPIC:
             json.dump(self.mid_symbols.to_dict(), f, ensure_ascii=False, indent=2)
 
         # --- Step 4 ---
-        print("=====> Step 5: Outputting files")
+        print("\n=====> Step 5: Outputting files\n")
         time_save_start = time.time()
         
         self.mid2files.load_data(self.mid_symbols)

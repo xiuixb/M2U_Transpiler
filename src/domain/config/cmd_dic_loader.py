@@ -39,3 +39,4 @@ class PreprocessCmd:
 
 CMD_KEYWORDS_SINGLE = set(_load_data()["cmd_keywords_single"])
 CMD_KEYWORDS_MULTI = set(_load_data()["cmd_keywords_multi"])
+SUPPORTED_COMMANDS = (CMD_KEYWORDS_SINGLE | CMD_KEYWORDS_MULTI) - set(PreprocessCmd.commands_to_skip)

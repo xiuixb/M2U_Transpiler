@@ -137,6 +137,14 @@ class MaterialApplicationNode(ASTNode):
             return f"'mtype': '{self.mtype}', 'geom_name': '{self.geom_name}', 'spec': '{self.spec[0]}'"
         return f"'mtype': '{self.mtype}', 'geom_name': '{self.geom_name}'"
 
+# 薄箔
+class FoilCommandNode(ASTNode):
+    def __init__(self, geom_name, thickness, material, lineno):
+        self.geom_name = geom_name
+        self.thickness = thickness
+        self.material = material
+        self.lineno = lineno
+
     
 # 端口
 class PortCommandNode(ASTNode):

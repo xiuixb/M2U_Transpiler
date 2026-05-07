@@ -64,6 +64,7 @@ class MidSymbolTable():
                 "target_format": "unipic2.5d", 
                 "creation_time": "",
                 "device_type": "",
+                "max_lineno": 0,
                 "unit": "mm",
                 "coordinate_system_1": "Z",
                 "coordinate_system_2": "R",

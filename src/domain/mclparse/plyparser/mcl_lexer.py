@@ -78,6 +78,10 @@ reserved = {
     'DIELECTRIC': 'K_DIELECTRIC',
     'VOID':'K_VOID',
 
+    #薄箔参数
+    'FOIL': 'K_FOIL',
+
+
     #端口
     'PORT': 'K_PORT',
     'OUTGOING': 'K_OUTGOING',
@@ -233,6 +237,11 @@ tokens = [
     'K_CONDUCTOR',
     'K_DIELECTRIC',
     'K_VOID',
+
+    #薄箔参数
+    'K_FOIL',
+
+
     #端口
     'K_PORT',
     'K_OUTGOING',

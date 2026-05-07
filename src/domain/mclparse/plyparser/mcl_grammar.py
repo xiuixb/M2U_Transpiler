@@ -104,6 +104,7 @@ def p_command(p):
                | geometry_command
                | header_command
                | material_application_command
+               | foil_command
                | ports_command
                | emission_command
                | emit_command
@@ -281,6 +282,16 @@ def p_conductor_command(p):
 def p_void_command(p):
     """void_command : K_VOID IDENTITY ';'"""
     p[0] = MaterialApplicationNode('VOID', p[2], None, p.lineno(1))
+
+# ===================
+# 薄箔命令
+# ===================
+
+
+def p_foil_command(p):
+    """foil_command : K_FOIL IDENTITY IDENTITY IDENTITY ';'"""
+    p[0] = FoilCommandNode(p[2], p[3], p[4], p.lineno(1))
+
 
 
 # ===================

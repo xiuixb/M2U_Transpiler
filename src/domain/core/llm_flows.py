@@ -18,7 +18,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from src.infrastructure.llm_entity import EmbeddingEntity
 from src.infrastructure.db_entity import ChromaDBEntity
-from src.domain.config.prompt import *
+from src.domain.config.prompt import get_json_dict, get_m2u_task_dict, get_parse_cmd_dict
 
 
 class EmbeddingFlow:
@@ -112,10 +112,9 @@ class MCLPromptBuildFlow:
     """MCL 提示词构建流程"""
     
     def build_parse_prompt(self, task_name, cmd_name, query: str) -> str:
-
-        task_background = m2u_task_dict[task_name]
-        cmd_docs = parse_cmd_dict[cmd_name]
-        json_schema = json_dict[cmd_name]
+        task_background = get_m2u_task_dict()[task_name]
+        cmd_docs = get_parse_cmd_dict()[cmd_name]
+        json_schema = get_json_dict()[cmd_name]
         
         # 填充模板
         prompt = f"""

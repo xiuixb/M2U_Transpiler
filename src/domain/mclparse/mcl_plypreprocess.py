@@ -121,7 +121,7 @@ class PlyPreprocess:
 
             first = tokens[0]
 
-            # ---- command filtering ----
+            # 命令过滤
             if first in self.rules.commands_to_skip:
                 continue
 
@@ -145,6 +145,8 @@ class PlyPreprocess:
                         new_tokens.append(tok)
                         i += 1
                 cmd_format = " ".join(new_tokens)
+
+
 
             # ---- POINT store ----
             toks = cmd_format.split()

@@ -11,5 +11,7 @@
     "   "
   ],
   "llmparse_patterns": [],
-  "mcl2mid_llmconv_commands": []
+  "mcl2mid_llmconv_commands": [
+    "FOIL"
+  ]
 }

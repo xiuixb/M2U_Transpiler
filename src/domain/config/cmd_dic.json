@@ -19,7 +19,7 @@
       "EMIT": ["emission_apply"],
       "INDUCTOR": ["inductor"],
       "RESISTOR": ["resistor"],
-      "FOIL": ["foil_model"],
+      "FOIL": ["foil"],
       "PRESET": ["electromagnetic_field"],
       "OBSERVE": ["observe"]
     }
@@ -39,7 +39,7 @@
       "PRESET": ["FUNCTION"],
       "INDUCTOR": ["LINE"],
       "RESISTOR": ["LINE"],
-      "FOIL": ["LINE", "AREA"],
+      "FOIL": ["ASSIGN"],
       "OBSERVE": ["POINT", "LINE"]
     },
     "MID_dict": {
@@ -88,9 +88,6 @@
       "emission_apply": ["selection"],
       "secondary_electron_emitter": [],
       "electromagnetic_field": ["function"],
-      "inductor": ["selection"],
-      "resistor": ["selection"],
-      "foil_model": ["selection"],
       "diagnostic": []
     }
   },
@@ -131,7 +128,6 @@
       "LOOKBACK",
       "VOLTAGE",
       "FILM",
-      "FOIL",
       "GAS_CONDUCTIVITY",
       "MATERIAL",
       "SURFACE_LOSS",

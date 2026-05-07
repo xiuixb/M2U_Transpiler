@@ -37,7 +37,26 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from src.domain.config.cmd_dic_loader import SUPPORTED_COMMANDS
 from src.presentation.controller import FrontendController
+
+COMMAND_CATEGORY_ORDER = [
+    "控制流",
+    "变量与函数",
+    "几何对象",
+    "网格与时间",
+    "端口与边界",
+    "基础材料",
+    "集总器件",
+    "EMISSION",
+    "OBSERVE",
+    "RANGE",
+    "CONTOUR",
+    "MAXWELL",
+    "TABLE",
+    "粒子与场图形",
+    "数据输出",
+]
 
 
 def pretty_json(data: Any) -> str:
@@ -1320,6 +1339,10 @@ class LLMConfigPanel(QWidget):
         self.command_list.itemClicked.connect(self._on_command_selected)
         self.command_list.setMinimumWidth(280)
         self.command_list.setMaximumWidth(380)
+        self.command_order_combo = QComboBox()
+        self.command_order_combo.addItem("按字母排序", "alpha")
+        self.command_order_combo.addItem("按类别分类", "category")
+        self.command_order_combo.currentIndexChanged.connect(self._refresh_navigation)
 
         self.path_label = QLabel("未加载 LLM 提示词配置")
         self.key_label = QLabel("-")
@@ -1342,6 +1365,7 @@ class LLMConfigPanel(QWidget):
         left.addWidget(self.prompt_type_list, 2)
         self.command_label = QLabel("命令")
         left.addWidget(self.command_label)
+        left.addWidget(self.command_order_combo)
         left.addWidget(self.command_list, 3)
         left_widget = QWidget()
         left_widget.setLayout(left)
@@ -1414,6 +1438,72 @@ class LLMConfigPanel(QWidget):
             return (self.current_group, "__command__")
         return (self.current_group, self.current_key)
 
+    def _command_group_name(self, command_name: str) -> str:
+        command = command_name.upper()
+        if command.startswith("OBSERVE "):
+            return "OBSERVE"
+        if command.startswith("RANGE "):
+            return "RANGE"
+        if command.startswith("CONTOUR "):
+            return "CONTOUR"
+        if command.startswith("EMISSION "):
+            return "EMISSION"
+        if command.startswith("GRID "):
+            return "GRID"
+        if command.startswith("MAXWELL "):
+            return "MAXWELL"
+        if command.startswith("TABLE "):
+            return "TABLE"
+        head = command.split(" ", 1)[0]
+        if head in {"POINT", "LINE", "AREA", "VOLUME", "SYSTEM"}:
+            return "几何对象"
+        if head in {"MARK", "AUTOGRID", "DURATION", "TIMER", "PARALLEL_GRID"}:
+            return "网格与时间"
+        if head in {"PORT", "RESONANT_PORT", "FREESPACE", "IMPORT", "MATCH", "OUTGOING", "SYMMETRY"}:
+            return "端口与边界"
+        if head in {"CONDUCTOR", "FILM", "FOIL", "CONDUCTANCE", "DIELECTRIC", "GAS_CONDUCTIVITY", "MATERIAL", "SURFACE_LOSS", "VOID"}:
+            return "基础材料"
+        if head in {"INDUCTOR", "POLARIZER", "RESISTOR", "SHIM"}:
+            return "集总器件"
+        if head in {"ASSIGN", "FUNCTION", "PARAMETER", "INTEGER", "REAL", "CHARACTER", "CONTROL", "MCLDIALOG"}:
+            return "变量与函数"
+        if head in {"PHASESPACE", "TAGGING", "VECTOR"}:
+            return "粒子与场图形"
+        if head in {"DISPLAY", "DUMP", "EXPORT", "GRAPHICS", "HEADER", "STATISTICS", "VIEWER"}:
+            return "数据输出"
+        if head in {"BLOCK", "ENDBLOCK", "CALL", "RETURN", "DO", "ENDDO", "IF", "ELSEIF", "ELSE", "ENDIF"}:
+            return "控制流"
+        return head
+
+    def _populate_command_list(self, command_names: set[str]) -> None:
+        mode = str(self.command_order_combo.currentData() or "alpha")
+        self.command_list.clear()
+        if mode == "category":
+            grouped: dict[str, list[str]] = {}
+            for command_name in sorted(command_names):
+                grouped.setdefault(self._command_group_name(command_name), []).append(command_name)
+            ordered_groups = sorted(
+                grouped,
+                key=lambda name: (
+                    COMMAND_CATEGORY_ORDER.index(name) if name in COMMAND_CATEGORY_ORDER else len(COMMAND_CATEGORY_ORDER),
+                    name,
+                ),
+            )
+            for group_name in ordered_groups:
+                header = QListWidgetItem(f"[{group_name}]")
+                header.setFlags(Qt.NoItemFlags)
+                header.setData(Qt.UserRole, None)
+                self.command_list.addItem(header)
+                for command_name in grouped[group_name]:
+                    item = QListWidgetItem(command_name)
+                    item.setData(Qt.UserRole, command_name)
+                    self.command_list.addItem(item)
+            return
+        for command_name in sorted(command_names):
+            item = QListWidgetItem(command_name)
+            item.setData(Qt.UserRole, command_name)
+            self.command_list.addItem(item)
+
     def _refresh_navigation(self) -> None:
         prompt_config = self.controller.state.prompt_config or {}
         system_target, command_groups, command_label = self._category_groups()
@@ -1435,16 +1525,12 @@ class LLMConfigPanel(QWidget):
             self.prompt_type_list.addItem(item)
         self.prompt_type_list.blockSignals(False)
 
-        command_names: set[str] = set()
+        command_names: set[str] = set(SUPPORTED_COMMANDS)
         for group_name in command_groups:
             command_names.update(prompt_config.get(group_name, {}).keys())
 
         self.command_list.blockSignals(True)
-        self.command_list.clear()
-        for command_name in sorted(command_names):
-            item = QListWidgetItem(command_name)
-            item.setData(Qt.UserRole, command_name)
-            self.command_list.addItem(item)
+        self._populate_command_list(command_names)
         self.command_list.blockSignals(False)
 
         selected_command = previous_command if previous_command in command_names else ""
@@ -1473,12 +1559,14 @@ class LLMConfigPanel(QWidget):
         if key_marker == "__command__":
             self.current_scope = "command"
             self.command_label.setVisible(True)
+            self.command_order_combo.setVisible(True)
             self.command_list.setVisible(True)
             current_command = self.command_list.currentItem().data(Qt.UserRole) if self.command_list.currentItem() else ""
             self.current_key = str(current_command or "")
         else:
             self.current_scope = "system"
             self.command_label.setVisible(False)
+            self.command_order_combo.setVisible(False)
             self.command_list.setVisible(False)
             self.current_key = key_marker
         self._update_editor()
@@ -1536,6 +1624,7 @@ class LLMConfigPanel(QWidget):
         self.category_combo.setCurrentIndex(selected_index)
         self.category_combo.blockSignals(False)
         self.command_label.setVisible(self.current_scope == "command")
+        self.command_order_combo.setVisible(self.current_scope == "command")
         self.command_list.setVisible(self.current_scope == "command")
         self._refresh_navigation()
         self.save_button.setEnabled(bool(prompt_config))

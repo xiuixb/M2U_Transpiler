@@ -174,6 +174,9 @@ class MCL2MIDST_LLMConv:
         self.magic_symbols.cmds_list = sorted_entries
         print(f"[info] 有效解析条目数: {len(sorted_entries)}")
 
+        # 填写最大lineno
+        self.mid_symbols.sT["meta"]["max_lineno"] = max([r.get("lineno", 0) for r in sorted_entries])
+
         # ======================================================
         # 2️⃣ 阶段1：主遍历
         # ======================================================
@@ -702,6 +705,34 @@ class MCL2MIDST_LLMConv:
             self._print_handler_result(f"mark target={geom_name} axis={axis} size={size_num} mm")
         except Exception as e:
             print(f"[error] MARK 处理失败: {e}")
+
+
+    def _process_foil(self, idx, record):
+        entry = record["payload"]
+        
+        geom_name = entry.get("geom_name", "")
+        thickness = entry.get("thickness", "")
+        material = entry.get("material", "")
+
+        if not thickness or not material:
+            print("[error] FOIL 缺少必要字段，已忽略。")
+            return
+        try:
+            thickness_value = eval_qty(thickness, self.mid_symbols.sT["variable"], self.unit_lr).to(ureg.micron)
+            self.mid_symbols.sT["physics_entities"]["foil_model"].append({
+                "parameters": {
+                    "geom_name": geom_name,
+                    "thickness_num": thickness_value.magnitude,
+                    "thickness_unit": "micron",
+                    "mat_name": material,
+                },
+                "dependencies": [],
+                "cac_result": {}
+            })
+            self._print_handler_result(f"foil target={geom_name} thickness={thickness_value.magnitude} micron mat={material}")
+        except Exception as e:
+            print(f"[error] FOIL 处理失败: {e}")
+
 
     def _process_port(self, idx, record):
 

@@ -26,7 +26,7 @@ M2D_FILE7="D:\AAA_PIC\Parser\M2U_Transpiler\data\RKLYS\RKLYS.m2d"
 
 start_time=$(date '+%Y-%m-%d %H:%M:%S.%3N')
 
-M2D_FILE=$M2D_FILE1
+M2D_FILE=$M2D_FILE5
 
 python src/application/magic2unipic.py -I "$M2D_FILE"
 
