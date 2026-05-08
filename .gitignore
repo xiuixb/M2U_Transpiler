@@ -45,3 +45,7 @@ dist/
 build/
 *.exe
 *.pkg
+
+
+
+# 前端的配置文件
